@@ -1,0 +1,89 @@
+{% extends 'main/base.html' %}
+
+{% block title %}Home | Sportify{% endblock %}
+
+{% block content %}
+<style>
+.card:hover {
+    transform: translateY(-8px);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
+    cursor: pointer;
+
+}
+
+
+</style>
+
+
+
+
+
+<div class="position-relative w-100" style="height: 60vh; overflow: hidden;">
+  <video autoplay muted loop playsinline class="position-absolute w-100 h-100" style="object-fit: cover;">
+    <source src="/static/videos/vids.mp4" type="video/mp4">
+    Your browser does not support the video tag.
+  </video>
+
+  <div class="position-absolute text-white text-center"
+       style="top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 2;">
+    <h2 class="fw-bold">Welcome To Sportify</h2>
+    <p>Discover and connect with talented designers from all around the world. Whether you're here to create, collaborate, or find inspiration — you're in the right place.</p>
+       <form method="get" action="#" class="mb-4">
+
+                <input type="search" name="search" class="form-control" placeholder="Search"
+                       value="{{ request.GET.search }}">
+
+       </form>
+    <a href="#" class="btn btn-outline-light mt-3">Explore All Designers</a>
+  </div>
+</div>
+
+
+
+<main class="container mt-5"  style="max-width: 900px;">
+    {% for specialty, designers in grouped_designers.items %}
+    <div class="mb-5">
+       <a href="#" class="text-decoration-none text-dark">
+           <h4 class="mb-3 border-bottom pb-2">{{ specialty }}
+</h4>
+
+
+
+       </a>
+        {% if designers %}
+            <div class="row row-cols-2 row-cols-sm-3 row-cols-md-5 g-3 ">
+                {% for post in designers %}
+                    <div class="col">
+                        <a href="{% url 'designer:post_to_user_view' post.id %}" class="text-decoration-none text-dark">
+
+                            <div class="card  h-100 text-center border-2 shadow">
+                                <div class="d-flex justify-content-start pt-3 p-2">
+                        <img src="{{ post.profile_photo.url }}" alt="Profile Photo"
+                             class="rounded-circle" style="width: 30px; height: 30px; object-fit: cover;">
+                        <h6 class="   p-2" >{{ post.designer.user.username }}</h6>
+
+
+                    </div>
+                                {% with post.work_samples.all|first as sample %}
+                                    {% if sample %}
+                                        <img src="{{ sample.image.url }}" class="img-fluid rounded mb-2" style="height: 140px;object-fit: contain; padding:5px; " />
+                                    {% endif %}
+                                {% endwith %}
+<!--                                <hr style="text-align:right;">-->
+<!--                                <p class="small fw-bold mb-2">{{ post.designer.user.username }}</p>-->
+                            </div>
+                        </a>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+        <div class="row row-cols-2 row-cols-sm-3 row-cols-md-5 g-3 ">
+            <p class="text-muted">No designers in this specialty yet.</p>
+        </div>
+        {% endif %}
+    </div>
+{% endfor %}
+
+</main>
+{% endblock %}
