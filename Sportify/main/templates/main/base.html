@@ -110,16 +110,34 @@
             <a class="nav-link" href="{% url 'main:main_page_view'%}">Home</a>
           </li>
 
-
-            <li class="nav-item">
-                <a class="nav-link" href="#">All Designers</a>
-              </li>
           <li class="nav-item">
-            <a class="nav-link" href="#">Contact Us</a>
+            <a class="nav-link" href="{% url 'main:about_page_view' %}">About</a>
+          </li>
+
+
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="clubsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Athletes
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="clubsDropdown">
+              <li><a class="dropdown-item" href="#">All Posts</a></li>
+              <li><a class="dropdown-item" href="#">All Athletes</a></li>
+            </ul>
+          </li>
+
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="clubsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Clubs
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="clubsDropdown">
+              <li><a class="dropdown-item" href="#">All Posts</a></li>
+              <li><a class="dropdown-item" href="#">All Ads</a></li>
+              <li><a class="dropdown-item" href="#">All Clubs</a></li>
+            </ul>
           </li>
 
           <li class="nav-item">
-            <a class="nav-link" href="{% url 'main:about_page_view' %}">About</a>
+            <a class="nav-link" href="#">Contact Us</a>
           </li>
         </ul>
       </div>
@@ -134,7 +152,7 @@
             <a class="nav-link dropdown-toggle" href="#" id="Dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
               Signup/Signin
             </a>
-            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="authDropdown">
+            <ul class="dropdown-menu" aria-labelledby="authDropdown">
               <li><a class="dropdown-item" href="#">Sign Up as</a></li>
               <li><a class="dropdown-item" href="#">Sign In</a></li>
             </ul>
@@ -182,9 +200,8 @@
           <h5>Section</h5>
           <ul class="nav flex-column">
             <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-muted">Home</a></li>
-            <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-muted">Contact</a></li>
-
             <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-muted">About</a></li>
+            <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-muted">Contact</a></li>
           </ul>
         </div>
 
