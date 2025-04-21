@@ -24,14 +24,34 @@ p {
     margin-bottom: 1.5rem;
 }
 
-</style>
-<div class="position-relative w-100" style="height: 60vh; overflow: hidden;">
+.background-section {
+    background-image: url("#"); /* Replace with your image path */
+    background-size: cover;
+    background-position: center;
+    height: 60vh;
+    position: relative;
+    overflow: hidden;
+}
 
-  <div class="position-absolute text-white text-center"
-       style="top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 2;">
-    <h2 class="fw-bold">Welcome To Sportify</h2>
-    <p>The platform where talents meet opportunity</p>
-    <a href="{% url 'main:about_page_view' %}" class="btn btn-primary btn-lg">Get to know us</a>
+.background-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(43, 42, 42, 0.5); /* Add a dark overlay for better text visibility */
+    z-index: 1;
+}
+</style>
+<div class="background-section">
+  <div class="position-relative w-100" style="height: 60vh; overflow: hidden;">
+
+    <div class="position-absolute text-white text-center"
+        style="top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 2;">
+      <h2 class="fw-bold">Welcome To Sportify</h2>
+      <p>The platform where talents meet opportunity</p>
+      <a href="{% url 'main:about_page_view' %}" class="btn btn-primary btn-lg">Get to know us</a>
+    </div>
   </div>
 </div>
 {% endblock %}
