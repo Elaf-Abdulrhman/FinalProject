@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
+from django.http import JsonResponse
 from .models import Post
 from .forms import PostForm
 
@@ -16,18 +17,29 @@ def add_post(request):
 
 
 def all_posts(request):
-    # Get all posts and apply pagination
-    posts_list = Post.objects.all().order_by('-created_at')  # Order posts by creation date (latest first)
-    paginator = Paginator(posts_list, 6)  # Show 6 posts per page
+    posts_list = Post.objects.all().order_by('-created_at')
+    page = int(request.GET.get('page', 1))  # Get the current page number
+    per_page = 6  # Number of posts per page
+    start = (page - 1) * per_page
+    end = page * per_page
+    posts = posts_list[start:end]
 
-    page_number = request.GET.get('page')  # Get current page from query params
-    page_obj = paginator.get_page(page_number)  # Get page object
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':  # Check if it's an AJAX request
+        posts_data = [
+            {
+                'id': post.id,
+                'title': post.title,
+                'content': post.content,
+                'author': post.author,
+                'photo_url': post.photo.url if post.photo else None,
+                'created_at': post.created_at.strftime('%B %d, %Y'),
+            }
+            for post in posts
+        ]
+        return JsonResponse({'posts': posts_data})
 
-    context = {
-        'posts': page_obj,
-    }
+    return render(request, 'posts/all_posts.html', {'posts': posts_list[:per_page]})
 
-    return render(request, 'posts/all_posts.html', context)
 
 def post_details(request, post_id):
     # Retrieve the post by its ID or return a 404 if not found
