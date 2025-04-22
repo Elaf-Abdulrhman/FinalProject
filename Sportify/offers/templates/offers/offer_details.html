@@ -1,0 +1,39 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block title %}{{ offer.title }} | Sportify{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <!-- Error message if offer is not found -->
+    {% if offer not in offers %}
+        <div class="alert alert-danger text-center">
+            <strong>Error:</strong> Offer not found.
+        </div>
+    {% else %}
+    <div class="card">
+        <div class="card-header">
+            <h1 class="card-title">{{ offer.title }}</h1>
+            <p class="text-muted">By {{ offer.author }} on {{ offer.created_at|date:"F d, Y" }}</p>
+        </div>
+        
+        {% if offer.photo %}
+        <img src="{{ offer.photo.url }}" class="card-img-top" alt="{{ offer.title }} image">
+        {% else %}
+        <img src="{% static 'images/default_image.jpg' %}" class="card-img-top" alt="Default image">
+        {% endif %}
+
+        <div class="card-body">
+            <p class="card-text">{{ offer.content }}</p>         
+            
+        </div>
+        
+        <div class="card-footer text-muted text-center">
+            <a href="{% url 'offers:delete_offer' offer.id %}" class="btn btn-primary">Delete</a>
+            <a href="{% url 'offers:edit_offer' offer.id %}" class="btn btn-primary">Edit</a>
+            <a href="{% url 'offers:all_offers' %}" class="btn btn-link">Back to All Offers</a>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

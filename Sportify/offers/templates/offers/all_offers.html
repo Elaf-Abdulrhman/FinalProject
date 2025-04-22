@@ -1,0 +1,95 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block title %}All job offers | Sportify{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="text-center">All Offers</h1>
+
+    <!-- Display message if there are no offers -->
+    {% if offers.paginator.count == 0 %}
+        <div class="alert alert-info text-center">
+            No offers available. Be the first to add an offer!
+        </div>
+    {% endif %}
+
+    <a href="{% url 'offers:add_offer' %}" class="btn btn-primary">Add New Offer</a>
+
+    <!-- Display all offers -->
+    <div id="offers-container" class="row">
+        {% for offer in offers %}
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                {% if offer.photo %}
+                    <img src="{{ offer.photo.url }}" class="card-img-top" alt="{{ offer.title }} image">
+                {% endif %}
+                <div class="card-body">
+                    <h5 class="card-title">{{ offer.title }}</h5>
+                    <p class="card-text">{{ offer.content|truncatewords:20 }}</p>
+                    <p class="text-muted"><small>Author: {{ offer.author }}</small></p>
+                    <p class="text-muted"><small>Published at: {{ offer.created_at|date:"F d, Y" }}</small></p>
+                    <a href="{% url 'offers:offer_details' offer.id %}" class="btn btn-primary">Read More</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Loading spinner -->
+    <div id="loading-spinner" class="text-center my-4" style="display: none;">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
+</div>
+
+<script>
+    let currentPage = 1;
+    const offersContainer = document.getElementById('offers-container');
+    const loadingSpinner = document.getElementById('loading-spinner');
+
+    // Function to load more offers
+    const loadMoreOffers = () => {
+        currentPage++;
+        loadingSpinner.style.display = 'block';
+
+        fetch(`?page=${currentPage}`, {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'  // Indicate it's an AJAX request
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            loadingSpinner.style.display = 'none';
+            data.offers.forEach(offer => {
+                const offerHTML = `
+                    <div class="col-md-4 mb-4">
+                        <div class="card">
+                            ${offer.photo_url ? `<img src="${offer.photo_url}" class="card-img-top" alt="${offer.title} image">` : ''}
+                            <div class="card-body">
+                                <h5 class="card-title">${offer.title}</h5>
+                                <p class="card-text">${offer.content.substring(0, 100)}...</p>
+                                <p class="text-muted"><small>Author: ${offer.author}</small></p>
+                                <p class="text-muted"><small>Published at: ${offer.created_at}</small></p>
+                                <a href="/offers/offer/${offer.id}/" class="btn btn-primary">Read More</a>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                offersContainer.insertAdjacentHTML('beforeend', offerHTML);
+            });
+        })
+        .catch(error => {
+            console.error('Error loading more offers:', error);
+        });
+    };
+
+    // Infinite scroll event listener
+    window.addEventListener('scroll', () => {
+        if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 100) {
+            loadMoreOffers();
+        }
+    });
+</script>
+{% endblock %}
