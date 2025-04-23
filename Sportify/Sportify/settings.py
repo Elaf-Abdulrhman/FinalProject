@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'posts',
     'offers',
     'athlete',
+    'clubs',
 ]
 
 MIDDLEWARE = [
