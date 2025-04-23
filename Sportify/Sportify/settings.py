@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'offers',
     'athlete',
     'clubs',
+    'subscriptions',
 ]
 
 MIDDLEWARE = [
