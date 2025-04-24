@@ -147,7 +147,7 @@
               {{ request.user.username }}
             </a>
             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="authDropdown">
-              <li><a class="dropdown-item" href="#">Profile</a></li>
+              <li><a class="dropdown-item" href="{% url 'account:profile_view' %}">Profile</a></li>
               <li><a class="dropdown-item" href="{% url 'account:logout_view' %}">Log Out</a></li>
                        {% else %}
             <a class="nav-link dropdown-toggle" href="#" id="Dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
