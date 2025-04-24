@@ -106,24 +106,21 @@ def logout_view(request):
 
 
 
-def Edit_Profile_view(request:HttpRequest):
+def Edit_Profile_view(request: HttpRequest):
     if request.method == 'POST':
-        user_form = UserSignupForm(request.POST)
-        athlete_form = AthleteSignupForm(request.POST, request.FILES)
+        user_form = UserSignupForm(request.POST, instance=request.user)
+        athlete_form = AthleteSignupForm(request.POST, request.FILES, instance=request.user.athlete)
 
         if user_form.is_valid() and athlete_form.is_valid():
-            user = user_form.save()
-            athlete = athlete_form.save(commit=False)
-            athlete.user = user
-            athlete.save()
-
-            messages.success(request, "Update profile successfully")
+            user_form.save()
+            athlete_form.save()
+            messages.success(request, "Profile updated successfully!")
             return redirect('account:profile_view')
         else:
             messages.error(request, "There was an error with your form.")
     else:
-        user_form = UserSignupForm()
-        athlete_form = AthleteSignupForm()
+        user_form = UserSignupForm(instance=request.user)
+        athlete_form = AthleteSignupForm(instance=request.user.athlete)
 
     return render(request, 'account/Edit_Profile.html', {
         'user_form': user_form,
@@ -158,4 +155,3 @@ def Edit_profile_club_view(request:HttpRequest):
         'user_form': user_form,
         'club_form': club_form
     })
-        
