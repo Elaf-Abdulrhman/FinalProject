@@ -1,0 +1,57 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block title %}Add Offer | Sportify{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="text-center">Add a New Offer</h1>
+
+    <!-- Success message (Optional) -->
+    {% if message %}
+        <div class="alert alert-success">
+            {{ message }}
+        </div>
+    {% endif %}
+
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <div class="mb-3">
+            <label for="title" class="form-label">Title</label>
+            <input type="text" class="form-control" id="title" name="title" value="{{ form.title.value }}" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="author" class="form-label">Author</label>
+            <input type="text" class="form-control" id="author" name="author" value="{{ form.author.value }}" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="content" class="form-label">Content</label>
+            <textarea class="form-control" id="content" name="content" rows="5" required>{{ form.content.value }}</textarea>
+        </div>
+
+        <div class="mb-3">
+            <label for="photo" class="form-label">Image</label>
+            <input type="file" class="form-control" id="photo" name="photo" accept="image/*">
+        </div>
+        <button type="submit" class="btn btn-primary w-100">Submit</button>
+    </form>
+
+    <!-- Display form errors -->
+    {% if form.errors %}
+        <div class="alert alert-danger mt-3">
+            <ul>
+                {% for field in form %}
+                    {% for error in field.errors %}
+                        <li>{{ field.label }}: {{ error }}</li>
+                    {% endfor %}
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+
+    <a href="{% url 'offers:all_offers' %}" class="btn btn-link mt-3 d-block text-center">Back to All Offers</a>
+</div>
+{% endblock %}
