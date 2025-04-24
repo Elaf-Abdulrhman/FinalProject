@@ -30,7 +30,7 @@
   }
 
   .navbar-nav .nav-link:hover {
-    color: darkseagreen;
+    color: lightsalmon;
     transform: scale(1.1);
   }
     .btn1{
@@ -149,7 +149,7 @@
       <div class="nav-right">
         <div class="nav-item dropdown">
           {% if request.user.is_authenticated %}
-            <button class="btn btn-dark dropdown-toggle" href="#" id="authDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <button class="btn btn-light dropdown-toggle" href="#" id="authDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
               {{ request.user.username }}
             </button>
             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="authDropdown">
