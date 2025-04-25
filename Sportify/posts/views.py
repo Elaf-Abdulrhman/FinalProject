@@ -1,10 +1,11 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from .models import Post,Comment
+from .models import Post,Comment,Like
 from .forms import PostForm,CommentForm
 from django.core.paginator import Paginator
-
+from django.db.models import Q
+from account.models import Athlete, Club, Sport, City
 @login_required
 def add_post(request):
     if request.method == 'POST':
@@ -21,18 +22,24 @@ def add_post(request):
 
 
 
-def all_posts(request):
-    post_list = Post.objects.all().order_by('-created_at')
-    paginator = Paginator(post_list, 6)
+# def all_posts(request):
+#     post_list = Post.objects.all().order_by('-created_at')
+#     paginator = Paginator(post_list, 6)
+#
+#     page_number = request.GET.get('page')
+#     posts = paginator.get_page(page_number)
+#
+#     return render(request, 'posts/all_posts.html', {'posts': posts})
 
-    page_number = request.GET.get('page')
-    posts = paginator.get_page(page_number)
-
-    return render(request, 'posts/all_posts.html', {'posts': posts})
+from .models import Like
 
 def post_details(request, post_id):
     post = get_object_or_404(Post, pk=post_id)
     comments = post.comments.all().order_by('-created_at')  # Fetch related comments
+
+    liked = False
+    if request.user.is_authenticated:
+        liked = Like.objects.filter(user=request.user, post=post).exists()
 
     if request.method == 'POST':
         if request.user.is_authenticated:
@@ -52,8 +59,11 @@ def post_details(request, post_id):
     return render(request, 'posts/post_details.html', {
         'post': post,
         'comments': comments,
-        'form': form
+        'form': form,
+        'liked': liked,  # ← this is the new line
     })
+
+
 
 @login_required
 def delete_comment(request, comment_id):
@@ -100,3 +110,57 @@ def edit_post(request, pk):
     else:
         form = PostForm(instance=post)
     return render(request, 'posts/edit_post.html', {'form': form, 'post': post})
+
+
+@login_required
+def like_post(request, post_id):
+    post = get_object_or_404(Post, id=post_id)
+    like, created = Like.objects.get_or_create(user=request.user, post=post)
+
+    if not created:
+        like.delete()
+
+    return redirect('posts:post_details', post_id=post.id)
+
+
+from urllib.parse import urlencode
+
+def all_posts(request):
+    sport_id = request.GET.get('sport')
+    city_id = request.GET.get('city')
+    poster_type = request.GET.get('posted_by')
+
+    posts = Post.objects.all().order_by('-created_at')
+
+    if sport_id:
+        posts = posts.filter(user__athlete__sport_id=sport_id) | posts.filter(user__club__sport_id=sport_id)
+
+    if city_id:
+        posts = posts.filter(user__athlete__city_id=city_id) | posts.filter(user__club__city_id=city_id)
+
+    if poster_type == 'athlete':
+        posts = posts.filter(user__athlete__isnull=False)
+    elif poster_type == 'club':
+        posts = posts.filter(user__club__isnull=False)
+
+    paginator = Paginator(posts.distinct(), 10)
+    page = request.GET.get('page')
+    posts = paginator.get_page(page)
+
+#########
+    query_params = request.GET.copy()
+    if 'page' in query_params:
+        del query_params['page']
+    filter_querystring = query_params.urlencode()
+
+    context = {
+        'posts': posts,
+        'sports': Sport.objects.all(),
+        'cities': City.objects.all(),
+        'selected_sport': sport_id,
+        'selected_city': city_id,
+        'selected_poster': poster_type,
+        'filter_querystring': filter_querystring,
+    }
+
+    return render(request, 'posts/all_posts.html', context)

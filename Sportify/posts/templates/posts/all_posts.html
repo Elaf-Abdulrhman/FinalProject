@@ -2,13 +2,48 @@
 {% block title %}All Posts | Sportify{% endblock %}
 
 {% block content %}
-<div class="container  p-5">
+<div class="container mt-5 p-3" style="max-width: 900px;">
   <h2 class="text-center mb-4">Recent Posts</h2>
-{% if user.is_authenticated %}
+
+  <!-- Filter Form -->
+  <form method="get" class="row g-2 mb-4">
+    <div class="col-md-3">
+      <select name="sport" class="form-select">
+        <option value="">All Sports</option>
+        {% for sport in sports %}
+          <option value="{{ sport.id }}" {% if selected_sport == sport.id|stringformat:"s" %}selected{% endif %}>{{ sport.sport_name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="col-md-3">
+      <select name="city" class="form-select">
+        <option value="">All Cities</option>
+        {% for city in cities %}
+          <option value="{{ city.id }}" {% if selected_city == city.id|stringformat:"s" %}selected{% endif %}>{{ city.city_name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="col-md-3">
+      <select name="posted_by" class="form-select">
+        <option value="">All Users</option>
+        <option value="athlete" {% if selected_poster == 'athlete' %}selected{% endif %}>Athletes</option>
+        <option value="club" {% if selected_poster == 'club' %}selected{% endif %}>Clubs</option>
+      </select>
+    </div>
+
+    <div class="col-md-3 d-grid">
+      <button type="submit" class="btn btn-dark">Apply Filters</button>
+    </div>
+  </form>
+
+  {% if user.is_authenticated %}
     <div class="text-end mt-4 p-3">
       <a href="{% url 'posts:add_post' %}" class="btn btn-dark">+ Add Post</a>
     </div>
   {% endif %}
+
   {% if posts %}
     {% for post in posts %}
       <div class="card mb-3 shadow-sm p-3 position-relative">
@@ -18,19 +53,34 @@
           <div class="d-flex align-items-center">
             <img src="#" alt="Profile" class="rounded-circle me-2" width="40" height="40">
             <div>
-              <strong>{% if post.user.athlete %}
-                      {{ post.user.first_name }}
-                    {% elif post.user.club %}
-                      {{ post.user.club.clubName }}&nbsp;&nbsp;<i class="bi bi-patch-check-fill"></i>
-                    {% else %}
-                      {{ post.user.username }}
-                    {% endif %}</strong><br>
+              <strong>
+                {% if post.user.athlete %}
+                  {{ post.user.first_name }}
+                {% elif post.user.club %}
+                  {{ post.user.club.clubName }}&nbsp;&nbsp;<i class="bi bi-patch-check-fill"></i>
+                {% else %}
+                  {{ post.user.username }}
+                {% endif %}
+              </strong><br>
               <small class="text-muted">@{{ post.user.username }}</small>
             </div>
           </div>
+
           <div class="d-flex gap-3 z-1">
             <i class="bi bi-bookmark" style="font-size: 1.2rem; cursor: pointer;"></i>
-            <i class="bi bi-heart" style="font-size: 1.2rem; cursor: pointer;"></i>
+
+            <form action="{% url 'posts:like_post' post.id %}" method="POST" class="d-inline">
+              {% csrf_token %}
+              {% if post.is_liked %}
+                <button type="submit" class="btn btn-sm text-danger border-0 bg-transparent p-0">
+                  <i class="bi bi-heart-fill" style="font-size: 1.3rem;"></i> {{ post.total_likes }}
+                </button>
+              {% else %}
+                <button type="submit" class="btn btn-sm text-muted border-0 bg-transparent p-0">
+                  <i class="bi bi-heart" style="font-size: 1.3rem;"></i> {{ post.total_likes }}
+                </button>
+              {% endif %}
+            </form>
           </div>
         </div>
 
@@ -38,46 +88,56 @@
           <p>&nbsp;&nbsp;&nbsp;{{ post.content|truncatewords:25 }}</p>
 
           {% if post.photo %}
-              <div class="mt-2">
-                <img src="{{ post.photo.url }}" alt="Post Media" class="img-fluid rounded" style="max-height: 200px; width: auto; display: block; margin: 0 auto;">
-              </div>
-            {% endif %}
-
+            <div class="mt-2">
+              <img src="{{ post.photo.url }}" alt="Post Media" class="img-fluid rounded" style="max-height: 200px; width: auto; display: block; margin: 0 auto;">
+            </div>
+          {% endif %}
         </div>
-      <div class="text-end  mt-3">
-      {{ post.comments.count }} <i class="bi bi-chat" style="font-size: 1.3rem;"> </i>
-    </div>
+
+        <div class="text-end mt-3">
+          {{ post.comments.count }} <i class="bi bi-chat" style="font-size: 1.3rem;"></i>
+        </div>
       </div>
     {% endfor %}
 
-    {% if posts.has_other_pages %}
-      <nav class="mt-4">
-        <ul class="pagination justify-content-center">
-          {% if posts.has_previous %}
-            <li class="page-item"><a class="page-link" href="?page={{ posts.previous_page_number }}">Previous</a></li>
-          {% else %}
-            <li class="page-item disabled"><span class="page-link">Previous</span></li>
-          {% endif %}
+    <!-- Pagination with filters kept -->
+    <!-- Pagination -->
+{% if posts.has_other_pages %}
+  <nav class="mt-4">
+    <ul class="pagination justify-content-center">
 
-          {% for num in posts.paginator.page_range %}
-            <li class="page-item {% if posts.number == num %}active{% endif %}">
-              <a class="page-link" href="?page={{ num }}">{{ num }}</a>
-            </li>
-          {% endfor %}
+      {% if posts.has_previous %}
+        <li class="page-item">
+          <a class="page-link" href="?page={{ posts.previous_page_number }}{% if filter_querystring %}&{{ filter_querystring }}{% endif %}">Previous</a>
+        </li>
+      {% else %}
+        <li class="page-item disabled">
+          <span class="page-link">Previous</span>
+        </li>
+      {% endif %}
 
-          {% if posts.has_next %}
-            <li class="page-item"><a class="page-link" href="?page={{ posts.next_page_number }}">Next</a></li>
-          {% else %}
-            <li class="page-item disabled"><span class="page-link">Next</span></li>
-          {% endif %}
-        </ul>
-      </nav>
-    {% endif %}
+      {% for num in posts.paginator.page_range %}
+        <li class="page-item {% if posts.number == num %}active{% endif %}">
+          <a class="page-link" href="?page={{ num }}{% if filter_querystring %}&{{ filter_querystring }}{% endif %}">{{ num }}</a>
+        </li>
+      {% endfor %}
+
+      {% if posts.has_next %}
+        <li class="page-item">
+          <a class="page-link" href="?page={{ posts.next_page_number }}{% if filter_querystring %}&{{ filter_querystring }}{% endif %}">Next</a>
+        </li>
+      {% else %}
+        <li class="page-item disabled">
+          <span class="page-link">Next</span>
+        </li>
+      {% endif %}
+
+    </ul>
+  </nav>
+{% endif %}
+
   {% else %}
     <p class="text-center">No posts available yet.</p>
   {% endif %}
-
-
 </div>
-
 {% endblock %}
