@@ -2,7 +2,7 @@
 {% block title %}Post Details{% endblock %}
 
 {% block content %}
-<div class="container mt-5">
+<div class="container mt-5 p-5">
   <h3 class="text-center">@{{ post.user.username }}'s post</h3>
 
   <div class="card shadow-sm p-4">
@@ -12,31 +12,35 @@
       <div class="d-flex align-items-center">
         <img src="#" class="rounded-circle me-2" width="45" height="45" alt="Profile Picture">
         <div>
-          <strong>{{ post.user.first_name|default:"name" }}</strong><br>
+          <strong>
+            {% if post.user.athlete %}
+              {{ post.user.first_name }}
+            {% elif post.user.club %}
+              {{ post.user.club.clubName }}
+            {% else %}
+              {{ post.user.username }}
+            {% endif %}
+          </strong><br>
           <small class="text-muted">@{{ post.user.username }}</small>
         </div>
       </div>
 
       <div class="d-flex gap-3">
-
         {% if user == post.user %}
           <div class="dropdown text-end">
             <button class="btn" type="button" id="actionMenu" data-bs-toggle="dropdown" aria-expanded="false">
               <i class="bi bi-three-dots-vertical fs-5"></i>
             </button>
             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="actionMenu">
-              <li>
-                <a class="dropdown-item" href="{% url 'posts:edit_post' post.id %}">Edit</a>
-              </li>
-              <li>
-                <button class="dropdown-item text-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">Delete</button>
-              </li>
+              <li><a class="dropdown-item" href="{% url 'posts:edit_post' post.id %}">Edit</a></li>
+              <li><button class="dropdown-item text-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">Delete</button></li>
             </ul>
           </div>
         {% endif %}
       </div>
     </div>
 
+    <!-- Post content -->
     <div class="text-start mt-4">
       <p>{{ post.content }}</p>
 
@@ -49,33 +53,38 @@
       {% if post.video %}
         <video class="w-100 rounded mb-3" controls style="max-height: 400px;">
           <source src="{{ post.video.url }}" type="video/mp4">
-          Something went wrong displaying this video.
+          Your browser does not support the video tag.
         </video>
       {% endif %}
     </div>
 
-    <div class="text-end">
+
+
+    <div class="d-flex text-start gap-3 mt-3">
+      <i class="bi bi-bookmark" style="font-size: 1.3rem;"></i>
+      <i class="bi bi-heart" style="font-size: 1.3rem;"></i>
+
+    </div>
+
+    <div class="text-end  mt-3">
+      {{ comments.count }} <i class="bi bi-chat" style="font-size: 1.3rem;"> </i>
+    </div>
+ <div class="text-end">
       <span class="badge text-secondary">{{ post.created_at|date:"M d, Y" }} {{ post.created_at|time:"g:i A" }}</span>
     </div>
 
-      <div class="d-flex text-start gap-3">
-        <i class="bi bi-bookmark" style="font-size: 1.3rem;"></i>
-        <i class="bi bi-heart" style="font-size: 1.3rem;"></i>
-      </div>
+    <!-- Delete Modal -->
     {% if user == post.user %}
       <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
         <div class="modal-dialog">
           <div class="modal-content">
-
             <div class="modal-header">
               <h5 class="modal-title text-danger" id="deleteModalLabel">Confirm Deletion</h5>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-
             <div class="modal-body">
               Are you sure you want to delete this post? This action cannot be undone.
             </div>
-
             <div class="modal-footer">
               <form method="POST" action="{% url 'posts:delete_post' post.id %}">
                 {% csrf_token %}
@@ -83,13 +92,53 @@
               </form>
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
             </div>
-
           </div>
         </div>
       </div>
     {% endif %}
   </div>
+
+  <hr>
+
+  <!-- Comments -->
+  <h4 class="mt-4">Comments</h4>
+
+  {% if user.is_authenticated %}
+    <form method="POST" class="d-flex align-items-center mb-4">
+      {% csrf_token %}
+      <div class="flex-grow-1 me-2">
+        {{ form.content }}
+      </div>
+      <button type="submit" class="btn btn-dark btn-sm">Comment</button>
+    </form>
+  {% else %}
+    <p><a href="{% url 'account:login_view' %}" class="btn btn-outline-primary btn-sm">Login to comment</a></p>
+  {% endif %}
+
+  {% if comments %}
+    <div class="mt-4">
+      {% for comment in comments %}
+        <div class="card mb-2">
+          <div class="card-body position-relative">
+            <strong>{{ comment.user.username }}</strong>
+
+            <p class="mt-2 mb-0">{{ comment.content }}</p>
+          <br>
+            <small class="text-muted">{{ comment.created_at|date:"F d, Y H:i" }}</small>
+            {% if comment.user == user %}
+              <form action="{% url 'posts:delete_comment' comment.id %}" method="POST" class="position-absolute top-0 end-0 mt-2 me-2">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-sm btn-outline-danger" style="font-size: 0.8rem;">
+                  <i class="bi bi-trash3"></i>
+                </button>
+              </form>
+            {% endif %}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p class="text-muted">No comments yet. Be the first!</p>
+  {% endif %}
 </div>
-
-
 {% endblock %}

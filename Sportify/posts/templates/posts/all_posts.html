@@ -12,10 +12,8 @@
   {% if posts %}
     {% for post in posts %}
       <div class="card mb-3 shadow-sm p-3 position-relative">
-        <!-- Clickable whole card -->
         <a href="{% url 'posts:post_details' post.id %}" class="stretched-link text-decoration-none text-dark"></a>
 
-        <!-- Post Header -->
         <div class="d-flex justify-content-between align-items-start">
           <div class="d-flex align-items-center">
             <img src="#" alt="Profile" class="rounded-circle me-2" width="40" height="40">
@@ -23,21 +21,19 @@
               <strong>{% if post.user.athlete %}
                       {{ post.user.first_name }}
                     {% elif post.user.club %}
-                      {{ post.user.club.clubName }}
+                      {{ post.user.club.clubName }}&nbsp;&nbsp;<i class="bi bi-patch-check-fill"></i>
                     {% else %}
                       {{ post.user.username }}
                     {% endif %}</strong><br>
               <small class="text-muted">@{{ post.user.username }}</small>
             </div>
           </div>
-          <!-- Icons (still clickable) -->
           <div class="d-flex gap-3 z-1">
             <i class="bi bi-bookmark" style="font-size: 1.2rem; cursor: pointer;"></i>
             <i class="bi bi-heart" style="font-size: 1.2rem; cursor: pointer;"></i>
           </div>
         </div>
 
-        <!-- Post Content -->
         <div class="mt-3 z-1">
           <p>&nbsp;&nbsp;&nbsp;{{ post.content|truncatewords:25 }}</p>
 
@@ -48,10 +44,12 @@
             {% endif %}
 
         </div>
+      <div class="text-end  mt-3">
+      {{ post.comments.count }} <i class="bi bi-chat" style="font-size: 1.3rem;"> </i>
+    </div>
       </div>
     {% endfor %}
 
-    <!-- Pagination -->
     {% if posts.has_other_pages %}
       <nav class="mt-4">
         <ul class="pagination justify-content-center">
