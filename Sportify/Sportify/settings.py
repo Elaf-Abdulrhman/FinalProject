@@ -134,6 +134,6 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# Stripe settings
-STRIPE_PUBLISHABLE_KEY = 'pk_test_51NyxnKLeC5yhtguJSkPo35KIneo8pPYfOUDcFP26IhtgnXL3dIysltpAaFvvtH3GyNhqyNdApzyEsab8lsKrf7jg00LgOimd8b'
-STRIPE_SECRET_KEY = 'sk_test_51NyxnKLeC5yhtguJpfYiZFox5lpVkf8mCKiwqCIDsE9OkVzjnvZey4FyYzDudkvlltsUWoYtBpBGkeMToaZho6dh00HIA3KJlP'
+# Moyasar settings
+MOYASAR_PUBLISHABLE_KEY = 'pk_test_wJ4i6psLToc8uJ2J3PFADniiS16MFzhhcDZ86Kk9'
+MOYASAR_SECRET_KEY = 'sk_test_sF2ML8JKf8QhAL7mrtVBrgXs5p4tjKvVrhFXLJG1'

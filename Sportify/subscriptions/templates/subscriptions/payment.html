@@ -1,55 +1,62 @@
+<!-- templates/subscriptions/payment.html -->
+
 {% extends 'main/base.html' %}
 
 {% block title %}Payment | Sportify{% endblock %}
 
 {% block content %}
-<div class="container mt-5">
-    <h1 class="text-center">Complete Your Payment</h1>
-    <p class="text-center">Pay 0.99 SAR to subscribe to the Plus Plan.</p>
+<div class="container mt-5 text-center">
+  <h1>Subscribe to Plus Plan</h1>
+  <p>Pay 10 SAR to subscribe.</p>
 
-    <form id="payment-form" method="post">
-        {% csrf_token %}
-        <div id="card-element" class="form-control mb-3"></div>
-        <button id="submit" class="btn btn-primary w-100">Pay 0.99 SAR</button>
-    </form>
+  <div class="mysr-form"></div>
 
-    <div id="payment-message" class="mt-3 text-center"></div>
-</div>
+  <script src="https://cdn.moyasar.com/v1/moyasar.js"></script>
+  <script>
+    window.Moyasar.init({
+      element: '.mysr-form',
+      amount: 1000,  // Amount in halalas (1000 halalas = 10 SAR)
+      currency: 'SAR',
+      description: 'Plus Plan Subscription',
+      publishable_api_key: '{{ moyasar_publishable_key }}', 
+      callback_url: 'http://127.0.0.1:8000/subscriptions/payment_success/',
+      methods: ['creditcard'],
+      onSuccess: function(payment) {
+        console.log("Payment Success:", payment);
+        alert("Payment completed successfully!");
 
-<script src="https://js.stripe.com/v3/"></script>
-<script>
-    const stripe = Stripe('{{ stripe_publishable_key }}');
-    const elements = stripe.elements();
-    const cardElement = elements.create('card');
-    cardElement.mount('#card-element');
-
-    const form = document.getElementById('payment-form');
-    form.addEventListener('submit', async (event) => {
-        event.preventDefault();
-        const { paymentMethod, error } = await stripe.createPaymentMethod({
-            type: 'card',
-            card: cardElement,
-        });
-
-        if (error) {
-            document.getElementById('payment-message').textContent = error.message;
-        } else {
-            const response = await fetch('', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': '{{ csrf_token }}',
-                },
-                body: JSON.stringify({ payment_method_id: paymentMethod.id }),
-            });
-
-            const result = await response.json();
-            if (result.error) {
-                document.getElementById('payment-message').textContent = result.error;
-            } else {
-                window.location.href = '/subscriptions/payment_success/';
+        // Send payment ID to the backend to verify the payment status
+        const paymentId = payment.id;
+        
+        // Make sure to pass the payment ID to the backend for verification
+        fetch(`/subscriptions/payment_success/?id=${paymentId}`)
+          .then(response => {
+            if (!response.ok) {
+              throw new Error(`HTTP error! status: ${response.status}`);
             }
-        }
+            return response.json();
+          })
+          .then(data => {
+            console.log("Backend Response:", data); // Debugging
+            // Redirect to success or failure page based on response
+            if (data.status === 'paid') {
+              window.location.href = '/subscriptions/payment_success/';
+            } else {
+              alert('Payment failed, please try again.');
+              window.location.href = '/subscriptions/payment_failed/';
+            }
+          })
+          .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while verifying the payment.');
+            window.location.href = '/subscriptions/payment_failed/';
+          });
+      },
+      onError: function(error) {
+        console.error('Payment Error:', error);
+        alert('Payment Failed: ' + error.message);
+      }
     });
-</script>
+  </script>  
+</div>
 {% endblock %}

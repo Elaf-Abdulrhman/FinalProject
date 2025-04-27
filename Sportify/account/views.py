@@ -12,12 +12,11 @@ from django.http import HttpRequest
 # Create your views here.
 
 def sign_up_as_view(request:HttpRequest):
-    if request.user.is_authenticated:
-        print(f"User {request.user.username} is logged in.")
-    else:
-        print("User is NOT logged in.")
 
     return render(request,"account/sign_up_as.html")
+
+def profile_view(request:HttpRequest):
+    return render(request,"account/profile.html")
 
 
 def signup_athlete_view(request):
@@ -104,3 +103,55 @@ def login_view(request):
 def logout_view(request):
     logout(request)
     return redirect('main:main_page_view')
+
+
+
+def Edit_Profile_view(request: HttpRequest):
+    if request.method == 'POST':
+        user_form = UserSignupForm(request.POST, instance=request.user)
+        athlete_form = AthleteSignupForm(request.POST, request.FILES, instance=request.user.athlete)
+
+        if user_form.is_valid() and athlete_form.is_valid():
+            user_form.save()
+            athlete_form.save()
+            messages.success(request, "Profile updated successfully!")
+            return redirect('account:profile_view')
+        else:
+            messages.error(request, "There was an error with your form.")
+    else:
+        user_form = UserSignupForm(instance=request.user)
+        athlete_form = AthleteSignupForm(instance=request.user.athlete)
+
+    return render(request, 'account/Edit_Profile.html', {
+        'user_form': user_form,
+        'athlete_form': athlete_form
+    })
+    
+    
+def Edit_profile_club_view(request:HttpRequest):
+
+    if request.method == 'POST':
+        user_form = ClubUserSignupForm(request.POST)
+        club_form = ClubSignupForm(request.POST, request.FILES)
+
+        if user_form.is_valid() and club_form.is_valid():
+            user = user_form.save()
+            club = club_form.save(commit=False)
+            club.user = user
+            club.is_approved = False
+            club.save()
+
+            messages.info(request, "Update profile successfully")
+            return redirect('account:profile_view')
+        else:
+
+
+            messages.error(request, "There was an error with your form.")
+    else:
+        user_form = ClubUserSignupForm()
+        club_form = ClubSignupForm()
+
+    return render(request, 'account/Edit_profile_club.html', {
+        'user_form': user_form,
+        'club_form': club_form
+    })
