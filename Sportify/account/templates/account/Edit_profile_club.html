@@ -12,16 +12,16 @@
     {% endfor %}
   {% endif %}
 
-  <form method="POST" enctype="multipart/form-data" class="p-3 border rounded bg-white shadow-sm">
+  <form method="POST" action="{% url 'account:Edit_profile_club_view' user.id %}" enctype="multipart/form-data" class="p-3 border rounded bg-white shadow-sm">
     {% csrf_token %}
     {{ form.as_p }}
     <!-- <button type="submit">Upload</button> -->
 
 
     <div class="mb-3 text-center">
+      <img src="{{ user.club.photo.url }}" alt="Club Profile Photo" style="width: 7rem;"/>
       <label for="id_photo" class="form-label small">Club Photo</label>
-      <input type="file" name="photo" id="id_photo" onchange="previewFile()" class="form-control form-control-sm mx-auto" style="max-width: 280px;">
-      <img id="preview" src="#" alt="Image Preview" style="max-height: 200px;" />
+      <input type="file" name="photo" id="id_photo" class="form-control form-control-sm mx-auto" style="max-width: 280px;">
     </div>
 
     <div class="row g-2">

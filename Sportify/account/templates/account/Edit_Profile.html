@@ -5,13 +5,17 @@
 {% block content %}
 <div class="container mt-5 p-5">
   <h3 class="text-center mb-3">Athlete Edit Profile</h3>
-  <form method="POST" enctype="multipart/form-data" class="p-3 border rounded bg-white shadow-sm">
+  <form method="POST" action="{% url 'account:Edit_Profile_view' user.id %}" enctype="multipart/form-data" class="p-3 border rounded bg-white shadow-sm">
     {% csrf_token %}
+    {{ form.as_p }}
+
 
     <div class="mb-3 text-center">
+      
+      <img src="{{ user.athlete.profilePhoto.url }}" alt="Athlete Profile Photo" style="width: 7rem;" />
       <label for="id_profilePhoto" class="form-label small">Profile Photo</label>
-      <input type="file" name="profilePhoto" id="id_profilePhoto" onchange="previewFile()"class="form-control form-control-sm mx-auto" style="max-width: 280px;">
-      <img id="preview" src="#" alt="Image Preview" style="max-height: 200px;" />
+      <input type="file" name="profilePhoto" id="id_profilePhoto" class="form-control form-control-sm mx-auto" style="max-width: 280px;">
+      
     </div>
 
     <div class="row g-2">

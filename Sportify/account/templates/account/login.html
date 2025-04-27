@@ -31,8 +31,9 @@
             <button type="submit" class="btn btn-dark w-100">Sign In</button>
           </form>
 
-          <div class="text-center mt-3">
+          <div class="d-flex flex-column text-center mt-3">
             <small>Don't have an account? <a href="{% url 'account:sign_up_as_view' %}">Sign up here</a></small>
+            <small>Did you forget password? <a href="{% url 'account:sign_up_as_view' %}">reset password</a></small>
           </div>
         </div>
       </div>
