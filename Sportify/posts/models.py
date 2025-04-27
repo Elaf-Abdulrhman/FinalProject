@@ -12,7 +12,8 @@ class Post(models.Model):
         return self.likes.count()
 
     def __str__(self):
-        return f"Post by {self.user.username} on {self.created_at.strftime('%Y-%m-%d')}"
+        username = self.user.username if self.user else "Unknown User"
+        return f"Post by {username} on {self.created_at.strftime('%Y-%m-%d')}"
 
 class Comment(models.Model):
     post = models.ForeignKey('Post', related_name='comments', on_delete=models.CASCADE)

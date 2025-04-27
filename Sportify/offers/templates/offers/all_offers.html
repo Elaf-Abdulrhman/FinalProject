@@ -9,7 +9,7 @@
 <div class="text-start ">
     {% if user.is_authenticated and user.club %}
         <div class="d-flex justify-content-start gap-3 p-3">
-            <a href="{% url 'offers:add_offer' %}" class="btn btn-dark px-4">Add a new add!</a>
+            <a href="{% url 'offers:add_offer' %}" class="btn btn-dark px-4">Add a new offer!</a>
             <a href="{% url 'subscriptions:plus_plan' %}" class="btn btn-dark px-4">UPGRADE</a>
         </div>
     {% endif %}
