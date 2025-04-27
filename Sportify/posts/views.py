@@ -8,6 +8,7 @@ from django.db.models import Q
 from account.models import Athlete, Club, Sport, City
 from django.template.loader import render_to_string
 from django.http import JsonResponse
+from bookmarks.models import Bookmark  # Import the Bookmark model
 
 
 
@@ -43,8 +44,11 @@ def post_details(request, post_id):
     comments = post.comments.all().order_by('-created_at')  # Fetch related comments
 
     liked = False
+    bookmarked = False  # Initialize bookmarked status
+
     if request.user.is_authenticated:
         liked = Like.objects.filter(user=request.user, post=post).exists()
+        bookmarked = Bookmark.objects.filter(user=request.user, post=post).exists()  # Check if bookmarked
 
     if request.method == 'POST':
         if request.user.is_authenticated:
@@ -65,7 +69,8 @@ def post_details(request, post_id):
         'post': post,
         'comments': comments,
         'form': form,
-        'liked': liked,  # ← this is the new line
+        'liked': liked,
+        'bookmarked': bookmarked,  # Pass bookmarked status to the template
     })
 
 

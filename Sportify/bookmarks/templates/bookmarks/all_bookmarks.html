@@ -1,0 +1,15 @@
+<!-- all_bookmark.html -->
+{% extends 'main/base.html' %}
+
+{% block title %}My Bookmarks | Sportify{% endblock %}
+
+{% block content %}
+<h2>My Bookmarked Posts</h2>
+<ul>
+    {% for bookmark in bookmarks %}
+        <li>
+            <a href="{% url 'posts:post_detail' bookmark.post.id %}">{{ bookmark.post.title }}</a>
+        </li>
+    {% endfor %}
+</ul>
+{% endblock %}

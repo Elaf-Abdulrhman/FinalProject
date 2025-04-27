@@ -11,6 +11,9 @@ class Post(models.Model):
     def total_likes(self):
         return self.likes.count()
 
+    def total_bookmarks(self):
+        return self.bookmarked_by.count()
+
     def __str__(self):
         username = self.user.username if self.user else "Unknown User"
         return f"Post by {username} on {self.created_at.strftime('%Y-%m-%d')}"
