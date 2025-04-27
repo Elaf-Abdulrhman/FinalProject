@@ -30,7 +30,4 @@ urlpatterns = [
     path('athlete/', include('athlete.urls')),
     path('clubs/', include('clubs.urls')),
     path('subscriptions/', include('subscriptions.urls')),
-]
-
- if settings.DEBUG:
-     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
