@@ -1,0 +1,34 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block title %}All clubs | Sportify{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="text-center">All Clubs</h1>
+
+    <!-- Search Bar -->
+    <form method="get" action="{% url 'clubs:all_clubs' %}" class="d-flex justify-content-center mb-4">
+        <input type="text" name="q" class="form-control w-50" placeholder="Search for clubs..." value="{{ request.GET.q }}">
+        <button type="submit" class="btn btn-primary ms-2">Search</button>
+    </form>
+
+    <!-- clubs List 
+    <div class="row">
+        {% for club in clubs %}
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">{{ club.name }}</h5>
+                    <p class="card-text">{{ club.description|truncatewords:20 }}</p>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="alert alert-info text-center">
+            No clubs found.
+        </div>
+        {% endfor %}
+    </div> -->
+</div>
+{% endblock %}

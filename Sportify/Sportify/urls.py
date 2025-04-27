@@ -28,7 +28,9 @@ urlpatterns = [
     path('posts/', include('posts.urls')),
     path('offers/', include('offers.urls')),
     path('athlete/', include('athlete.urls')),
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    path('clubs/', include('clubs.urls')),
+    path('subscriptions/', include('subscriptions.urls')),
+]
 
-# if settings.DEBUG:
-#     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+ if settings.DEBUG:
+     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

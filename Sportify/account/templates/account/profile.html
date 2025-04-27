@@ -167,6 +167,11 @@ p {
             <div class="shadow p-4 mb-4 profile-card">
                 <a class="nav-link fw-bold" href="{% url 'main:main_page_view' %}">Club's Offers</a>
             </div>
+
+            <div class="shadow p-4 mb-4 profile-card">
+            <h4>Contact Info</h4>
+                <p>email: {{user.email}}</p>
+            </div>
         {% endif %}
             <div class="shadow p-4 mb-4 profile-card">
                 <a class="nav-link fw-bold" href="{% url 'main:main_page_view' %}">Bookmarks</a>

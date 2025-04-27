@@ -1,33 +1,52 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseForbidden
+from django.utils import timezone
 from .models import Offer
 from .forms import OfferForm
+from account.models import Club
+from datetime import timedelta
+from django.contrib import messages
 
 def add_offer(request):
+    # Check if user is a club
+    if not hasattr(request.user, 'club'):
+        return HttpResponseForbidden("Only clubs can add offers.")
+
+    # Limit club to 3 posts per week
+    one_week_ago = timezone.now() - timedelta(days=7)
+    offers_last_week = Offer.objects.filter(user=request.user, created_at__gte=one_week_ago).count()
+    if offers_last_week >= 3:
+        messages.error(request, "You can only post 3 offers per week,Upgrade your plan to post unlimited offers .","alert-danger")
+        return redirect('offers:all_offers')
+
     if request.method == 'POST':
-        form = OfferForm(request.POST, request.FILES)  # <-- include request.FILES
+        form = OfferForm(request.POST, request.FILES)
         if form.is_valid():
-            form.save()
+            offer = form.save(commit=False)
+            offer.user = request.user
+            offer.save()
             return redirect('offers:all_offers')
     else:
         form = OfferForm()
     return render(request, 'offers/add_offer.html', {'form': form})
 
+
+
 def all_offers(request):
     offers_list = Offer.objects.all().order_by('-created_at')
-    page = int(request.GET.get('page', 1))  # Get the current page number
-    per_page = 6  # Number of offers per page
+    page = int(request.GET.get('page', 1))
+    per_page = 6
     start = (page - 1) * per_page
     end = page * per_page
     offers = offers_list[start:end]
 
-    if request.headers.get('x-requested-with') == 'XMLHttpRequest':  # Check if it's an AJAX request
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
         offers_data = [
             {
                 'id': offer.id,
                 'title': offer.title,
                 'content': offer.content,
-                'author': offer.author,
+                'author': offer.user.username,
                 'photo_url': offer.photo.url if offer.photo else None,
                 'created_at': offer.created_at.strftime('%B %d, %Y'),
             }
@@ -38,14 +57,8 @@ def all_offers(request):
     return render(request, 'offers/all_offers.html', {'offers': offers_list[:per_page]})
 
 def offer_details(request, offer_id):
-    # Retrieve the offer by its ID or return a 404 if not found
     offer = get_object_or_404(Offer, pk=offer_id)
-    
-    context = {
-        'offer': offer,
-    }
-
-    return render(request, 'offers/offer_details.html', context)
+    return render(request, 'offers/offer_details.html', {'offer': offer})
 
 def delete_offer(request, pk):
     offer = get_object_or_404(Offer, pk=pk)
@@ -57,10 +70,10 @@ def delete_offer(request, pk):
 def edit_offer(request, pk):
     offer = get_object_or_404(Offer, pk=pk)
     if request.method == 'POST':
-        form = OfferForm(request.POST, request.FILES, instance=offer)  # <-- include request.FILES
+        form = OfferForm(request.POST, request.FILES, instance=offer)
         if form.is_valid():
             form.save()
-            return redirect('offers:offer_details', offer_id=offer.pk)  # Redirect to the updated offer details
+            return redirect('offers:offer_details', offer_id=offer.pk)
     else:
         form = OfferForm(instance=offer)
     return render(request, 'offers/edit_offer.html', {'form': form, 'offer': offer})

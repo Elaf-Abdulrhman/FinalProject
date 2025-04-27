@@ -1,63 +1,43 @@
 {% extends 'main/base.html' %}
-{% load static %}
-
-{% block title %}Add Post | Sportify{% endblock %}
+{% block title %}Add Post{% endblock %}
 
 {% block content %}
 <div class="container mt-5">
-    <h1 class="text-center">Add a New Post</h1>
+  <div class="card shadow-sm p-4 mx-auto" style="max-width: 600px;">
+    <h4 class="mb-3 text-center">Create a New Post</h4>
 
-    <!-- Success message (Optional) -->
-    {% if message %}
-        <div class="alert alert-success">
-            {{ message }}
-        </div>
-    {% endif %}
+    <!-- User info -->
+    <div class="d-flex align-items-center mb-4">
+      <img src="#" alt="Profile Picture" class="rounded-circle me-2" width="45" height="45">
+      <div>
+        <strong>{{ request.user.first_name|default:"Your name" }}</strong><br>
+        <small class="text-muted">@{{ request.user.username }}</small>
+      </div>
+    </div>
 
-    <form method="POST" enctype="multipart/form-data">
-        {% csrf_token %}
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
 
-        <div class="mb-3">
-            <label for="title" class="form-label">Title</label>
-            <input type="text" class="form-control" id="title" name="title" value="{{ form.title.value }}" required>
-        </div>
+      <div class="mb-4">
+  <textarea name="content" id="id_content" class="form-control shadow-sm border-0 rounded-4 p-3" rows="4" placeholder="What's on your mind?" required></textarea>
+      </div>
 
-        <div class="mb-3">
-            <label for="author" class="form-label">Author</label>
-            <input type="text" class="form-control" id="author" name="author" value="{{ form.author.value }}" required>
-        </div>
 
-        <div class="mb-3">
-            <label for="content" class="form-label">Content</label>
-            <textarea class="form-control" id="content" name="content" rows="5" required>{{ form.content.value }}</textarea>
-        </div>
+      <div class="d-flex gap-3 align-items-center">
+        <label for="id_photo" class="btn btn-outline-secondary d-flex align-items-end">
+          <i class="bi bi-image me-1"></i>
+        </label>
+        <input type="file" id="id_photo" name="photo" accept="image/*" class="d-none">
 
-        <div class="mb-3">
-            <label for="photo" class="form-label">Image</label>
-            <input type="file" class="form-control" id="photo" name="photo" accept="image/*">
-        </div>
+        <label for="id_video" class="btn btn-outline-secondary d-flex align-items-end">
+          <i class="bi bi-camera-video me-1"></i>
+        </label>
+        <input type="file" id="id_video" name="video" accept="video/*" class="d-none">
+      </div>
 
-        <div class="mb-3">
-            <label for="video" class="form-label">Video</label>
-            <input type="file" class="form-control" id="video" name="video" accept="video/*">
-        </div>
-
-        <button type="submit" class="btn btn-primary w-100">Submit</button>
+      <button type="submit" class="btn btn-dark w-100 mt-3">Post</button>
     </form>
-
-    <!-- Display form errors -->
-    {% if form.errors %}
-        <div class="alert alert-danger mt-3">
-            <ul>
-                {% for field in form %}
-                    {% for error in field.errors %}
-                        <li>{{ field.label }}: {{ error }}</li>
-                    {% endfor %}
-                {% endfor %}
-            </ul>
-        </div>
-    {% endif %}
-
-    <a href="{% url 'posts:all_posts' %}" class="btn btn-link mt-3 d-block text-center">Back to All Posts</a>
+  </div>
 </div>
+
 {% endblock %}

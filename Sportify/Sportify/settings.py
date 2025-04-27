@@ -44,6 +44,8 @@ INSTALLED_APPS = [
     'posts',
     'offers',
     'athlete',
+    'clubs',
+    'subscriptions',
 ]
 
 MIDDLEWARE = [
@@ -133,3 +135,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR,'media' )
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Moyasar settings
+MOYASAR_PUBLISHABLE_KEY = 'pk_test_wJ4i6psLToc8uJ2J3PFADniiS16MFzhhcDZ86Kk9'
+MOYASAR_SECRET_KEY = 'sk_test_sF2ML8JKf8QhAL7mrtVBrgXs5p4tjKvVrhFXLJG1'

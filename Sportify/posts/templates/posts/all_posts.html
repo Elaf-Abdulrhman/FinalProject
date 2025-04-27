@@ -4,101 +4,106 @@
 {% block title %}All Posts | Sportify{% endblock %}
 
 {% block content %}
-<div class="container mt-5">
-    <h1 class="text-center">All Posts</h1>
+<div class="container mt-5 p-3" style="max-width: 900px;">
+  <h2 class="text-center mb-4">Recent Posts</h2>
 
-    <!-- Display message if there are no posts -->
-    {% if posts.paginator.count == 0 %}
-        <div class="alert alert-info text-center">
-            No posts available. Be the first to add a post!
-        </div>
-    {% endif %}
-
-    <a href="{% url 'posts:add_post' %}" class="btn btn-primary">Add New Post</a>
-
-    <!-- Display all posts -->
-    <div id="posts-container" class="row">
-        {% for post in posts %}
-        <div class="col-md-4 mb-4">
-            <div class="card">
-                {% if post.photo %}
-                    <img src="{{ post.photo.url }}" class="card-img-top" alt="{{ post.title }} image">
-                {% endif %}
-                <div class="card-body">
-                    <h5 class="card-title">{{ post.title }}</h5>
-                    <p class="card-text">{{ post.content|truncatewords:20 }}</p>
-                    <p class="text-muted"><small>Author: {{ post.author }}</small></p>
-                    {% if post.video %}
-                        <div class="mt-2">
-                            <h6>Video</h6>
-                            <video controls class="w-100">
-                                <source src="{{ post.video.url }}" type="video/mp4">
-                                Your browser does not support the video tag.
-                            </video>
-                        </div>
-                    {% endif %}
-                    <p class="text-muted"><small>Posted on: {{ post.created_at|date:"F d, Y" }}</small></p>
-                    <a href="{% url 'posts:post_details' post.id %}" class="btn btn-primary">Read More</a>
-                </div>
-            </div>
-        </div>
+  <!-- Filter Form -->
+  <form method="get" class="row g-2 mb-4">
+    <div class="col-md-3">
+      <select name="sport" class="form-select">
+        <option value="">All Sports</option>
+        {% for sport in sports %}
+          <option value="{{ sport.id }}" {% if selected_sport == sport.id|stringformat:"s" %}selected{% endif %}>{{ sport.sport_name }}</option>
         {% endfor %}
+      </select>
     </div>
 
-    <!-- Loading spinner -->
-    <div id="loading-spinner" class="text-center my-4" style="display: none;">
-        <div class="spinner-border text-primary" role="status">
-            <span class="visually-hidden">Loading...</span>
-        </div>
+    <div class="col-md-3">
+      <select name="city" class="form-select">
+        <option value="">All Cities</option>
+        {% for city in cities %}
+          <option value="{{ city.id }}" {% if selected_city == city.id|stringformat:"s" %}selected{% endif %}>{{ city.city_name }}</option>
+        {% endfor %}
+      </select>
     </div>
+
+    <div class="col-md-3">
+      <select name="posted_by" class="form-select">
+        <option value="">All Users</option>
+        <option value="athlete" {% if selected_poster == 'athlete' %}selected{% endif %}>Athletes</option>
+        <option value="club" {% if selected_poster == 'club' %}selected{% endif %}>Clubs</option>
+      </select>
+    </div>
+
+    <div class="col-md-3 d-grid">
+      <button type="submit" class="btn btn-dark">Apply Filters</button>
+    </div>
+  </form>
+
+  <!-- Add Post Button -->
+  {% if user.is_authenticated %}
+    <div class="text-end mt-4 p-3">
+      <a href="{% url 'posts:add_post' %}" class="btn btn-dark">+ Add Post</a>
+    </div>
+  {% endif %}
+
+  <!-- Posts List -->
+  <div id="posts-container">
+    {% include 'posts/post_card.html' %}
+  </div>
+
+  <!-- Loading Spinner -->
+  <div id="loading-spinner" class="text-center my-4" style="display: none;">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+
+  <!-- No Posts Message -->
+  {% if not posts %}
+    <p class="text-center">No posts available yet.</p>
+  {% endif %}
 </div>
-
 <script>
-    let currentPage = 1;
-    const postsContainer = document.getElementById('posts-container');
-    const loadingSpinner = document.getElementById('loading-spinner');
+let currentPage = 1;
+let hasNextPage = true;
+const postsContainer = document.getElementById('posts-container');
+const loadingSpinner = document.getElementById('loading-spinner');
 
-    // Function to load more posts
-    const loadMorePosts = () => {
-        currentPage++;
-        loadingSpinner.style.display = 'block';
+const loadMorePosts = () => {
+    if (!hasNextPage) return;
 
-        fetch(`?page=${currentPage}`, {
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest'  // Indicate it's an AJAX request
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            loadingSpinner.style.display = 'none';
-            data.posts.forEach(post => {
-                const postHTML = `
-                    <div class="col-md-4 mb-4">
-                        <div class="card">
-                            ${post.photo_url ? `<img src="${post.photo_url}" class="card-img-top" alt="${post.title} image">` : ''}
-                            <div class="card-body">
-                                <h5 class="card-title">${post.title}</h5>
-                                <p class="card-text">${post.content.substring(0, 100)}...</p>
-                                <p class="text-muted"><small>Author: ${post.author}</small></p>
-                                <p class="text-muted"><small>Posted on: ${post.created_at}</small></p>
-                                <a href="/posts/post/${post.id}/" class="btn btn-primary">Read More</a>
-                            </div>
-                        </div>
-                    </div>
-                `;
-                postsContainer.insertAdjacentHTML('beforeend', postHTML);
-            });
-        })
-        .catch(error => {
-            console.error('Error loading more posts:', error);
-        });
-    };
+    currentPage++;
+    loadingSpinner.style.display = 'block';
 
-    // Infinite scroll event listener
-    window.addEventListener('scroll', () => {
-        if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 100) {
-            loadMorePosts();
+    const params = new URLSearchParams(window.location.search);
+    params.set('page', currentPage);
+
+    fetch(`?${params.toString()}`, {
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
         }
+    })
+    .then(response => response.json())
+    .then(data => {
+        loadingSpinner.style.display = 'none';
+        postsContainer.insertAdjacentHTML('beforeend', data.posts_html);
+
+        if (!data.has_next) {
+            hasNextPage = false;
+        }
+    })
+    .catch(error => {
+        console.error('Error loading posts:', error);
+        loadingSpinner.style.display = 'none';
     });
+};
+
+window.addEventListener('scroll', () => {
+    if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 100) {
+        loadMorePosts();
+    }
+});
 </script>
+
 {% endblock %}

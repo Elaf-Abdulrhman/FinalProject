@@ -58,4 +58,34 @@ p {
 
 </div>
 </div>
+
+<div class="clubs-section" style="padding: 2rem;">
+    <div class="container">
+        <h2 class="text-left mb-4">Explore Our Clubs</h2>
+        <div class="row">
+            {% for club in clubs %}
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <img src="{{ club.image.url }}" class="card-img-top" alt="{{ club.name }}">
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<div class="athletes-section" style="padding: 2rem;">
+  <div class="container">
+      <h2 class="text-left mb-4">Explore Our Athletes</h2>
+      <div class="row">
+          {% for athlete in athletes %}
+          <div class="col-md-4 mb-4">
+              <div class="card h-100">
+                  <img src="{{ athlete.image.url }}" class="card-img-top" alt="{{ athlete.name }}">
+              </div>
+          </div>
+          {% endfor %}
+      </div>
+  </div>
+</div>
 {% endblock %}
