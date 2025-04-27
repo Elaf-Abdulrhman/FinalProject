@@ -1,4 +1,4 @@
-from django.shortcuts import get_object_or_404, redirect
+from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from .models import Bookmark
@@ -15,3 +15,8 @@ def bookmark_post(request, post_id):
         bookmark.delete()
 
     return redirect('posts:post_details', post_id=post.id)
+
+@login_required
+def all_bookmarks(request):
+    bookmarks = Bookmark.objects.filter(user=request.user).select_related('post')
+    return render(request, 'bookmarks/all_bookmarks.html', {'bookmarks': bookmarks})

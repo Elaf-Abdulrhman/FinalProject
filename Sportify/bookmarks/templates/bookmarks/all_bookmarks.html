@@ -1,15 +1,88 @@
-<!-- all_bookmark.html -->
+<!-- all_bookmarks.html -->
 {% extends 'main/base.html' %}
 
 {% block title %}My Bookmarks | Sportify{% endblock %}
 
 {% block content %}
-<h2>My Bookmarked Posts</h2>
-<ul>
+<h2 class="mb-4 text-center">My Bookmarked Posts</h2>
+
+<div class="container mt-5 p-3" style="max-width: 900px;">
+  <div id="posts-container" class="row">
     {% for bookmark in bookmarks %}
-        <li>
-            <a href="{% url 'posts:post_detail' bookmark.post.id %}">{{ bookmark.post.title }}</a>
-        </li>
+      <div class="col-md-4 mb-4">
+        <div class="card h-100 shadow-sm">
+          {% if bookmark.post.photo %}
+            <img src="{{ bookmark.post.photo.url }}" class="card-img-top" alt="Post Image">
+          {% endif %}
+          <div class="card-body">
+            <!-- User Info -->
+            <div class="d-flex align-items-center mb-3">
+              {% if bookmark.post.user.profile.image %}
+                <img src="{{ bookmark.post.user.profile.image.url }}" alt="Profile Image" class="rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover;">
+              {% else %}
+                <img src="#" alt="Default Profile" class="rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover;">
+              {% endif %}
+              <span class="fw-bold">{{ bookmark.post.user.username }}</span>
+            </div>
+            
+            <!-- Post Info -->
+            <h5 class="card-title">{{ bookmark.post.content|truncatewords:10 }}</h5>
+            <p class="card-text"><small class="text-muted">{{ bookmark.post.created_at|date:"F j, Y" }}</small></p>
+          </div>
+        </div>
+      </div>
+    {% empty %}
+      <p class="text-muted text-center">You have no bookmarks yet.</p>
     {% endfor %}
-</ul>
+  </div>
+
+  <!-- Loading Spinner -->
+  <div id="loading-spinner" class="text-center my-4" style="display: none;">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+</div>
+
+<script>
+let currentPage = 1;
+let hasNextPage = true;
+const postsContainer = document.getElementById('posts-container');
+const loadingSpinner = document.getElementById('loading-spinner');
+
+const loadMorePosts = () => {
+    if (!hasNextPage) return;
+
+    currentPage++;
+    loadingSpinner.style.display = 'block';
+
+    const params = new URLSearchParams(window.location.search);
+    params.set('page', currentPage);
+
+    fetch(`?${params.toString()}`, {
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        loadingSpinner.style.display = 'none';
+        postsContainer.insertAdjacentHTML('beforeend', data.posts_html);
+
+        if (!data.has_next) {
+            hasNextPage = false;
+        }
+    })
+    .catch(error => {
+        console.error('Error loading posts:', error);
+        loadingSpinner.style.display = 'none';
+    });
+};
+
+window.addEventListener('scroll', () => {
+    if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 100) {
+        loadMorePosts();
+    }
+});
+</script>
 {% endblock %}
