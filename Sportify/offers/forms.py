@@ -4,4 +4,4 @@ from .models import Offer
 class OfferForm(forms.ModelForm):
     class Meta:
         model = Offer
-        fields = ['title', 'author', 'content', 'photo']
+        fields = ['title', 'content', 'photo', 'email', 'url', 'phone_number']

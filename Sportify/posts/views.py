@@ -6,6 +6,11 @@ from .forms import PostForm,CommentForm
 from django.core.paginator import Paginator
 from django.db.models import Q
 from account.models import Athlete, Club, Sport, City
+from django.template.loader import render_to_string
+from django.http import JsonResponse
+
+
+
 @login_required
 def add_post(request):
     if request.method == 'POST':
@@ -123,7 +128,6 @@ def like_post(request, post_id):
     return redirect('posts:post_details', post_id=post.id)
 
 
-from urllib.parse import urlencode
 
 def all_posts(request):
     sport_id = request.GET.get('sport')
@@ -143,18 +147,26 @@ def all_posts(request):
     elif poster_type == 'club':
         posts = posts.filter(user__club__isnull=False)
 
-    paginator = Paginator(posts.distinct(), 10)
-    page = request.GET.get('page')
-    posts = paginator.get_page(page)
+    posts = posts.distinct()
 
-#########
+    paginator = Paginator(posts, 3)  # 6 posts per page
+    page_number = request.GET.get('page', 1)
+    page_obj = paginator.get_page(page_number)
+
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        post_html = render_to_string('posts/post_card.html', {'posts': page_obj}, request=request)
+        return JsonResponse({
+            'posts_html': post_html,
+            'has_next': page_obj.has_next(),
+        })
+
     query_params = request.GET.copy()
     if 'page' in query_params:
         del query_params['page']
     filter_querystring = query_params.urlencode()
 
     context = {
-        'posts': posts,
+        'posts': page_obj,
         'sports': Sport.objects.all(),
         'cities': City.objects.all(),
         'selected_sport': sport_id,

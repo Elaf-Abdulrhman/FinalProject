@@ -85,10 +85,10 @@
   </div>
 </div>
 
-
- <div class="text-end">
-      <span class="badge text-secondary">{{ post.created_at|date:"M d, Y" }} {{ post.created_at|time:"g:i A" }}</span>
-    </div>
+<div class="text-end text-muted small mt-2">
+            <i ></i> {{ post.created_at|date:"M d, Y" }}
+            <i > </i> {{ post.created_at|time:"H:i A" }}
+        </div>
 
     <!-- Delete Modal -->
     {% if user == post.user %}
