@@ -26,18 +26,24 @@
   .navbar-nav .nav-link {
     transition: color 0.3s ease-in-out, transform 0.3s ease-in-out;
     font-weight: 500;
+      color: darkorange;
     font-size: 1rem;
   }
 
   .navbar-nav .nav-link:hover {
-    color: pink;
+    color: lightsalmon;
     transform: scale(1.1);
   }
-
+    .btn1{
+        border-radius: 20px;
+        
+    }
+  
+  
   .navbar-brand h5 {
     font-size: 1.5rem;
     font-weight: bold;
-    color: black;
+    color: white;
     transition: transform 0.3s ease-in-out;
   }
 
@@ -46,9 +52,8 @@
   }
 
   .top-navbar {
-    background-color: azure;
-    border-bottom-left-radius: 20px;
-    border-bottom-right-radius: 20px;
+    background-color: #0C1518;
+   
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 
 
@@ -98,7 +103,7 @@
   <nav class="navbar navbar-expand-lg navbar-light">
     <div class="container d-flex justify-content-between align-items-center">
         <a class="navbar-brand me-4" href="/">
-           <img src="{% static 'images/logo.png' %}" alt="Sport" class="Sportify" style="height: 40px;" />
+           <img src="{% static 'images/logo_white.png' %}" alt="Sport" class="Sportify" style="height: 40px;" />
       </a>
 
 
@@ -114,13 +119,15 @@
             <a class="nav-link" href="{% url 'main:about_page_view' %}">About</a>
           </li>
 
+              <li class="nav-item">
+                  <a class="nav-link" href="{% url 'posts:all_posts'%}">All Posts</a>
+              </li>
 
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" id="clubsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
               Athletes
             </a>
             <ul class="dropdown-menu" aria-labelledby="clubsDropdown">
-              <li><a class="dropdown-item" href="{% url 'posts:all_posts'%}">All Posts</a></li>
               <li><a class="dropdown-item" href="{% url 'athlete:all_athletes'%}">All Athletes</a></li>
             </ul>
           </li>
@@ -130,7 +137,6 @@
               Clubs
             </a>
             <ul class="dropdown-menu" aria-labelledby="clubsDropdown">
-              <li><a class="dropdown-item" href="{% url 'posts:all_posts'%}">All Posts</a></li>
               <li><a class="dropdown-item" href="{% url 'offers:all_offers'%}">All Offers</a></li>
               <li><a class="dropdown-item" href="{% url 'clubs:all_clubs'%}">All Clubs</a></li>
             </ul>
@@ -144,16 +150,17 @@
       <div class="nav-right">
         <div class="nav-item dropdown">
           {% if request.user.is_authenticated %}
-            <a class="nav-link dropdown-toggle" href="#" id="authDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <button class="btn btn-light dropdown-toggle" href="#" id="authDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
               {{ request.user.username }}
-            </a>
+            </button>
             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="authDropdown">
               <li><a class="dropdown-item" href="{% url 'account:profile_view' %}">Profile</a></li>
               <li><a class="dropdown-item" href="{% url 'account:logout_view' %}">Log Out</a></li>
+            </ul>
                        {% else %}
-            <a class="nav-link dropdown-toggle" href="#" id="Dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-              Signup/Signin
-            </a>
+            <button class="btn btn-dark dropdown-toggle" type="button" id="authDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                Signup / Signin
+              </button>
             <ul class="dropdown-menu" aria-labelledby="authDropdown">
               <li><a class="dropdown-item" href="{% url 'account:sign_up_as_view' %}">Sign Up as</a></li>
               <li><a class="dropdown-item" href="{% url 'account:login_view' %}">Sign In</a></li>
