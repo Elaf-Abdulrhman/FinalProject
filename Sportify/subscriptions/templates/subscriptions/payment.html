@@ -25,10 +25,9 @@
         console.log("Payment Success:", payment);
         alert("Payment completed successfully!");
 
-        // Send payment ID to the backend to verify the payment status
+        // Send payment ID to the backend to save and verify the payment
         const paymentId = payment.id;
 
-        // Make sure to pass the payment ID to the backend for verification
         fetch(`/subscriptions/payment_success/?id=${paymentId}`)
           .then(response => {
             if (!response.ok) {
@@ -38,7 +37,6 @@
           })
           .then(data => {
             console.log("Backend Response:", data); // Debugging
-            // Redirect to success or failure page based on response
             if (data.status === 'paid') {
               window.location.href = '/subscriptions/payment_success/';
             } else {
