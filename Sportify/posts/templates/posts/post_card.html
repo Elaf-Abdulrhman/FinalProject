@@ -20,19 +20,28 @@
         </div>
 
         <div class="d-flex gap-3 z-1">
-            <i class="bi bi-bookmark" style="font-size: 1.2rem; cursor: pointer;"></i>
-
-            <form action="{% url 'posts:like_post' post.id %}" method="POST" class="d-inline">
+            <!-- Bookmark/Unbookmark -->
+            <form action="{% url 'bookmarks:bookmark_post' post.id %}" method="POST" class="bookmark-form d-inline">
                 {% csrf_token %}
-                {% if post.is_liked %}
-                    <button type="submit" class="btn btn-sm text-danger border-0 bg-transparent p-0">
-                        <i class="bi bi-heart-fill" style="font-size: 1.3rem;"></i> {{ post.total_likes }}
-                    </button>
-                {% else %}
-                    <button type="submit" class="btn btn-sm text-muted border-0 bg-transparent p-0">
-                        <i class="bi bi-heart" style="font-size: 1.3rem;"></i> {{ post.total_likes }}
-                    </button>
-                {% endif %}
+                <button type="submit" class="btn btn-sm border-0 bg-transparent p-0 bookmark-btn" data-post-id="{{ post.id }}">
+                    {% if post.is_bookmarked %}
+                        <i class="bi bi-bookmark-fill" style="font-size: 1.2rem;"></i>
+                    {% else %}
+                        <i class="bi bi-bookmark" style="font-size: 1.2rem;"></i>
+                    {% endif %}
+                </button>
+            </form>
+
+            <!-- Like/Unlike -->
+            <form action="{% url 'posts:like_post' post.id %}" method="POST" class="like-form d-inline">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-sm border-0 bg-transparent p-0 like-btn" data-post-id="{{ post.id }}">
+                    {% if post.is_liked %}
+                        <i class="bi bi-heart-fill" style="font-size: 1.3rem;"></i> <span class="like-count">{{ post.total_likes }}</span>
+                    {% else %}
+                        <i class="bi bi-heart" style="font-size: 1.3rem;"></i> <span class="like-count">{{ post.total_likes }}</span>
+                    {% endif %}
+                </button>
             </form>
         </div>
     </div>
@@ -45,6 +54,14 @@
                 <img src="{{ post.photo.url }}" alt="Post Media" class="img-fluid rounded" style="max-height: 200px; width: auto; display: block; margin: 0 auto;">
             </div>
         {% endif %}
+        {% if post.video %}
+            <div class="mt-2">
+                <video controls style="max-height: 200px; width: auto; display: block; margin: 0 auto;">
+                    <source src="{{ post.video.url }}" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+        {% endif %}
     </div>
 
     <div class="text-end mt-3">
@@ -52,3 +69,91 @@
     </div>
 </div>
 {% endfor %}
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  // Handle Like/Unlike
+  document.querySelectorAll('.like-form').forEach(form => {
+    form.addEventListener('submit', event => {
+      event.preventDefault(); // Prevent form submission
+      const button = form.querySelector('.like-btn');
+      const postId = button.dataset.postId;
+
+      console.log(`Liking/Unliking post with ID: ${postId}`); // Debugging log
+
+      fetch(form.action, {
+        method: 'POST',
+        headers: {
+          'X-CSRFToken': form.querySelector('[name=csrfmiddlewaretoken]').value,
+        },
+      })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+          console.log(`Successfully processed like/unlike for post ID: ${postId}`); // Debugging log
+          return response.text(); // Expecting a redirect response
+        })
+        .then(() => {
+          // Toggle the like icon and update the like count
+          const likeCount = button.querySelector('.like-count');
+          const icon = button.querySelector('i');
+          const isLiked = icon.classList.contains('bi-heart-fill');
+
+          if (isLiked) {
+            icon.classList.remove('bi-heart-fill', 'text-danger');
+            icon.classList.add('bi-heart');
+            likeCount.textContent = parseInt(likeCount.textContent) - 1;
+          } else {
+            icon.classList.remove('bi-heart');
+            icon.classList.add('bi-heart-fill', 'text-danger');
+            likeCount.textContent = parseInt(likeCount.textContent) + 1;
+          }
+        })
+        .catch(error => {
+          console.error('Error processing like/unlike:', error);
+        });
+    });
+  });
+
+  // Handle Bookmark/Unbookmark
+  document.querySelectorAll('.bookmark-form').forEach(form => {
+    form.addEventListener('submit', event => {
+      event.preventDefault(); // Prevent form submission
+      const button = form.querySelector('.bookmark-btn');
+      const postId = button.dataset.postId;
+
+      console.log(`Bookmarking/Unbookmarking post with ID: ${postId}`); // Debugging log
+
+      fetch(form.action, {
+        method: 'POST',
+        headers: {
+          'X-CSRFToken': form.querySelector('[name=csrfmiddlewaretoken]').value,
+        },
+      })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+          console.log(`Successfully processed bookmark/unbookmark for post ID: ${postId}`); // Debugging log
+          return response.text(); // Expecting a redirect response
+        })
+        .then(() => {
+          // Toggle the bookmark icon
+          const icon = button.querySelector('i');
+          const isBookmarked = icon.classList.contains('bi-bookmark-fill');
+
+          if (isBookmarked) {
+            icon.classList.remove('bi-bookmark-fill');
+            icon.classList.add('bi-bookmark');
+          } else {
+            icon.classList.remove('bi-bookmark');
+            icon.classList.add('bi-bookmark-fill');
+          }
+        })
+        .catch(error => {
+          console.error('Error processing bookmark/unbookmark:', error);
+        });
+    });
+  });
+});
+</script>
