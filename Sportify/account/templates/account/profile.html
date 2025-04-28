@@ -97,9 +97,14 @@ p {
         <div class="position-absolute h-50 w-75 shadow p-4"
              style="top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 2; ">
             <div class="text-start">
-                <img src="{{ athlete.profile_picture.url }}" alt="{{ user.first_name }}" class="profile-img">
-                <h4 class="fw-bold">{{ user.first_name }}</h4>
-                <h6>{{ user.username }}</h6>
+                {%if request.user.is_authenticated and request.user.athlete%}
+                   <img src="{{ request.user.athlete.profilePhoto.url }}" alt="Athlete Profile Photo" style="width: 7rem;" />
+                   <h4 class="fw-bold">{{ user.first_name }}</h4>
+                   <h6> {{ user.username }}</h6>
+                   {% else %}
+                      <img src="{{ user.club.photo.url }}" alt="Club Profile Photo" style="width: 7rem;" />
+                   <h6>{{ user.username }}</h6>
+                {% endif %}
             </div>
     
             <div class="d-flex justify-content-end flex-column align-items-end m-4">
@@ -126,9 +131,9 @@ p {
     
                 <!-- Edit Profile Button -->
                 {%if request.user.is_authenticated and request.user.athlete%}
-                   <a href="{% url 'account:Edit_Profile_view' %}" class="btn edit-btn mt-4">Edit Profile</a>
+                   <a href="{% url 'account:Edit_Profile_view' user.id %}" class="btn edit-btn mt-4">Edit Profile</a>
                    {% else %}
-                    <a href="{% url 'account:Edit_profile_club_view'%}" class="btn edit-btn mt-4">Edit Profile</a>
+                    <a href="{% url 'account:Edit_profile_club_view' user.id %}" class="btn edit-btn mt-4">Edit Profile</a>
                 {% endif %}
             </div>
         </div>
@@ -143,15 +148,21 @@ p {
         <!-- Sidebar Navigation -->
         <div class="col-md-4">
         
-        {%if request.user.is_authenticated and request.user.athlete%}
+        
             <div class="shadow p-4 mb-4 profile-card">
+                {%if request.user.is_authenticated and request.user.athlete%}
                 <h4>Achievements</h4>
                 <p>{{user.athlete.achievements}}</p>
+                {% endif %}
                 <h4>Contact Info</h4>
                 <p>email: {{user.email}}</p>
+                {%if request.user.is_authenticated and request.user.athlete%}
                 <p>phone number:{{user.athlete.phoneNumber}}</p>
+                {% endif %}
+
+
             </div>
-        {% endif %}
+        
         {%if request.user.is_authenticated and request.user.club%}
             <div class="shadow p-4 mb-4 profile-card">
                 <a class="nav-link fw-bold" href="{% url 'main:main_page_view' %}">Club's Offers</a>
@@ -163,7 +174,7 @@ p {
             </div>
         {% endif %}
             <div class="shadow p-4 mb-4 profile-card">
-                <a class="nav-link fw-bold" href="{% url 'main:main_page_view' %}">Bookmarks</a>
+                <a class="nav-link fw-bold" href="{% url 'bookmarks:all_bookmarks' %}">Bookmarks</a>
             </div>
         </div>
 
