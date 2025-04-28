@@ -65,9 +65,18 @@ p {
         <div class="row">
             {% for club in clubs %}
             <div class="col-md-4 mb-4">
-                <div class="card h-100">
-                    <img src="{{ club.image.url }}" class="card-img-top" alt="{{ club.name }}">
+                <div class="card">
+                    <div class="card-body">
+                        <img src="{{club.photo.url}}" alt="photo " style="width: 5rem;">
+                        <a href="{% url 'account:profile_view' club.user.id %}"><h5 class="card-title">{{ club.user.username }}</h5></a>
+                        <h5 class="card-title">{{ club.clubName }}</h5>
+                        <p class="card-text">{{ club.description|truncatewords:20 }}</p>
+                    </div>
                 </div>
+            </div>
+            {% empty %}
+            <div class="alert alert-info text-center">
+                No clubs found.
             </div>
             {% endfor %}
         </div>
@@ -78,14 +87,19 @@ p {
   <div class="container">
       <h2 class="text-left mb-4">Explore Our Athletes</h2>
       <div class="row">
-          {% for athlete in athletes %}
-          <div class="col-md-4 mb-4">
-              <div class="card h-100">
-                  <img src="{{ athlete.image.url }}" class="card-img-top" alt="{{ athlete.name }}">
-              </div>
-          </div>
-          {% endfor %}
-      </div>
+        {% for athlete in athletes %}
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <img src="{{athlete.profilePhoto.url}}" alt=" profilePhoto " style="width: 5rem;">
+                    <h5>{{ athlete.user.first_name }}</h5>
+                    <a class="link-secondary link-offset-3 link-underline-opacity-0 link-underline-opacity-75-hover" href="{% url 'account:profile_view' athlete.user.id %}"><h6 class="card-title">{{ athlete.user.username }}</h6></a>
+                    <p class="card-text">{{ athlete.bio|truncatewords:20 }}</p>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
   </div>
 </div>
 {% endblock %}

@@ -13,14 +13,30 @@
         <button type="submit" class="btn btn-primary ms-2">Search</button>
     </form>
 
-    <!-- Athletes List 
+
+    <!-- <div class="row mt-5 row-cols-1 row-cols-md-3 g-4">
+        {% for athlete in athletes %}
+          <div class="col">
+              <div class="d-flex flex-column justify-content-start align-items-start h-100 p-4 shadow">
+                  <img src="{{athlete.profilePhoto.url}}" alt=" profilePhoto " style="width: 10rem;">
+                  <a href="#"> <h3>{{athlete.user.username}}</h3> </a>
+                  <h4>{{athlete.user.first_name}}</h4>
+                  <p>{{athlete.bio}}</p>
+              </div>
+          </div>
+        {% endfor %}
+      </div> -->
+
+    Athletes List 
     <div class="row">
         {% for athlete in athletes %}
         <div class="col-md-4 mb-4">
             <div class="card">
                 <div class="card-body">
-                    <h5 class="card-title">{{ athlete.name }}</h5>
-                    <p class="card-text">{{ athlete.description|truncatewords:20 }}</p>
+                    <img src="{{athlete.profilePhoto.url}}" alt=" profilePhoto " style="width: 5rem;">
+                    <h5>{{ athlete.user.first_name }}</h5>
+                    <a class="link-secondary link-offset-3 link-underline-opacity-0 link-underline-opacity-75-hover" href="{% url 'account:profile_view' athlete.user.id %}"><h6 class="card-title">{{ athlete.user.username }}</h6></a>
+                    <p class="card-text">{{ athlete.bio|truncatewords:20 }}</p>
                 </div>
             </div>
         </div>
@@ -29,6 +45,6 @@
             No athletes found.
         </div>
         {% endfor %}
-    </div> -->
+    </div>
 </div>
 {% endblock %}
