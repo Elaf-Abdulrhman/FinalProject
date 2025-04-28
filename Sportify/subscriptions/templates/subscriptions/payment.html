@@ -18,7 +18,7 @@
       amount: 1000,  // Amount in halalas (1000 halalas = 10 SAR)
       currency: 'SAR',
       description: 'Plus Plan Subscription',
-      publishable_api_key: '{{ moyasar_publishable_key }}', 
+      publishable_api_key: '{{ moyasar_publishable_key }}',
       callback_url: 'http://127.0.0.1:8000/subscriptions/payment_success/',
       methods: ['creditcard'],
       onSuccess: function(payment) {
@@ -27,7 +27,7 @@
 
         // Send payment ID to the backend to verify the payment status
         const paymentId = payment.id;
-        
+
         // Make sure to pass the payment ID to the backend for verification
         fetch(`/subscriptions/payment_success/?id=${paymentId}`)
           .then(response => {
@@ -57,6 +57,6 @@
         alert('Payment Failed: ' + error.message);
       }
     });
-  </script>  
+  </script>
 </div>
 {% endblock %}

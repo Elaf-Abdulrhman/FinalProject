@@ -2,18 +2,19 @@
 
 import requests
 from django.conf import settings
-from django.shortcuts import render
-from django.http import JsonResponse
-from .models import Payment  # Assuming you have a Payment model
-
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from django.utils.dateparse import parse_datetime
+from datetime import datetime
+from .models import Payment
+from account.models import Club
 
 def payment_success(request):
     payment_id = request.GET.get('id')
-    # Check if payment ID is missing in the request
+
     if not payment_id:
         return render(request, 'subscriptions/payment_failed.html', {'error': 'Missing payment ID'})
 
-    # Moyasar API endpoint
     url = f"https://api.moyasar.com/v1/payments/{payment_id}"
     headers = {
         'Accept': 'application/json',
@@ -24,28 +25,39 @@ def payment_success(request):
         response = requests.get(url, headers=headers)
         if response.status_code == 200:
             payment_data = response.json()
-            print(f"Payment Data: {payment_data}")  # Debugging
 
-            # Check if the payment status is 'paid'
             if payment_data.get('status') == 'paid':
-                # Save payment information to the database
-                Payment.objects.create(
-                    payment_id=payment_data['id'],
-                    amount=payment_data['amount'],
-                    status=payment_data['status'],
-                )
+                created_at_raw = payment_data.get('created_at')
+                if created_at_raw:
+                    created_at = parse_datetime(created_at_raw)
+                else:
+                    created_at = datetime.now()
+
+                if request.user.is_authenticated:
+                    Payment.objects.create(
+                        user=request.user,
+                        payment_id=payment_data['id'],
+                        amount=payment_data['amount'],
+                        status=payment_data['status'],
+                        created_at=created_at,
+                    )
+
+                    if hasattr(request.user, 'club'):
+                        club = request.user.club
+                        club.is_premium = True
+                        club.save()
+                        messages.success(request, "Congratulations! Your club has been upgraded to Plus Plan!")
+
                 return render(request, 'subscriptions/payment_success.html', {'payment': payment_data})
+
             else:
-                # Payment status is not 'paid'
                 return render(request, 'subscriptions/payment_failed.html', {'error': 'Payment not completed'})
         else:
-            # Failed to fetch payment details from Moyasar API
             error_message = response.json().get('message', 'Failed to verify payment')
             return render(request, 'subscriptions/payment_failed.html', {'error': error_message})
-    except Exception as e:
-        # Handle exceptions
-        return render(request, 'subscriptions/payment_failed.html', {'error': str(e)})
 
+    except Exception as e:
+        return render(request, 'subscriptions/payment_failed.html', {'error': str(e)})
 
 def payment(request):
     return render(request, 'subscriptions/payment.html', {

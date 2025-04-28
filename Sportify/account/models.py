@@ -49,6 +49,7 @@ class Club(models.Model):
     photo = models.ImageField(upload_to='media/clubs/photos/', null=True, blank=True)
     description = models.TextField(blank=True)
     is_approved = models.BooleanField(default=False)
+    is_premium = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.clubName} ({'Approved' if self.is_approved else 'Pending'})"
