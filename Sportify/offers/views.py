@@ -7,17 +7,26 @@ from account.models import Club
 from datetime import timedelta
 from django.contrib import messages
 
+from django.utils import timezone
+from datetime import timedelta
+from django.contrib import messages
+from django.shortcuts import redirect, render
+from django.http import HttpResponseForbidden
+from .forms import OfferForm
+from .models import Offer
+
 def add_offer(request):
-    # Check if user is a club
     if not hasattr(request.user, 'club'):
         return HttpResponseForbidden("Only clubs can add offers.")
 
-    # Limit club to 3 posts per week
-    one_week_ago = timezone.now() - timedelta(days=7)
-    offers_last_week = Offer.objects.filter(user=request.user, created_at__gte=one_week_ago).count()
-    if offers_last_week >= 3:
-        messages.error(request, "You can only post 3 offers per week,Upgrade your plan to post unlimited offers .","alert-danger")
-        return redirect('offers:all_offers')
+    club = request.user.club
+
+    if not club.is_premium:
+        one_week_ago = timezone.now() - timedelta(days=7)
+        offers_last_week = Offer.objects.filter(user=request.user, created_at__gte=one_week_ago).count()
+        if offers_last_week >= 3:
+            messages.error(request, "You can only post 3 offers per week. Upgrade your plan to post unlimited offers!", "alert-danger")
+            return redirect('offers:all_offers')
 
     if request.method == 'POST':
         form = OfferForm(request.POST, request.FILES)
@@ -25,11 +34,12 @@ def add_offer(request):
             offer = form.save(commit=False)
             offer.user = request.user
             offer.save()
+            messages.success(request, "Your offer has been successfully posted.", "alert-success")
             return redirect('offers:all_offers')
     else:
         form = OfferForm()
-    return render(request, 'offers/add_offer.html', {'form': form})
 
+    return render(request, 'offers/add_offer.html', {'form': form})
 
 
 def all_offers(request):
