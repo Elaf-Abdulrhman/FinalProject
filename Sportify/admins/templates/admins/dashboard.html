@@ -1,0 +1,78 @@
+{% extends "main/base.html" %}
+
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+  <h1 class="text-center">Admin Dashboard</h1>
+  <div class="row mt-4">
+    <!-- Clubs Section -->
+    <div class="col-md-4">
+      <div class="card text-center shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title">Clubs</h5>
+          <p class="card-text">Manage all registered clubs.</p>
+          <a href="{% url 'admin:account_club_changelist' %}" class="btn btn-primary">View Clubs</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Users Section -->
+    <div class="col-md-4">
+      <div class="card text-center shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title">Users</h5>
+          <p class="card-text">Manage all registered users.</p>
+          <a href="{% url 'admin:auth_user_changelist' %}" class="btn btn-primary">View Users</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Payments Section -->
+    <div class="col-md-4">
+      <div class="card text-center shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title">Payments</h5>
+          <p class="card-text">View and manage all payments.</p>
+          <a href="{% url 'admin:subscriptions_payment_changelist' %}" class="btn btn-primary">View Payments</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row mt-4">
+<!-- Premium Clubs Section -->
+    <div class="col-md-6">
+      <div class="card text-center shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title">Premium Clubs</h5>
+          <p class="card-text">View all premium clubs.</p>
+          <a href="{% url 'admin:account_club_changelist' %}?is_premium__exact=1" class="btn btn-success">View Premium Clubs</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Reports Section -->
+    <div class="col-md-6">
+      <div class="card text-center shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title">Reports</h5>
+          <p class="card-text">Generate and view reports.</p>
+          <a href="#" class="btn btn-secondary">Generate Reports</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Settings Section -->
+    <div class="col-md-6">
+      <div class="card text-center shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title">Settings</h5>
+          <p class="card-text">Manage application settings.</p>
+          <a href="#" class="btn btn-warning">Go to Settings</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
