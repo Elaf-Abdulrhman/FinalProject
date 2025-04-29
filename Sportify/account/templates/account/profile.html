@@ -63,8 +63,13 @@ h5, h6 {
                     <img src="{% static 'images/userprofile.png' %}" alt="Default Photo" class="profile-img me-3">
                 {% endif %}
                 <div>
-                    <h5 class="fw-bold">{{ user.first_name }} </h5>
-                    <h6>@{{ user.username }}</h6>
+                    <h5 class="fw-bold">{{ user.first_name }}{% if user.athlete.isPrivate %}
+                        <i class="bi bi-lock-fill"></i>
+                        {% endif %} </h5>
+
+                    <h6>@{{ user.username }}
+
+                    </h6>
                 </div>
             {% else %}
                 <img src="{{ user.club.photo.url }}" alt="Club Profile Photo" class="profile-img me-3">
@@ -76,11 +81,14 @@ h5, h6 {
         </div>
 
         <div class="d-inline align-items-center ">
-           {% if user.athlete %}
-                <a href="{% url 'account:edit_profile_athlete_view' user.id %}" class="btn edit-btn me-3">Edit Profile</a>
-            {% elif user.club %}
-                <a href="{% url 'account:edit_profile_club_view' user.id %}" class="btn edit-btn me-3">Edit Profile</a>
-            {% endif %}
+               {% if request.user == user %}
+                   {% if user.athlete %}
+                       <a href="{% url 'account:edit_profile_athlete_view' user.id %}" class="btn edit-btn me-3">Edit Profile</a>
+                   {% elif user.club %}
+                       <a href="{% url 'account:edit_profile_club_view' user.id %}" class="btn edit-btn me-3">Edit Profile</a>
+                   {% endif %}
+               {% endif %}
+
 
             <div class="social-icons" style="color: black">
                 <a href="#"><i class="bi bi-facebook"></i></a>
@@ -94,7 +102,6 @@ h5, h6 {
     </div>
 
     <div class="row">
-        <!-- Sidebar Info -->
         <div class="col-md-3">
             <div class="profile-card mb-4">
                 {% if request.user.is_authenticated and request.user.athlete %}
@@ -122,7 +129,7 @@ h5, h6 {
             <div class="profile-card">
                 <h5 class="fw-bold mb-4">Posts</h5>
 
-                    <p>No posts yet.</p>
+
             </div>
         </div>
     </div>

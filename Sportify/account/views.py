@@ -1,6 +1,7 @@
 from django.contrib.auth.forms import AuthenticationForm,User
 from .forms import UserSignupForm, AthleteSignupForm, ClubSignupForm, ClubUserSignupForm
 from .models import Athlete, Club
+from posts.models import Post
 from django.contrib import messages
 from django.http import HttpRequest
 from django.shortcuts import render,redirect,get_object_or_404
@@ -100,10 +101,18 @@ def logout_view(request):
     return redirect('main:main_page_view')
 
 
-def profile_view(request:HttpRequest, user_id):
+def profile_view(request: HttpRequest, user_id):
     user = get_object_or_404(User, id=user_id)
-    return render(request,"account/profile.html", {'user': user})
 
+    try:
+        athlete = Athlete.objects.get(user=user)
+        if athlete.isPrivate and request.user != user:
+            messages.warning(request, "This account is private.")
+            return render(request, "account/private_profile.html")
+    except Athlete.DoesNotExist:
+        pass
+    posts = Post.objects.filter(user=user).order_by('-created_at').distinct()
+    return render(request, "account/profile.html", {'user': user, 'posts': posts})
 
 
 def edit_profile_athlete_view(request: HttpRequest, user_id):
