@@ -153,6 +153,9 @@ def all_posts(request):
 
     posts = Post.objects.filter(filters).order_by('-created_at').distinct()
 
+    # Exclude posts by athletes with isPrivate=True
+    posts = posts.exclude(user__athlete__isPrivate=True)
+
     paginator = Paginator(posts, 3)
     page_number = request.GET.get('page', 1)
     page_obj = paginator.get_page(page_number)
