@@ -31,7 +31,7 @@ class Athlete(models.Model):
     height = models.FloatField()
     weight = models.FloatField()
     dateOfBirth = models.DateTimeField()
-    profilePhoto = models.ImageField(upload_to='media/athletes/photos/', default="static/image/profile.jpg")
+    profilePhoto = models.ImageField(upload_to='athletes/photos/', default="static/images/profile.png")
     bio = models.TextField(blank=True) 
     isAvailable = models.BooleanField(default=True)
     isPrivate = models.BooleanField(default=False)
