@@ -1,22 +1,21 @@
-from django.shortcuts import render,redirect,get_object_or_404
-from django.http import HttpRequest, HttpResponse
-from django.contrib.auth import login, authenticate, logout
-from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.forms import AuthenticationForm,User
 from .forms import UserSignupForm, AthleteSignupForm, ClubSignupForm, ClubUserSignupForm
-from .models import User, Athlete, Club
+from .models import Athlete, Club
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required
-
-
+from django.http import HttpRequest
+from django.shortcuts import render,redirect,get_object_or_404
+from django.contrib.auth import logout,login
+from .forms import AthleteEditForm ,ClubEditForm
 # Create your views here.
 
-def sign_up_as_view(request:HttpRequest):
 
-    return render(request,"account/sign_up_as.html")
+def sign_up_as_view(request: HttpRequest):
+    if request.user.is_authenticated:
+        print(f"User {request.user.username} is logged in.")
+    else:
+        print("User is NOT logged in.")
 
-def profile_view(request:HttpRequest, user_id):
-    user = get_object_or_404(User, id=user_id)
-    return render(request,"account/profile.html", {'user': user})
+    return render(request, "account/sign_up_as.html")
 
 
 def signup_athlete_view(request):
@@ -44,8 +43,6 @@ def signup_athlete_view(request):
     })
 
 
-
-
 def signup_club_view(request):
     if request.method == 'POST':
         user_form = ClubUserSignupForm(request.POST)
@@ -62,7 +59,6 @@ def signup_club_view(request):
             return redirect('account:login_view')
         else:
 
-
             messages.error(request, "There was an error with your form.")
     else:
         user_form = ClubUserSignupForm()
@@ -72,7 +68,6 @@ def signup_club_view(request):
         'user_form': user_form,
         'club_form': club_form
     })
-
 
 
 def login_view(request):
@@ -105,88 +100,37 @@ def logout_view(request):
     return redirect('main:main_page_view')
 
 
+def profile_view(request:HttpRequest, user_id):
+    user = get_object_or_404(User, id=user_id)
+    return render(request,"account/profile.html", {'user': user})
 
 
-@login_required
-def Edit_Profile_view(request: HttpRequest, user_id):
-    print("Logged in user ID:", request.user.id)
-    print("URL user ID:", user_id)
 
-    if request.user.id != user_id:
-        messages.warning(request, "You cannot edit this profile.", "alert-warning")
-        return redirect("main:main_page_view")
-
-    user = request.user
-    try:
-        athlete = Athlete.objects.get(user=user)
-    except Athlete.DoesNotExist:
-        messages.error(request, "Athlete profile not found.", "alert-danger")
-        return redirect("main:main_page_view")
+def edit_profile_athlete_view(request: HttpRequest, user_id):
+    athlete = get_object_or_404(Athlete, user__id=user_id)
 
     if request.method == "POST":
-        user_form = UserSignupForm(request.POST, instance=user)
-        athlete_form = AthleteSignupForm(request.POST, request.FILES, instance=athlete)
-
-        if user_form.is_valid() and athlete_form.is_valid():
-            user_form.save()
-            athlete_form.save()
-            messages.success(request, "Profile updated successfully!", "alert-success")
-            login(request, user)
-            return redirect("account:profile_view", user_id=request.user.id)
-        else:
-            print("User Form Errors:", user_form.errors)
-            print("Athlete Form Errors:", athlete_form.errors)
-            messages.error(request, "There was an error with your form.", "alert-danger")
+        form = AthleteEditForm(request.POST, request.FILES, instance=athlete, user=athlete.user)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Your athlete profile was updated successfully!")
+            return redirect('account:profile_view', user_id=user_id)
     else:
-        user_form = UserSignupForm(instance=user)
-        athlete_form = AthleteSignupForm(instance=athlete)
+        form = AthleteEditForm(instance=athlete, user=athlete.user)
 
-    return render(request, "account/Edit_Profile.html", {
-        "user_form": user_form,
-        "athlete_form": athlete_form,
-        "user": user,
-        "athlete": athlete,
-    })
-    
-    
+    return render(request, "account/edit_athlete_profile.html", {"form": form})
 
 
-@login_required
-def Edit_profile_club_view(request: HttpRequest, user_id):
-    # Check if the logged-in user matches the user_id in the URL
-    print("Logged in user ID:", request.user.id)
-    print("URL user ID:", user_id)
+def edit_profile_club_view(request: HttpRequest, user_id):
+    club = get_object_or_404(Club, user__id=user_id)
 
-    if request.user.id != user_id:
-        messages.warning(request, "You cannot edit this profile.", "alert-warning")
-        return redirect("main:main_page_view")
-
-    user = request.user
-    club = get_object_or_404(Club, user=user)
-
-    # Handle the form submission on POST request
-    if request.method == 'POST':
-        user_form = ClubUserSignupForm(request.POST, instance=user)
-        club_form = ClubSignupForm(request.POST, request.FILES, instance=club)
-
-        if user_form.is_valid() and club_form.is_valid():
-            user_form.save()
-            club_form.save()
-            messages.success(request, "Profile updated successfully!", "alert-success")
-            login(request, user)
-            return redirect("account:profile_view", user_id=request.user.id)
-        else:
-            print("User Form Errors:", user_form.errors)
-            print("Club Form Errors:", club_form.errors)
-            messages.error(request, "There was an error with your form.", "alert-danger")
+    if request.method == "POST":
+        form = ClubEditForm(request.POST, request.FILES, instance=club, user=club.user)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Your club profile was updated successfully!")
+            return redirect('account:profile_view', user_id=user_id)
     else:
-        # Pre-fill the forms with current user and club data
-        user_form = ClubUserSignupForm(instance=user)
-        club_form = ClubSignupForm(instance=club)
+        form = ClubEditForm(instance=club, user=club.user)
 
-    return render(request, 'account/Edit_profile_club.html', {
-        'user_form': user_form,
-        'club_form': club_form,
-        'user': user,
-        'club': club,
-    })
+    return render(request, "account/edit_club_profile.html", {"form": form})
