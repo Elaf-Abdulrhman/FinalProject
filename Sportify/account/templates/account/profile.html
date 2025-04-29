@@ -1,198 +1,212 @@
 {% extends 'main/base.html' %}
 
-{% block title %} Athlete Profile {% endblock %}
+{% block title %} {{ user.username }}'s Profile {% endblock %}
+{% load static %}
 
 {% block content %}
 
-<style> 
+<style>
 .card:hover {
     transform: translateY(-8px);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
     cursor: pointer;
 }
-
-
-h2 {
-    font-size: 2rem;
-    font-weight: bold;
-    color: #333;
-    margin-bottom: 1rem;
+h5, h6 {
+    margin-bottom: 0.5rem;
 }
-
-
-h6 {
-    font-size: 1.1rem;
-    color: #777;
-    margin-bottom: 1.5rem;
-}
-
-
-p {
-    font-size: 1.2rem;
-    color: #666;
-    margin-bottom: 1.5rem;
-}
-
-
-.social-icons svg {
-    margin-right: 10px;
-    transition: transform 0.3s ease;
-}
-
-.social-icons svg:hover {
-    transform: scale(1.1);
-}
-
-
 .profile-img {
-    width: 120px;
-    height: 120px;
+    width: 80px;
+    height: 80px;
     object-fit: cover;
     border-radius: 50%;
-    margin-bottom: 15px;
+    background-color: #ddd;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
-
-
-.edit-btn {
-    font-size: 1rem;
-    padding: 10px 20px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    transition: background-color 0.3s ease;
-}
-
-.edit-btn:hover {
-    background-color: #0056b3;
-}
-
-
 .profile-card {
     background-color: #fff;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
-
-
-.social-icons {
-    display: flex;
-    gap: 15px;
-}
-.social-link svg {
+.social-icons a {
+    margin-right: 15px;
     color: black;
-    transition: color 0.3s ease;
 }
-
-.social-link:hover svg {
-    color: gray; /* or any color you prefer on hover */
+.social-icons a:hover {
+    color: gray;
 }
-
-
+.edit-btn {
+    background: black;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 5px;
+    font-size: 0.9rem;
+}
+.bookmark-icon {
+    font-size: 22px;
+}
 </style>
-<div class="d-flex flex-row justify-content-end align-items-end">
 
-    <div class="position-relative w-100" style="height: 60vh; overflow: hidden;">
-        <div class="position-absolute h-50 w-75 shadow p-4"
-             style="top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 2; ">
-            <div class="text-start">
-                {%if request.user.is_authenticated and request.user.athlete%}
-                   <img src="{{ request.user.athlete.profilePhoto.url }}" alt="Athlete Profile Photo" style="width: 7rem;" />
-                   <h4 class="fw-bold">{{ user.first_name }}</h4>
-                   <h6> {{ user.username }}</h6>
-                   {% else %}
-                      <img src="{{ user.club.photo.url }}" alt="Club Profile Photo" style="width: 7rem;" />
-                   <h6>{{ user.username }}</h6>
+<div class="container my-5" style="max-width: 1000px;">
+
+    <!-- Profile Card -->
+    <div class="profile-card d-flex justify-content-between align-items-center mb-5">
+        <div class="d-flex align-items-center">
+            {% if request.user.is_authenticated and request.user.athlete %}
+                {% if request.user.athlete.profilePhoto %}
+                    <img src="{{ request.user.athlete.profilePhoto.url }}" alt="Profile Photo" class="profile-img me-3">
+                {% else %}
+                    <img src="{% static 'images/userprofile.png' %}" alt="Default Photo" class="profile-img me-3">
                 {% endif %}
-            </div>
-    
-            <div class="d-flex justify-content-end flex-column align-items-end m-4">
-                <div class="social-icons">
-    
-                    <a href="#" target="_blank" class="social-link">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-twitter" viewBox="0 0 16 16">
-                            <path d="M12.6.75h2.454l-5.36 6.142L16 15.25h-4.937l-3.867-5.07-4.425 5.07H.316l5.733-6.57L0 .75h5.063l3.495 4.633L12.601.75Zm-.86 13.028h1.36L4.323 2.145H2.865z"/>
-                        </svg>
-                    </a>
-    
-                    <a href="#" target="_blank" class="social-link">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-facebook" viewBox="0 0 16 16">
-                            <path d="M16 8.049c0-4.446-3.582-8.05-8-8.05C3.58 0-.002 3.603-.002 8.05c0 4.017 2.926 7.347 6.75 7.951v-5.625h-2.03V8.05H6.75V6.275c0-2.017 1.195-3.131 3.022-3.131.876 0 1.791.157 1.791.157v1.98h-1.009c-.993 0-1.303.621-1.303 1.258v1.51h2.218l-.354 2.326H9.25V16c3.824-.604 6.75-3.934 6.75-7.951"/>
-                        </svg>
-                    </a>
-    
-                    <a href="#" target="_blank" class="social-link">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-instagram" viewBox="0 0 16 16">
-                            <path d="M8 0C5.829 0 5.556.01 4.703.048 3.85.088 3.269.222 2.76.42a3.9 3.9 0 0 0-1.417.923A3.9 3.9 0 0 0 .42 2.76C.222 3.268.087 3.85.048 4.7.01 5.555 0 5.827 0 8.001c0 2.172.01 2.444.048 3.297.04.852.174 1.433.372 1.942.205.526.478.972.923 1.417.444.445.89.719 1.416.923.51.198 1.09.333 1.942.372C5.555 15.99 5.827 16 8 16s2.444-.01 3.298-.048c.851-.04 1.434-.174 1.943-.372a3.9 3.9 0 0 0 1.416-.923c.445-.445.718-.891.923-1.417.197-.509.332-1.09.372-1.942C15.99 10.445 16 10.173 16 8s-.01-2.445-.048-3.299c-.04-.851-.175-1.433-.372-1.941a3.9 3.9 0 0 0-.923-1.417A3.9 3.9 0 0 0 13.24.42c-.51-.198-1.092-.333-1.943-.372C10.443.01 10.172 0 7.998 0zm-.717 1.442h.718c2.136 0 2.389.007 3.232.046.78.035 1.204.166 1.486.275.373.145.64.319.92.599s.453.546.598.92c.11.281.24.705.275 1.485.039.843.047 1.096.047 3.231s-.008 2.389-.047 3.232c-.035.78-.166 1.203-.275 1.485a2.5 2.5 0 0 1-.599.919c-.28.28-.546.453-.92.598-.28.11-.704.24-1.485.276-.843.038-1.096.047-3.232.047s-2.39-.009-3.233-.047c-.78-.036-1.203-.166-1.485-.276a2.5 2.5 0 0 1-.92-.598 2.5 2.5 0 0 1-.6-.92c-.109-.281-.24-.705-.275-1.485-.038-.843-.046-1.096-.046-3.233s.008-2.388.046-3.231c.036-.78.166-1.204.276-1.486.145-.373.319-.64.599-.92s.546-.453.92-.598c.282-.11.705-.24 1.485-.276.738-.034 1.024-.044 2.515-.045zm4.988 1.328a.96.96 0 1 0 0 1.92.96.96 0 0 0 0-1.92m-4.27 1.122a4.109 4.109 0 1 0 0 8.217 4.109 4.109 0 0 0 0-8.217m0 1.441a2.667 2.667 0 1 1 0 5.334 2.667 2.667 0 0 1 0-5.334"/>
-                        </svg>
-                    </a>
+                <div>
+                    <h5 class="fw-bold">{{ user.first_name }}{% if user.athlete.isPrivate %}
+                        <i class="bi bi-lock-fill"></i>
+                        {% endif %}</h5>
+                    <h6>@{{ user.username }}</h6>
+
+                    <!-- BIO -->
+                    {% if user.athlete.bio %}
+                        <div class="small text-muted mb-1">{{ user.athlete.bio }}</div>
+                    {% endif %}
+
+                    <!-- CITY | SPORT | AGE -->
+                    <div class="d-flex flex-wrap small text-muted">
+                        {% if user.athlete.city %}
+                            <div class="me-3"><i class="bi bi-geo-alt"></i> {{ user.athlete.city }}</div>
+                        {% endif %}
+                        {% if user.athlete.sport %}
+                            <div class="me-3"><i class="bi bi-trophy"></i> {{ user.athlete.sport }}</div>
+                        {% endif %}
+                        {% if user.athlete.dateOfBirth %}
+<div>
+                                {% if user.athlete.dateOfBirth %}
+                            <p><i class="bi bi-calendar"></i> Date of Birth: {{ user.athlete.dateOfBirth|date:"F d, Y" }}</p>
+                        {% endif %}
+                            </div>
+                        {% endif %}
+                    </div>
+
                 </div>
-    
-                <!-- Edit Profile Button -->
-                {%if request.user.is_authenticated and request.user.athlete%}
-                   <a href="{% url 'account:Edit_Profile_view' user.id %}" class="btn edit-btn mt-4">Edit Profile</a>
-                   {% else %}
-                    <a href="{% url 'account:Edit_profile_club_view' user.id %}" class="btn edit-btn mt-4">Edit Profile</a>
+            {% else %}
+                <img src="{{ user.club.photo.url }}" alt="Club Profile Photo" class="profile-img me-3">
+                <div>
+                    <h5 class="fw-bold">{{ user.club.clubName }} <i class="bi bi-patch-check-fill"></i></h5>
+                    <h6>@{{ user.username }}</h6>
+
+                    {% if user.club.description %}
+                        <div class="small text-muted mb-1">{{ user.club.description }}</div>
+                    {% endif %}
+
+                    <div class="d-flex flex-wrap small text-muted">
+                        {% if user.club.city %}
+                            <div class="me-3"><i class="bi bi-geo-alt"></i> {{ user.club.city }}</div>
+                        {% endif %}
+                        {% if user.club.sport %}
+                            <div><i class="bi bi-trophy"></i> {{ user.club.sport }}</div>
+                        {% endif %}
+                    </div>
+
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="d-inline align-items-center">
+            {% if request.user == user %}
+                {% if user.athlete %}
+                    <a href="{% url 'account:edit_profile_athlete_view' user.id %}" class="btn edit-btn me-3">Edit Profile</a>
+                {% elif user.club %}
+                    <a href="{% url 'account:edit_profile_club_view' user.id %}" class="btn edit-btn me-3">Edit Profile</a>
+                {% endif %}
+            {% endif %}
+
+            <div class="social-icons">
+                {% if user.athlete %}
+                    {% if user.athlete.facebook %}
+                        <a href="{{ user.athlete.facebook }}"><i class="bi bi-facebook"></i></a>
+                    {% endif %}
+                    {% if user.athlete.instagram %}
+                        <a href="{{ user.athlete.instagram }}"><i class="bi bi-instagram"></i></a>
+                    {% endif %}
+                    {% if user.athlete.twitterX %}
+                        <a href="{{ user.athlete.twitterX }}"><i class="bi bi-twitter-x"></i></a>
+                    {% endif %}
+                {% elif user.club %}
+                    {% if user.club.facebook %}
+                        <a href="{{ user.club.facebook }}"><i class="bi bi-facebook"></i></a>
+                    {% endif %}
+                    {% if user.club.instagram %}
+                        <a href="{{ user.club.instagram }}"><i class="bi bi-instagram"></i></a>
+                    {% endif %}
+                    {% if user.club.twitterX %}
+                        <a href="{{ user.club.twitterX }}"><i class="bi bi-twitter-x"></i></a>
+                    {% endif %}
                 {% endif %}
             </div>
+
         </div>
     </div>
 
-
-</div>
-
-
-<div class="container my-5">
-    <div class="row g-5">
-        <!-- Sidebar Navigation -->
-        <div class="col-md-4">
-        
-        
-            <div class="shadow p-4 mb-4 profile-card">
-                {%if request.user.is_authenticated and request.user.athlete%}
-                <h4>Achievements</h4>
-                <p>{{user.athlete.achievements}}</p>
+    <div class="row">
+        <!-- Left Sidebar -->
+        <div class="col-md-3">
+            <div class="profile-card mb-4">
+                {% if request.user.is_authenticated and request.user.athlete %}
+                    <h6 class="fw-bold">Achievements</h6>
+                    <p>{{ user.athlete.achievements|default:"No achievements yet." }}</p>
                 {% endif %}
-                <h4>Contact Info</h4>
-                <p>email: {{user.email}}</p>
-                {%if request.user.is_authenticated and request.user.athlete%}
-                <p>phone number:{{user.athlete.phoneNumber}}</p>
+                <hr>
+                <h6 class="fw-bold">Contact Info</h6>
+                <p>Email: {{ user.email }}</p>
+                {% if request.user.is_authenticated and request.user.athlete %}
+                    <p>Phone: {{ user.athlete.phoneNumber|default:"-" }}</p>
+                    <hr>
+
+                    {% if user.athlete.height %}
+                        <p>Height: {{ user.athlete.height }} cm</p>
+                    {% endif %}
+                    {% if user.athlete.weight %}
+                        <p>Weight: {{ user.athlete.weight }} kg</p>
+                    {% endif %}
                 {% endif %}
-
-
-            </div>
-        
-        {%if request.user.is_authenticated and request.user.club%}
-            <div class="shadow p-4 mb-4 profile-card">
-                <a class="nav-link fw-bold" href="{% url 'main:main_page_view' %}">Club's Offers</a>
             </div>
 
-            <div class="shadow p-4 mb-4 profile-card">
-            <h4>Contact Info</h4>
-                <p>email: {{user.email}}</p>
-            </div>
-        {% endif %}
-            <div class="shadow p-4 mb-4 profile-card">
-                <a class="nav-link fw-bold" href="{% url 'bookmarks:all_bookmarks' %}">Bookmarks</a>
+            <div class="profile-card mb-4 text-center">
+                <h6 class="fw-bold">Bookmark</h6>
+                <a href="{% url 'bookmarks:all_bookmarks' %}" class="bookmark-icon d-block mt-2">
+                    <i class="bi bi-bookmark"></i>
+                </a>
             </div>
         </div>
 
         <!-- Posts Section -->
-        <div class="col-md-8">
-            <h2>Posts</h2>
-            <div class="shadow p-4 profile-card">
-                <h4>{{user.username}} Post</h4>
-                {% for post in posts %}
-                    <div class="post-item mb-4">
-                        <h5>{{ post.title }}</h5>
-                        <p>{{ post.content }}</p>
-                        <small>{{ post.created_at }}</small>
+        <div class="col-md-9">
+            <div class="profile-card">
+                <h5 class="fw-bold mb-4">My Posts</h5>
+                <div class="container">
+                    <div class="row justify-content-center">
+                        <div class="col-md-8">
+
+                            {% if posts %}
+                                {% for post in posts %}
+                                    {% include "posts/post_card.html" %}
+                                {% endfor %}
+                            {% else %}
+                                <p class="text-muted text-center">No posts yet.</p>
+                            {% endif %}
+
+                        </div>
                     </div>
-                {% endfor %}
+                </div>
             </div>
         </div>
     </div>
+
 </div>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
 
 {% endblock %}

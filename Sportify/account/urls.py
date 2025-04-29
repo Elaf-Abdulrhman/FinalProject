@@ -11,8 +11,8 @@ urlpatterns = [
     path("signup/as/club/", views.signup_club_view, name="signup_club_view"),
     path('login/', views.login_view, name='login_view'),
     path('logout/', views.logout_view, name='logout_view'),
-    path('Edit/Profile/<int:user_id>/',views.Edit_Profile_view,name="Edit_Profile_view"),
-    path('Edit/Profile/Club/<int:user_id>/',views.Edit_profile_club_view,name="Edit_profile_club_view")
+    path('edit/athlete/<int:user_id>/', views.edit_profile_athlete_view, name='edit_profile_athlete_view'),
+    path('edit/club/<int:user_id>/', views.edit_profile_club_view, name='edit_profile_club_view'),
 
 ]
 
