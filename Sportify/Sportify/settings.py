@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'clubs',
     'subscriptions',
     'bookmarks',
+    'admins.apps.AdminConfig',  # Ensure this matches the app's configuration
 ]
 
 MIDDLEWARE = [
@@ -126,6 +127,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / "static"]
+
 
 # Media files
 MEDIA_URL = '/media/'

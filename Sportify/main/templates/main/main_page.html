@@ -1,6 +1,8 @@
+
 {% extends 'main/base.html' %}
 
 {% block title %}Home | Sportify{% endblock %}
+{% load static %}
 
 {% block content %}
 <style>
@@ -24,61 +26,109 @@ p {
     margin-bottom: 1.5rem;
 }
 
-.background-section {
-    background-image: url("#"); /* Replace with your image path */
-    background-size: cover;
-    background-position: center;
-    height: 60vh;
-    position: relative;
-    overflow: hidden;
+
+ 
+
+body {
+  font-family: "Archivo", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+  font-variation-settings:
+    "wdth" 89.8;
 }
 
-.background-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(43, 42, 42, 0.5); /* Add a dark overlay for better text visibility */
-    z-index: 1;
-}
+
 </style>
-<div class="background-section">
-  <div class="background-overlay">
-  <div class="position-relative w-100" style="height: 60vh; overflow: hidden;">
 
-    <div class="position-absolute text-white text-center"
-        style="top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 2;">
-      <h2 class="fw-bold">Welcome To Sportify</h2>
-      <p>The platform where talents meet opportunity</p>
-      <a href="{% url 'main:about_page_view' %}" class="btn btn-primary btn-lg">Get to know us</a>
+<div id="sportifyCarousel" class="carousel slide" data-bs-ride="carousel" style="overflow: hidden;">
+
+  <div class="carousel-inner">
+
+    <div class="carousel-item active">
+      <div class="d-flex align-items-center" style="height: 60vh; overflow: hidden;">
+        <div class="d-flex flex-column justify-content-center p-5" style="flex: 1; height: 100%; background-color: #0C1518;">
+          <div class="p-5">
+            <h2 class="fw-bold" style="color: white;">Welcome To Sportify</h2>
+            <p style="color: white;">The platform where talents meet opportunity</p>
+            <a href="{% url 'main:about_page_view' %}" class="btn btn-light btn-lg" style="height: 3rem; width: 11rem;">Get to know us</a>
+          </div>
+        </div>
+        <div style="flex: 1; height: 100%; overflow: hidden;">
+          <img src="{% static 'images/p1.jpg' %}" alt="Sportify" style="width: 100%; height: 100%; object-fit: cover;">
+        </div>
+      </div>
     </div>
+
+    <div class="carousel-item">
+      <div class="d-flex align-items-center" style="height: 60vh; overflow: hidden;">
+        <div class="d-flex flex-column justify-content-center p-5" style="flex: 1; height: 100%; background-color: #0C1518;">
+          <div class="p-5">
+            <h2 class="fw-bold" style="color: white;">Sign Up as a Club</h2>
+            <p style="color: white;">The platform where you can find athletes that match your team.</p>
+            <a href="{% url 'main:about_page_view' %}" class="btn btn-light btn-lg" style="height: 3rem; width: 11rem;">Get to know us</a>
+          </div>
+        </div>
+        <div style="flex: 1; height: 100%; overflow: hidden;">
+          <img src="{% static 'images/p3.jpg' %}" alt="Sign Up as Club" style="width: 100%; height: 100%; object-fit: cover;">
+        </div>
+      </div>
+    </div>
+
+    <div class="carousel-item">
+      <div class="d-flex align-items-center" style="height: 60vh; overflow: hidden;">
+        <div class="d-flex flex-column justify-content-center p-5" style="flex: 1; height: 100%; background-color: #0C1518;">
+          <div class="p-5">
+            <h2 class="fw-bold" style="color: white;">Sign Up as an Athlete</h2>
+            <p style="color: white;">The platform where clubs can find you.</p>
+            <a href="{% url 'main:about_page_view' %}" class="btn btn-light btn-lg" style="height: 3rem; width: 11rem;">Get to know us</a>
+          </div>
+        </div>
+        <div style="flex: 1; height: 100%; overflow: hidden;">
+          <img src="{% static 'images/photo3.jpg' %}" alt="Sign Up as Athlete" style="width: 100%; height: 100%; object-fit: cover;">
+        </div>
+      </div>
+    </div>
+
   </div>
 
+  <button class="carousel-control-prev" type="button" data-bs-target="#sportifyCarousel" data-bs-slide="prev">
+  </button>
+  <button class="carousel-control-next" type="button" data-bs-target="#sportifyCarousel" data-bs-slide="next">
+  </button>
 
 </div>
-</div>
-
 <div class="clubs-section" style="padding: 2rem;">
     <div class="container">
-        <h2 class="text-left mb-4">Explore Our Clubs</h2>
-        <div class="row">
-            {% for club in clubs %}
-            <div class="col-md-4 mb-4">
-                <div class="card">
-                    <div class="card-body">
-                        <img src="{{club.photo.url}}" alt="photo " style="width: 5rem;">
-                        <a href="{% url 'account:profile_view' club.user.id %}"><h5 class="card-title">{{ club.user.username }}</h5></a>
-                        <h5 class="card-title">{{ club.clubName }}</h5>
-                        <p class="card-text">{{ club.description|truncatewords:20 }}</p>
+        <h2 class="text-center mb-4">Explore Our Clubs</h2>
+        <div class="row justify-content-center">
+            <!-- Club Card -->
+            <div class="col-6 col-md-3 mb-4">
+                <a href="#" style="text-decoration: none;">
+                    <div style="border: 1px solid #ccc ; border-radius: 12px; overflow: hidden; text-align: center; transition: 0.3s; padding: 1rem; height: 250px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                        <img src="{% static 'images/itef.svg.png' %}" alt="Club 1" style="width: 100px; height: 100px; object-fit: cover; border-radius: 50%; margin-bottom: 1rem;">
+                        <h5 style="margin: 0; font-size: 1rem;">Club 1</h5>
                     </div>
-                </div>
+                </a>
             </div>
-            {% empty %}
-            <div class="alert alert-info text-center">
-                No clubs found.
+            <!-- card -->
+            <div class="col-6 col-md-3 mb-4">
+                <a href="#" style="text-decoration: none;">
+                    <div style="border: 1px solid #ccc; border-radius: 12px; overflow: hidden; text-align: center; transition: 0.3s; padding: 1rem; height: 250px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                        <img src="{% static 'images/shabab.svg.png' %}" alt="Club 2" style="width: 100px; height: 100px; object-fit: cover; border-radius: 50%; margin-bottom: 1rem;">
+                        <h5 style="margin: 0; font-size: 1rem;">Club 2</h5>
+                    </div>
+                </a>
             </div>
-            {% endfor %}
+            <!-- card -->
+            <div class="col-6 col-md-3 mb-4">
+                <a href="#" style="text-decoration: none;">
+                    <div style="border: 1px solid #ccc; border-radius: 12px; overflow: hidden; text-align: center; transition: 0.3s; padding: 1rem; height: 250px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                        <img src="{% static 'images/ta.svg.png' %}" alt="Club 3" style="width: 100px; height: 100px; object-fit: cover; border-radius: 50%; margin-bottom: 1rem;">
+                        <h5 style="margin: 0; font-size: 1rem;">Club 3</h5>
+                    </div>
+                </a>
+            </div>
         </div>
     </div>
 </div>
@@ -102,4 +152,5 @@ p {
     </div>
   </div>
 </div>
+
 {% endblock %}

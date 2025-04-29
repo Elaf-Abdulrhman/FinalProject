@@ -9,6 +9,8 @@ from account.models import Athlete, Club, Sport, City
 from django.template.loader import render_to_string
 from django.http import JsonResponse
 from bookmarks.models import Bookmark  # Import the Bookmark model
+from posts.models import Post, Like
+
 
 
 
@@ -36,8 +38,6 @@ def add_post(request):
 #     posts = paginator.get_page(page_number)
 #
 #     return render(request, 'posts/all_posts.html', {'posts': posts})
-
-from .models import Like
 
 def post_details(request, post_id):
     post = get_object_or_404(Post, pk=post_id)
@@ -130,8 +130,8 @@ def like_post(request, post_id):
     if not created:
         like.delete()
 
-    return redirect('posts:post_details', post_id=post.id)
-
+    # Redirect back to the same page
+    return redirect(request.META.get('HTTP_REFERER', 'posts:all_posts'))
 
 
 def all_posts(request):

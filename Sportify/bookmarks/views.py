@@ -14,8 +14,7 @@ def bookmark_post(request, post_id):
         # If the bookmark already exists, remove it
         bookmark.delete()
 
-    return redirect('posts:post_details', post_id=post.id)
-
+    return redirect(request.META.get('HTTP_REFERER', 'posts:all_posts'))
 @login_required
 def all_bookmarks(request):
     # Filter bookmarks for the logged-in user
