@@ -1,6 +1,6 @@
 {% extends 'main/base.html' %}
 
-{% block title %} Athlete Profile {% endblock %}
+{% block title %} {{ user.username }}'s Profile {% endblock %}
 {% load static %}
 
 {% block content %}
@@ -51,7 +51,7 @@ h5, h6 {
 }
 </style>
 
-<div class="container my-5 " style="max-width: 1000px;">
+<div class="container my-5" style="max-width: 1000px;">
 
     <!-- Profile Card -->
     <div class="profile-card d-flex justify-content-between align-items-center mb-5">
@@ -65,47 +65,97 @@ h5, h6 {
                 <div>
                     <h5 class="fw-bold">{{ user.first_name }}{% if user.athlete.isPrivate %}
                         <i class="bi bi-lock-fill"></i>
-                        {% endif %} </h5>
+                        {% endif %}</h5>
+                    <h6>@{{ user.username }}</h6>
 
-                    <h6>@{{ user.username }}
+                    <!-- BIO -->
+                    {% if user.athlete.bio %}
+                        <div class="small text-muted mb-1">{{ user.athlete.bio }}</div>
+                    {% endif %}
 
-                    </h6>
+                    <!-- CITY | SPORT | AGE -->
+                    <div class="d-flex flex-wrap small text-muted">
+                        {% if user.athlete.city %}
+                            <div class="me-3"><i class="bi bi-geo-alt"></i> {{ user.athlete.city }}</div>
+                        {% endif %}
+                        {% if user.athlete.sport %}
+                            <div class="me-3"><i class="bi bi-trophy"></i> {{ user.athlete.sport }}</div>
+                        {% endif %}
+                        {% if user.athlete.dateOfBirth %}
+<div>
+                                {% if user.athlete.dateOfBirth %}
+                            <p><i class="bi bi-calendar"></i> Date of Birth: {{ user.athlete.dateOfBirth|date:"F d, Y" }}</p>
+                        {% endif %}
+                            </div>
+                        {% endif %}
+                    </div>
+
                 </div>
             {% else %}
                 <img src="{{ user.club.photo.url }}" alt="Club Profile Photo" class="profile-img me-3">
                 <div>
                     <h5 class="fw-bold">{{ user.club.clubName }} <i class="bi bi-patch-check-fill"></i></h5>
                     <h6>@{{ user.username }}</h6>
+
+                    {% if user.club.description %}
+                        <div class="small text-muted mb-1">{{ user.club.description }}</div>
+                    {% endif %}
+
+                    <div class="d-flex flex-wrap small text-muted">
+                        {% if user.club.city %}
+                            <div class="me-3"><i class="bi bi-geo-alt"></i> {{ user.club.city }}</div>
+                        {% endif %}
+                        {% if user.club.sport %}
+                            <div><i class="bi bi-trophy"></i> {{ user.club.sport }}</div>
+                        {% endif %}
+                    </div>
+
                 </div>
             {% endif %}
         </div>
 
-        <div class="d-inline align-items-center ">
-               {% if request.user == user %}
-                   {% if user.athlete %}
-                       <a href="{% url 'account:edit_profile_athlete_view' user.id %}" class="btn edit-btn me-3">Edit Profile</a>
-                   {% elif user.club %}
-                       <a href="{% url 'account:edit_profile_club_view' user.id %}" class="btn edit-btn me-3">Edit Profile</a>
-                   {% endif %}
-               {% endif %}
+        <div class="d-inline align-items-center">
+            {% if request.user == user %}
+                {% if user.athlete %}
+                    <a href="{% url 'account:edit_profile_athlete_view' user.id %}" class="btn edit-btn me-3">Edit Profile</a>
+                {% elif user.club %}
+                    <a href="{% url 'account:edit_profile_club_view' user.id %}" class="btn edit-btn me-3">Edit Profile</a>
+                {% endif %}
+            {% endif %}
 
-
-            <div class="social-icons" style="color: black">
-                <a href="#"><i class="bi bi-facebook"></i></a>
-                <a href="#"><i class="bi bi-instagram"></i></a>
-                <a href="#"><i class="bi bi-twitter-x" ></i></a>
-
+            <div class="social-icons">
+                {% if user.athlete %}
+                    {% if user.athlete.facebook %}
+                        <a href="{{ user.athlete.facebook }}"><i class="bi bi-facebook"></i></a>
+                    {% endif %}
+                    {% if user.athlete.instagram %}
+                        <a href="{{ user.athlete.instagram }}"><i class="bi bi-instagram"></i></a>
+                    {% endif %}
+                    {% if user.athlete.twitterX %}
+                        <a href="{{ user.athlete.twitterX }}"><i class="bi bi-twitter-x"></i></a>
+                    {% endif %}
+                {% elif user.club %}
+                    {% if user.club.facebook %}
+                        <a href="{{ user.club.facebook }}"><i class="bi bi-facebook"></i></a>
+                    {% endif %}
+                    {% if user.club.instagram %}
+                        <a href="{{ user.club.instagram }}"><i class="bi bi-instagram"></i></a>
+                    {% endif %}
+                    {% if user.club.twitterX %}
+                        <a href="{{ user.club.twitterX }}"><i class="bi bi-twitter-x"></i></a>
+                    {% endif %}
+                {% endif %}
             </div>
 
         </div>
-
     </div>
 
     <div class="row">
+        <!-- Left Sidebar -->
         <div class="col-md-3">
             <div class="profile-card mb-4">
                 {% if request.user.is_authenticated and request.user.athlete %}
-                    <h6 class="fw-bold">Achievement</h6>
+                    <h6 class="fw-bold">Achievements</h6>
                     <p>{{ user.athlete.achievements|default:"No achievements yet." }}</p>
                 {% endif %}
                 <hr>
@@ -113,11 +163,19 @@ h5, h6 {
                 <p>Email: {{ user.email }}</p>
                 {% if request.user.is_authenticated and request.user.athlete %}
                     <p>Phone: {{ user.athlete.phoneNumber|default:"-" }}</p>
+                    <hr>
+
+                    {% if user.athlete.height %}
+                        <p>Height: {{ user.athlete.height }} cm</p>
+                    {% endif %}
+                    {% if user.athlete.weight %}
+                        <p>Weight: {{ user.athlete.weight }} kg</p>
+                    {% endif %}
                 {% endif %}
             </div>
 
             <div class="profile-card mb-4 text-center">
-                <h6 class="fw-bold">BookmMark</h6>
+                <h6 class="fw-bold">Bookmark</h6>
                 <a href="{% url 'bookmarks:all_bookmarks' %}" class="bookmark-icon d-block mt-2">
                     <i class="bi bi-bookmark"></i>
                 </a>
@@ -127,9 +185,22 @@ h5, h6 {
         <!-- Posts Section -->
         <div class="col-md-9">
             <div class="profile-card">
-                <h5 class="fw-bold mb-4">Posts</h5>
+                <h5 class="fw-bold mb-4">My Posts</h5>
+                <div class="container">
+                    <div class="row justify-content-center">
+                        <div class="col-md-8">
 
+                            {% if posts %}
+                                {% for post in posts %}
+                                    {% include "posts/post_card.html" %}
+                                {% endfor %}
+                            {% else %}
+                                <p class="text-muted text-center">No posts yet.</p>
+                            {% endif %}
 
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

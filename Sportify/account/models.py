@@ -36,6 +36,9 @@ class Athlete(models.Model):
     isAvailable = models.BooleanField(default=True)
     isPrivate = models.BooleanField(default=False)
     achievements = models.TextField(blank=True)
+    facebook = models.URLField(blank=True)
+    twitterX = models.URLField(blank=True)
+    instagram = models.URLField(blank=True)
 
     def __str__(self):
         return f"{self.user.username} - Athlete"
@@ -50,7 +53,9 @@ class Club(models.Model):
     description = models.TextField(blank=True)
     is_approved = models.BooleanField(default=False)
     is_premium = models.BooleanField(default=False)
-
+    facebook = models.URLField(blank=True)
+    twitterX = models.URLField(blank=True)
+    instagram = models.URLField(blank=True)
     def __str__(self):
         return f"{self.clubName} ({'Approved' if self.is_approved else 'Pending'})"
 

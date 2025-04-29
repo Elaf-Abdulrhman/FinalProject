@@ -3,7 +3,7 @@
 {% block title %}Edit Athlete Profile{% endblock %}
 
 {% block content %}
-    <style>
+<style>
 input, select, textarea {
     background-color: white;
     border: 1px solid #ced4da;
@@ -45,16 +45,15 @@ input, select, textarea {
                 {{ form.phoneNumber }}
             </div>
 
-         <div class="mb-3">
-    <label class="form-label">Profile Photo</label><br>
+            <div class="mb-3">
+                <label class="form-label">Profile Photo</label><br>
+                {% if form.instance.profilePhoto %}
+                    <img src="{{ form.instance.profilePhoto.url }}" alt="Current Photo"
+                         class="img-thumbnail mb-3" style="width: 150px; height: 150px; object-fit: cover;">
+                {% endif %}
+                {{ form.profilePhoto }}
+            </div>
 
-    {% if form.instance.profilePhoto %}
-        <img src="{{ form.instance.profilePhoto.url }}" alt="Current Photo"
-             class="img-thumbnail mb-3" style="width: 150px; height: 150px; object-fit: cover;">
-    {% endif %}
-
-    {{ form.profilePhoto }}
-</div>
             <div class="mb-3">
                 <label class="form-label">Sport</label>
                 {{ form.sport }}
@@ -108,6 +107,21 @@ input, select, textarea {
             <div class="mb-3">
                 <label class="form-label">Achievements</label>
                 {{ form.achievements }}
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Facebook Profile URL</label>
+                {{ form.facebook }}
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Twitter (X) Profile URL</label>
+                {{ form.twitterX }}
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Instagram Profile URL</label>
+                {{ form.instagram }}
             </div>
 
             <div class="text-center mt-4">

@@ -29,8 +29,6 @@ class ClubSignupForm(forms.ModelForm):
         exclude = ['user', 'is_approved']
 
 
-
-
 class AthleteEditForm(forms.ModelForm):
     first_name = forms.CharField(max_length=30)
     last_name = forms.CharField(max_length=30)
@@ -41,7 +39,8 @@ class AthleteEditForm(forms.ModelForm):
         model = Athlete
         fields = [
             'profilePhoto', 'phoneNumber', 'dateOfBirth', 'sport', 'playingPosition',
-            'height', 'weight', 'gender', 'isAvailable', 'isPrivate', 'city', 'bio', 'achievements'
+            'height', 'weight', 'gender', 'isAvailable', 'isPrivate', 'city',
+            'bio', 'achievements', 'facebook', 'twitterX', 'instagram'  # <- Added here
         ]
         widgets = {
             'bio': forms.Textarea(attrs={'rows': 3}),
@@ -70,6 +69,7 @@ class AthleteEditForm(forms.ModelForm):
             athlete.save()
         return athlete
 
+
 class ClubEditForm(forms.ModelForm):
     username = forms.CharField(max_length=150)
     email = forms.EmailField()
@@ -77,7 +77,8 @@ class ClubEditForm(forms.ModelForm):
     class Meta:
         model = Club
         fields = [
-            'photo', 'clubName', 'phoneNumber', 'sport', 'city', 'description'
+            'photo', 'clubName', 'phoneNumber', 'sport', 'city',
+            'description', 'facebook', 'twitterX', 'instagram'  # <- Added here
         ]
         widgets = {
             'description': forms.Textarea(attrs={'rows': 3}),
