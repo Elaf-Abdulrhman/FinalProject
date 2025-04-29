@@ -41,7 +41,7 @@
   </form>
 
   <!-- Add Post Button -->
-  {% if user.is_authenticated %}
+  {% if user.is_authenticated and not user.is_superuser %}
     <div class="text-end mt-4 p-3">
       <a href="{% url 'posts:add_post' %}" class="btn btn-dark">+ Add Post</a>
     </div>

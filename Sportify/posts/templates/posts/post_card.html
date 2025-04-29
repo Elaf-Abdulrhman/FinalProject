@@ -25,6 +25,7 @@
 
         <div class="d-flex gap-3 z-1">
             <!-- Bookmark/Unbookmark -->
+             {% if not user.is_superuser%}
             <form action="{% url 'bookmarks:bookmark_post' post.id %}" method="POST" class="bookmark-form d-inline">
                 {% csrf_token %}
                 <button type="submit" class="btn btn-sm border-0 bg-transparent p-0 bookmark-btn" data-post-id="{{ post.id }}">
@@ -35,8 +36,10 @@
                     {% endif %}
                 </button>
             </form>
+            {% endif %}
 
             <!-- Like/Unlike -->
+            {% if not user.is_superuser%}
             <form action="{% url 'posts:like_post' post.id %}" method="POST" class="like-form d-inline">
                 {% csrf_token %}
                 <button type="submit" class="btn btn-sm border-0 bg-transparent p-0 like-btn" data-post-id="{{ post.id }}">
@@ -47,6 +50,7 @@
                     {% endif %}
                 </button>
             </form>
+            {% endif %}
         </div>
     </div>
 
@@ -68,6 +72,7 @@
         {% endif %}
     </div>
 
+    
     <div class="text-end mt-3">
         {{ post.comments.count }} <i class="bi bi-chat" style="font-size: 1.3rem;"></i>
     </div>

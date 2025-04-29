@@ -39,6 +39,7 @@ def add_post(request):
 #
 #     return render(request, 'posts/all_posts.html', {'posts': posts})
 
+
 def post_details(request, post_id):
     post = get_object_or_404(Post, pk=post_id)
     comments = post.comments.all().order_by('-created_at')  # Fetch related comments
@@ -50,7 +51,9 @@ def post_details(request, post_id):
         liked = Like.objects.filter(user=request.user, post=post).exists()
         bookmarked = Bookmark.objects.filter(user=request.user, post=post).exists()  # Check if bookmarked
 
-    if request.method == 'POST':
+    show_comment_form = request.user.is_authenticated and not request.user.is_superuser
+
+    if request.method == 'POST' and show_comment_form:
         if request.user.is_authenticated:
             form = CommentForm(request.POST)
             if form.is_valid():
@@ -63,7 +66,7 @@ def post_details(request, post_id):
             messages.error(request, "You must be logged in to comment.")
             return redirect('account:login_view')
     else:
-        form = CommentForm()
+        form = CommentForm() if show_comment_form else None
 
     return render(request, 'posts/post_details.html', {
         'post': post,
