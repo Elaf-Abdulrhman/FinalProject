@@ -23,7 +23,7 @@ def add_post(request):
             post.user = request.user
             post.save()
             messages.success(request, "Post created successfully!")
-            return redirect('posts:all_posts')
+            return redirect(request.META.get('HTTP_REFERER', '/'))
     else:
         form = PostForm()
     return render(request, 'posts/add_post.html', {'form': form})

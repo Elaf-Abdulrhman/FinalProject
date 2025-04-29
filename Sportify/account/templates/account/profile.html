@@ -174,26 +174,60 @@ h5, h6 {
                 {% endif %}
             </div>
 
+
+            <a href="{% url 'bookmarks:all_bookmarks' %}" class="text-decoration-none text-dark">
             <div class="profile-card mb-4 text-center">
                 <h6 class="fw-bold">Bookmark</h6>
-                <a href="{% url 'bookmarks:all_bookmarks' %}" class="bookmark-icon d-block mt-2">
+                <div class="bookmark-icon d-block mt-2">
                     <i class="bi bi-bookmark"></i>
+                </div>
+                </div>
                 </a>
-            </div>
+
+
+
+
+
+        <!-- Offers Card-->
+          {% if user.is_authenticated and user.club %}
+            <a href="{% url 'offers:my_offers' %}" class="text-decoration-none text-dark">
+                <div class="profile-card mb-4 text-center">
+                    <h6 class="fw-bold">Offers</h6>
+                                <div class="bookmark-icon d-block mt-2">
+                        <i class="bi bi-card-heading"></i>
+                    </div>
+                </div>
+            </a>
+{% endif %}
+
+        <!-- Offers Card-->
         </div>
 
         <!-- Posts Section -->
         <div class="col-md-9">
             <div class="profile-card">
-                <h5 class="fw-bold mb-4">My Posts</h5>
+               <div class="d-flex justify-content-between align-items-center mb-4">
+                  <h5 class="fw-bold mb-0">My Posts</h5>
+
+                  {% if user.is_authenticated and not user.is_superuser %}
+                    <a href="{% url 'posts:add_post' %}" class="dark">
+                      <i class="bi bi-plus-lg" style="color: black; font-size: 24px;"></i>
+                    </a>
+                  {% endif %}
+                </div>
+
+
+
+
+
                 <div class="container">
                     <div class="row justify-content-center">
                         <div class="col-md-8">
 
                             {% if posts %}
-                                {% for post in posts %}
+
                                     {% include "posts/post_card.html" %}
-                                {% endfor %}
+
                             {% else %}
                                 <p class="text-muted text-center">No posts yet.</p>
                             {% endif %}
@@ -207,6 +241,5 @@ h5, h6 {
 
 </div>
 
-<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
 
 {% endblock %}
