@@ -1,11 +1,15 @@
+{% load static %}
 {% for post in posts %}
 <div class="card mb-3 shadow-sm p-3 position-relative">
     <a href="{% url 'posts:post_details' post.id %}" class="stretched-link text-decoration-none text-dark"></a>
 
     <div class="d-flex justify-content-between align-items-start">
         <div class="d-flex align-items-center">
-            <img src="#" alt="Profile" class="rounded-circle me-2" width="40" height="40">
-            <div>
+          <img src="{% if athlete.profilePhoto %}{{ athlete.profilePhoto.url }}{% else %}{% static 'images/profile.png' %}{% endif %}" 
+                       alt="Profile Photo" 
+                       class="rounded-circle me-2" width="40" height="40">
+
+                       <div>
                 <strong>
                     {% if post.user.athlete %}
                         {{ post.user.first_name }}
