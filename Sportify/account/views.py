@@ -1,3 +1,5 @@
+import os
+
 from django.contrib.auth.forms import AuthenticationForm,User
 from .forms import UserSignupForm, AthleteSignupForm, ClubSignupForm, ClubUserSignupForm
 from .models import Athlete, Club
@@ -143,3 +145,4 @@ def edit_profile_club_view(request: HttpRequest, user_id):
         form = ClubEditForm(instance=club, user=club.user)
 
     return render(request, "account/edit_club_profile.html", {"form": form})
+
