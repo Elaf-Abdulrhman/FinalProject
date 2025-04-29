@@ -12,7 +12,7 @@
                      class="rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover; border-radius: 50%; border: 2px solid #ccc;">
             {% elif post.user.club and post.user.club.photo %}
                 <!-- Club's Profile Photo -->
-                <img src="{{ request.user.club.photo.url }}" alt="Profile Photo" 
+                <img src="{{ post.user.club.photo.url }}" alt="Profile Photo" 
                      class="rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover; border-radius: 50%; border: 2px solid #ccc;">
             {% else %}
                 <!-- Default Profile Photo -->
