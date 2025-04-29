@@ -92,7 +92,7 @@ h5, h6 {
 
                 </div>
             {% else %}
-                <img src="{{ user.club.photo.url }}" alt="Club Profile Photo" class="profile-img me-3">
+                <img src="{{ request.user.club.photo.url }}" alt="Club Profile Photo" class="profile-img me-3">
                 <div>
                     <h5 class="fw-bold">{{ user.club.clubName }} <i class="bi bi-patch-check-fill"></i></h5>
                     <h6>@{{ user.username }}</h6>
