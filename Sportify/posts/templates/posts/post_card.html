@@ -35,18 +35,22 @@
 
         <div class="d-flex gap-3 z-1">
             <!-- Bookmark/Unbookmark -->
-             {% if not user.is_superuser%}
+            {% if not user.is_superuser%}
             <form action="{% url 'bookmarks:bookmark_post' post.id %}" method="POST" class="bookmark-form d-inline">
-                {% csrf_token %}
-                <button type="submit" class="btn btn-sm border-0 bg-transparent p-0 bookmark-btn" data-post-id="{{ post.id }}">
-                    {% if post.is_bookmarked %}
-                        <i class="bi bi-bookmark-fill" style="font-size: 1.2rem;"></i>
-                    {% else %}
-                        <i class="bi bi-bookmark" style="font-size: 1.2rem;"></i>
-                    {% endif %}
+            {% csrf_token %}
+                <button type="submit" class="btn btn-sm text-primary border-0 bg-transparent p-0 bookmark-btn" data-post-id="{{ post.id }}">
+                  {% if post.is_bookmarked %}
+                    <i class="bi bi-bookmark-fill" style="font-size: 1.3rem;"></i> <span class="bookmark-count">{{ post.total_bookmarks }}</span>
+                  {% else %}
+                    <i class="bi bi-bookmark" style="font-size: 1.3rem;"></i> <span class="bookmark-count">{{ post.total_bookmarks }}</span>
+                  {% endif %}
                 </button>
-            </form>
-            {% endif %}
+            {% else %}
+            <span class="btn btn-sm border-0 bg-transparent p-0">
+              <i class="bi bi-bookmark" style="font-size: 1.3rem; color: gray;"></i>
+              <span class="bookmark-count">{{ post.total_bookmarks }}</span>
+          </span>
+          {% endif %}
 
             <!-- Like/Unlike -->
               {% if not user.is_superuser %}
