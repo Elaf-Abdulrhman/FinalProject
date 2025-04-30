@@ -36,7 +36,7 @@ h5, h6 {
     color: black;
 }
 .social-icons a:hover {
-    color: gray;
+    color: darkorange;
 }
 .edit-btn {
     background: black;
@@ -73,7 +73,6 @@ h5, h6 {
                         <div class="small text-muted mb-1">{{ user.athlete.bio }}</div>
                     {% endif %}
 
-                    <!-- CITY | SPORT | AGE -->
                     <div class="d-flex flex-wrap small text-muted">
                         {% if user.athlete.city %}
                             <div class="me-3"><i class="bi bi-geo-alt"></i> {{ user.athlete.city }}</div>
@@ -174,8 +173,8 @@ h5, h6 {
                 {% endif %}
             </div>
 
-
-            <a href="{% url 'bookmarks:all_bookmarks' %}" class="text-decoration-none text-dark">
+{% if request.user == user %}
+    <a href="{% url 'bookmarks:all_bookmarks' %}" class="text-decoration-none text-dark">
             <div class="profile-card mb-4 text-center">
                 <h6 class="fw-bold">Bookmark</h6>
                 <div class="bookmark-icon d-block mt-2">
@@ -183,6 +182,7 @@ h5, h6 {
                 </div>
                 </div>
                 </a>
+        {% endif %}
 
 
 

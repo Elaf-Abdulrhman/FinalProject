@@ -8,7 +8,7 @@
     <div class="card p-4 shadow-sm mx-auto" style="max-width: 700px;">
 
         <div class="text-center mb-4">
-            <img src="{% static 'images/default_profile.png' %}" alt="Profile" width="60" height="60" class="rounded-circle mb-2">
+            <img src="{{ offer.user.club.photo.url }}" alt="Profile" width="60" height="60" class="rounded-circle mb-2">
             <h5 class="mb-0">{{ offer.user.first_name }} {{ offer.user.last_name }}</h5>
             <small class="text-muted">@{{ offer.user.username }}</small>
         </div>

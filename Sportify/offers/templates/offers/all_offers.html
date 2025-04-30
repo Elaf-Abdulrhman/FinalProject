@@ -20,7 +20,7 @@
         {% for offer in offers %}
         <div class="card mb-3 shadow-sm p-2 d-flex flex-row align-items-center justify-content-between">
             <div class="d-flex align-items-center gap-3">
-                <img src="#" alt="Profile" width="40" height="40" class="rounded-circle">
+                <img src="{{ offer.user.club.photo.url }}" alt="Profile" width="40" height="40" class="rounded-circle">
                 <div>
                     <h6 class="mb-0">{{ offer.title }}</h6>
                 </div>
