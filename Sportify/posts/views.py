@@ -44,8 +44,9 @@ def post_details(request, post_id):
     post = get_object_or_404(Post, pk=post_id)
     comments = post.comments.all().order_by('-created_at')  # Fetch related comments
 
-    liked = False
-    bookmarked = False  # Initialize bookmarked status
+    # Check if the post is liked or bookmarked by the current user
+    is_liked = Like.objects.filter(user=request.user, post=post).exists()
+    is_bookmarked = Bookmark.objects.filter(user=request.user, post=post).exists()
 
     if request.user.is_authenticated:
         liked = Like.objects.filter(user=request.user, post=post).exists()
@@ -68,12 +69,13 @@ def post_details(request, post_id):
     else:
         form = CommentForm() if show_comment_form else None
 
+
     return render(request, 'posts/post_details.html', {
         'post': post,
         'comments': comments,
         'form': form,
-        'liked': liked,
-        'bookmarked': bookmarked,  # Pass bookmarked status to the template
+        'is_liked': is_liked,
+        'is_bookmarked': is_bookmarked,  # Pass bookmarked status to the template
     })
 
 
@@ -159,6 +161,10 @@ def all_posts(request):
     paginator = Paginator(posts, 3)
     page_number = request.GET.get('page', 1)
     page_obj = paginator.get_page(page_number)
+
+    for post in page_obj:
+        post.is_liked = request.user.is_authenticated and Like.objects.filter(user=request.user, post=post).exists()
+        post.is_bookmarked = request.user.is_authenticated and Bookmark.objects.filter(user=request.user, post=post).exists()
 
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
         post_html = render_to_string('posts/post_card.html', {'posts': page_obj}, request=request)

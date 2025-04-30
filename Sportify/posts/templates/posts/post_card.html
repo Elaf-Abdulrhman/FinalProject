@@ -34,30 +34,73 @@
         </div>
 
         <div class="d-flex gap-3 z-1">
-            <!-- Bookmark/Unbookmark -->
+
+          <!-- will be edited later -->
+          <div class="d-flex justify-content-between align-items-center mt-3">
+            {% if not user.is_superuser %}
+            <form action="{% url 'posts:like_post' post.id %}" method="POST" class="like-form d-inline">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-sm text-danger border-0 bg-transparent p-0 like-btn" data-post-id="{{ post.id }}">
+                    {% if is_liked %}
+                        <i class="bi bi-heart-fill" style="font-size: 1.3rem;"></i> <span class="like-count">{{ post.total_likes }}</span>
+                    {% else %}
+                        <i class="bi bi-heart" style="font-size: 1.3rem;"></i> <span class="like-count">{{ post.total_likes }}</span>
+                    {% endif %}
+                </button>
+            </form>
+        {% else %}
+            <span class="btn btn-sm border-0 bg-transparent p-0">
+                <i class="bi bi-heart" style="font-size: 1.3rem; color: gray;"></i>
+                <span class="like-count">{{ post.total_likes }}</span>
+            </span>
+        {% endif %}
+
+            <!-- Bookmark Button -->
             {% if not user.is_superuser%}
             <form action="{% url 'bookmarks:bookmark_post' post.id %}" method="POST" class="bookmark-form d-inline">
-            {% csrf_token %}
+                {% csrf_token %}
                 <button type="submit" class="btn btn-sm text-primary border-0 bg-transparent p-0 bookmark-btn" data-post-id="{{ post.id }}">
-                  {% if post.is_bookmarked %}
-                    <i class="bi bi-bookmark-fill" style="font-size: 1.3rem;"></i> <span class="bookmark-count">{{ post.total_bookmarks }}</span>
-                  {% else %}
-                    <i class="bi bi-bookmark" style="font-size: 1.3rem;"></i> <span class="bookmark-count">{{ post.total_bookmarks }}</span>
-                  {% endif %}
+                    {% if post.bookmarked %}
+                        <i class="bi bi-bookmark-fill" style="font-size: 1.3rem;"></i>
+                    {% else %}
+                        <i class="bi bi-bookmark" style="font-size: 1.3rem;"></i>
+                    {% endif %}
+                    <span class="bookmark-count">{{ post.total_bookmarks }}</span>
                 </button>
+            </form>
             {% else %}
             <span class="btn btn-sm border-0 bg-transparent p-0">
               <i class="bi bi-bookmark" style="font-size: 1.3rem; color: gray;"></i>
               <span class="bookmark-count">{{ post.total_bookmarks }}</span>
+            {% endif %}
           </span>
-          {% endif %}
+        </div>
 
-            <!-- Like/Unlike -->
+
+            <!-- Bookmark/Unbookmark 
+             {% if not user.is_superuser%}
+    <form action="{% url 'bookmarks:bookmark_post' post.id %}" method="POST" class="bookmark-form d-inline">
+    {% csrf_token %}
+        <button type="submit" class="btn btn-sm text-primary border-0 bg-transparent p-0 bookmark-btn" data-post-id="{{ post.id }}">
+          {% if post.bookmarked %}
+            <i class="bi bi-bookmark-fill" style="font-size: 1.3rem;"></i> <span class="bookmark-count">{{ post.total_bookmarks }}</span>
+          {% else %}
+            <i class="bi bi-bookmark" style="font-size: 1.3rem;"></i> <span class="bookmark-count">{{ post.total_bookmarks }}</span>
+          {% endif %}
+        </button>
+    {% else %}
+    <span class="btn btn-sm border-0 bg-transparent p-0">
+      <i class="bi bi-bookmark" style="font-size: 1.3rem; color: gray;"></i>
+      <span class="bookmark-count">{{ post.total_bookmarks }}</span>
+  </span>
+  {% endif %}-->
+
+            <!-- Like/Unlike 
               {% if not user.is_superuser %}
               <form action="{% url 'posts:like_post' post.id %}" method="POST" class="like-form d-inline">
                   {% csrf_token %}
                   <button type="submit" class="btn btn-sm border-0 bg-transparent p-0 like-btn" data-post-id="{{ post.id }}">
-                      {% if post.is_liked %}
+                      {% if post.liked %}
                           <i class="bi bi-heart-fill" style="font-size: 1.3rem;"></i> <span class="like-count">{{ post.total_likes }}</span>
                       {% else %}
                           <i class="bi bi-heart" style="font-size: 1.3rem;"></i> <span class="like-count">{{ post.total_likes }}</span>
@@ -65,12 +108,12 @@
                   </button>
               </form>
               {% else %}
-              <!-- Show non-clickable heart and like count for superusers -->
+              Show non-clickable heart and like count for superusers
               <span class="btn btn-sm border-0 bg-transparent p-0">
                   <i class="bi bi-heart" style="font-size: 1.3rem; color: gray;"></i>
                   <span class="like-count">{{ post.total_likes }}</span>
               </span>
-              {% endif %}
+              {% endif %}  -->
         </div>
     </div>
 
@@ -100,89 +143,66 @@
 {% endfor %}
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-  // Handle Like/Unlike
-  document.querySelectorAll('.like-form').forEach(form => {
-    form.addEventListener('submit', event => {
-      event.preventDefault(); // Prevent form submission
-      const button = form.querySelector('.like-btn');
-      const postId = button.dataset.postId;
+    // Handle like button
+    document.querySelectorAll('.like-form').forEach(form => {
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const postId = form.querySelector('.like-btn').dataset.postId;
 
-      console.log(`Liking/Unliking post with ID: ${postId}`); // Debugging log
+            const response = await fetch(form.action, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': form.querySelector('[name=csrfmiddlewaretoken]').value,
+                },
+            });
 
-      fetch(form.action, {
-        method: 'POST',
-        headers: {
-          'X-CSRFToken': form.querySelector('[name=csrfmiddlewaretoken]').value,
-        },
-      })
-        .then(response => {
-          if (!response.ok) {
-            throw new Error('Network response was not ok');
-          }
-          console.log(`Successfully processed like/unlike for post ID: ${postId}`); // Debugging log
-          return response.text(); // Expecting a redirect response
-        })
-        .then(() => {
-          // Toggle the like icon and update the like count
-          const likeCount = button.querySelector('.like-count');
-          const icon = button.querySelector('i');
-          const isLiked = icon.classList.contains('bi-heart-fill');
+            if (response.ok) {
+                const data = await response.json();
+                const likeIcon = form.querySelector('.bi');
+                const likeCount = form.querySelector('.like-count');
 
-          if (isLiked) {
-            icon.classList.remove('bi-heart-fill', 'text-danger');
-            icon.classList.add('bi-heart');
-            likeCount.textContent = parseInt(likeCount.textContent) - 1;
-          } else {
-            icon.classList.remove('bi-heart');
-            icon.classList.add('bi-heart-fill', 'text-danger');
-            likeCount.textContent = parseInt(likeCount.textContent) + 1;
-          }
-        })
-        .catch(error => {
-          console.error('Error processing like/unlike:', error);
+                if (data.is_liked) {
+                    likeIcon.classList.remove('bi-heart');
+                    likeIcon.classList.add('bi-heart-fill');
+                } else {
+                    likeIcon.classList.remove('bi-heart-fill');
+                    likeIcon.classList.add('bi-heart');
+                }
+
+                likeCount.textContent = data.total_likes;
+            }
         });
     });
-  });
 
-  // Handle Bookmark/Unbookmark
-  document.querySelectorAll('.bookmark-form').forEach(form => {
-    form.addEventListener('submit', event => {
-      event.preventDefault(); // Prevent form submission
-      const button = form.querySelector('.bookmark-btn');
-      const postId = button.dataset.postId;
+    // Handle bookmark button
+    document.querySelectorAll('.bookmark-form').forEach(form => {
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const postId = form.querySelector('.bookmark-btn').dataset.postId;
 
-      console.log(`Bookmarking/Unbookmarking post with ID: ${postId}`); // Debugging log
+            const response = await fetch(form.action, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': form.querySelector('[name=csrfmiddlewaretoken]').value,
+                },
+            });
 
-      fetch(form.action, {
-        method: 'POST',
-        headers: {
-          'X-CSRFToken': form.querySelector('[name=csrfmiddlewaretoken]').value,
-        },
-      })
-        .then(response => {
-          if (!response.ok) {
-            throw new Error('Network response was not ok');
-          }
-          console.log(`Successfully processed bookmark/unbookmark for post ID: ${postId}`); // Debugging log
-          return response.text(); // Expecting a redirect response
-        })
-        .then(() => {
-          // Toggle the bookmark icon
-          const icon = button.querySelector('i');
-          const isBookmarked = icon.classList.contains('bi-bookmark-fill');
+            if (response.ok) {
+                const data = await response.json();
+                const bookmarkIcon = form.querySelector('.bi');
+                const bookmarkCount = form.querySelector('.bookmark-count');
 
-          if (isBookmarked) {
-            icon.classList.remove('bi-bookmark-fill');
-            icon.classList.add('bi-bookmark');
-          } else {
-            icon.classList.remove('bi-bookmark');
-            icon.classList.add('bi-bookmark-fill');
-          }
-        })
-        .catch(error => {
-          console.error('Error processing bookmark/unbookmark:', error);
+                if (data.is_bookmarked) {
+                    bookmarkIcon.classList.remove('bi-bookmark');
+                    bookmarkIcon.classList.add('bi-bookmark-fill');
+                } else {
+                    bookmarkIcon.classList.remove('bi-bookmark-fill');
+                    bookmarkIcon.classList.add('bi-bookmark');
+                }
+
+                bookmarkCount.textContent = data.total_bookmarks;
+            }
         });
     });
-  });
 });
 </script>

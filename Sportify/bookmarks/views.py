@@ -13,6 +13,9 @@ def bookmark_post(request, post_id):
     if not created:
         # If the bookmark already exists, remove it
         bookmark.delete()
+    
+    total_bookmarks = Bookmark.objects.filter(post=post).count()
+    is_bookmarked = Bookmark.objects.filter(user=request.user, post=post).exists()
 
     return redirect(request.META.get('HTTP_REFERER', 'posts:all_posts'))
 @login_required

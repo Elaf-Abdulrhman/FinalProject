@@ -74,46 +74,44 @@
 
 
 <div class="d-flex justify-content-between align-items-center mt-3">
-  <!-- Bookmark -->
-  <div class="d-flex gap-3 align-items-center">
-{% if not user.is_superuser%}
-    <form action="{% url 'bookmarks:bookmark_post' post.id %}" method="POST" class="bookmark-form d-inline">
-    {% csrf_token %}
-        <button type="submit" class="btn btn-sm text-primary border-0 bg-transparent p-0 bookmark-btn" data-post-id="{{ post.id }}">
-          {% if post.is_bookmarked %}
-            <i class="bi bi-bookmark-fill" style="font-size: 1.3rem;"></i> <span class="bookmark-count">{{ post.total_bookmarks }}</span>
-          {% else %}
-            <i class="bi bi-bookmark" style="font-size: 1.3rem;"></i> <span class="bookmark-count">{{ post.total_bookmarks }}</span>
-          {% endif %}
-        </button>
+    <!-- Like Button -->
+    {% if not user.is_superuser %}
+        <form action="{% url 'posts:like_post' post.id %}" method="POST" class="like-form d-inline">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-sm text-danger border-0 bg-transparent p-0 like-btn" data-post-id="{{ post.id }}">
+                {% if is_liked %}
+                    <i class="bi bi-heart-fill" style="font-size: 1.3rem;"></i> <span class="like-count">{{ post.total_likes }}</span>
+                {% else %}
+                    <i class="bi bi-heart" style="font-size: 1.3rem;"></i> <span class="like-count">{{ post.total_likes }}</span>
+                {% endif %}
+            </button>
+        </form>
     {% else %}
-    <span class="btn btn-sm border-0 bg-transparent p-0">
-      <i class="bi bi-bookmark" style="font-size: 1.3rem; color: gray;"></i>
-      <span class="bookmark-count">{{ post.total_bookmarks }}</span>
-  </span>
-  {% endif %}
-  
-</form>
+        <span class="btn btn-sm border-0 bg-transparent p-0">
+            <i class="bi bi-heart" style="font-size: 1.3rem; color: gray;"></i>
+            <span class="like-count">{{ post.total_likes }}</span>
+        </span>
+    {% endif %}
 
- <!-- Like/Unlike -->
- {% if not user.is_superuser %}
- <form action="{% url 'posts:like_post' post.id %}" method="POST" class="like-form d-inline">
-     {% csrf_token %}
-     <button type="submit" class="btn btn-sm border-0 bg-transparent p-0 like-btn" data-post-id="{{ post.id }}">
-         {% if post.is_liked %}
-             <i class="bi bi-heart-fill" style="font-size: 1.3rem;"></i> <span class="like-count">{{ post.total_likes }}</span>
-         {% else %}
-             <i class="bi bi-heart" style="font-size: 1.3rem;"></i> <span class="like-count">{{ post.total_likes }}</span>
-         {% endif %}
-     </button>
- </form>
- {% else %}
- <!-- Show non-clickable heart and like count for superusers -->
- <span class="btn btn-sm border-0 bg-transparent p-0">
-     <i class="bi bi-heart" style="font-size: 1.3rem; color: gray;"></i>
-     <span class="like-count">{{ post.total_likes }}</span>
- </span>
- {% endif %} 
+    <!-- Bookmark Button -->
+    {% if not user.is_superuser %}
+        <form action="{% url 'bookmarks:bookmark_post' post.id %}" method="POST" class="bookmark-form d-inline">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-sm text-primary border-0 bg-transparent p-0 bookmark-btn" data-post-id="{{ post.id }}">
+                {% if is_bookmarked %}
+                    <i class="bi bi-bookmark-fill" style="font-size: 1.3rem;"></i>
+                {% else %}
+                    <i class="bi bi-bookmark" style="font-size: 1.3rem;"></i>
+                {% endif %}
+                <span class="bookmark-count">{{ post.total_bookmarks }}</span>
+            </button>
+        </form>
+    {% else %}
+        <span class="btn btn-sm border-0 bg-transparent p-0">
+            <i class="bi bi-bookmark" style="font-size: 1.3rem; color: gray;"></i>
+            <span class="bookmark-count">{{ post.total_bookmarks }}</span>
+        </span>
+    {% endif %}
 </div>
 
   <!-- Right: Comments count -->

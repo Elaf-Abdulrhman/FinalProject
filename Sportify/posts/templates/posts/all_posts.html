@@ -105,6 +105,71 @@
           loadMorePosts();
       }
   });
-  </script>  
-  
+
+  // Add the provided script for handling likes and bookmarks
+  document.addEventListener('DOMContentLoaded', () => {
+      // Handle like button
+      document.querySelectorAll('.like-form').forEach(form => {
+          form.addEventListener('submit', async (e) => {
+              e.preventDefault();
+              const postId = form.querySelector('.like-btn').dataset.postId;
+
+              const response = await fetch(form.action, {
+                  method: 'POST',
+                  headers: {
+                      'X-CSRFToken': form.querySelector('[name=csrfmiddlewaretoken]').value,
+                  },
+              });
+
+              if (response.ok) {
+                  const data = await response.json();
+                  const likeIcon = form.querySelector('.bi');
+                  const likeCount = form.querySelector('.like-count');
+
+                  if (data.is_liked) {
+                      likeIcon.classList.remove('bi-heart');
+                      likeIcon.classList.add('bi-heart-fill');
+                  } else {
+                      likeIcon.classList.remove('bi-heart-fill');
+                      likeIcon.classList.add('bi-heart');
+                  }
+
+                  likeCount.textContent = data.total_likes;
+              }
+          });
+      });
+
+      // Handle bookmark button
+      document.querySelectorAll('.bookmark-form').forEach(form => {
+          form.addEventListener('submit', async (e) => {
+              e.preventDefault();
+              const postId = form.querySelector('.bookmark-btn').dataset.postId;
+
+              const response = await fetch(form.action, {
+                  method: 'POST',
+                  headers: {
+                      'X-CSRFToken': form.querySelector('[name=csrfmiddlewaretoken]').value,
+                  },
+              });
+
+              if (response.ok) {
+                  const data = await response.json();
+                  const bookmarkIcon = form.querySelector('.bi');
+                  const bookmarkCount = form.querySelector('.bookmark-count');
+
+                  if (data.is_bookmarked) {
+                      bookmarkIcon.classList.remove('bi-bookmark');
+                      bookmarkIcon.classList.add('bi-bookmark-fill');
+                  } else {
+                      bookmarkIcon.classList.remove('bi-bookmark-fill');
+                      bookmarkIcon.classList.add('bi-bookmark');
+                  }
+
+                  bookmarkCount.textContent = data.total_bookmarks;
+              }
+          });
+      });
+  });
+</script>  
+
 {% endblock %}
