@@ -73,7 +73,7 @@ def post_details(request, post_id):
         'comments': comments,
         'form': form,
         'liked': liked,
-        'bookmarked': bookmarked,  # Pass bookmarked status to the template
+        'bookmarked': bookmarked,
     })
 
 
@@ -136,6 +136,16 @@ def like_post(request, post_id):
     # Redirect back to the same page
     return redirect(request.META.get('HTTP_REFERER', 'posts:all_posts'))
 
+# posts/views.py
+
+@login_required
+def like_post(request, post_id):
+    post = get_object_or_404(Post, id=post_id)
+    like, created = Like.objects.get_or_create(user=request.user, post=post)
+    if not created:
+        like.delete()
+    return redirect(request.META.get('HTTP_REFERER', 'posts:all_posts'))
+
 def all_posts(request):
     sport_id = request.GET.get('sport')
     city_id = request.GET.get('city')
@@ -152,21 +162,32 @@ def all_posts(request):
         filters &= Q(user__club__isnull=False)
 
     posts = Post.objects.filter(filters).order_by('-created_at').distinct()
-
-    # Exclude posts by athletes with isPrivate=True
     posts = posts.exclude(user__athlete__isPrivate=True)
+
+    # Bookmarks
+    bookmarked_post_ids = set()
+    if request.user.is_authenticated:
+        bookmarked_post_ids = set(
+            Bookmark.objects.filter(user=request.user).values_list('post_id', flat=True)
+        )
 
     paginator = Paginator(posts, 3)
     page_number = request.GET.get('page', 1)
     page_obj = paginator.get_page(page_number)
 
+    # Add .is_liked dynamically
+    for post in page_obj:
+        post.is_liked = post.is_liked_by(request.user) if request.user.is_authenticated else False
+
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-        post_html = render_to_string('posts/post_card.html', {'posts': page_obj}, request=request)
+        post_html = render_to_string('posts/post_card.html', {
+            'posts': page_obj,
+            'bookmarked_post_ids': bookmarked_post_ids,
+        }, request=request)
         return JsonResponse({
             'posts_html': post_html,
             'has_next': page_obj.has_next(),
         })
-
 
     query_params = request.GET.copy()
     query_params.pop('page', None)
@@ -180,7 +201,7 @@ def all_posts(request):
         'selected_city': city_id,
         'selected_poster': poster_type,
         'filter_querystring': filter_querystring,
+        'bookmarked_post_ids': bookmarked_post_ids,
     }
 
     return render(request, 'posts/all_posts.html', context)
-
