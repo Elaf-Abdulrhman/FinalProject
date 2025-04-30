@@ -136,28 +136,27 @@ def like_post(request, post_id):
     # Redirect back to the same page
     return redirect(request.META.get('HTTP_REFERER', 'posts:all_posts'))
 
-
 def all_posts(request):
     sport_id = request.GET.get('sport')
     city_id = request.GET.get('city')
     poster_type = request.GET.get('posted_by')
 
-    posts = Post.objects.all().order_by('-created_at')
-
+    filters = Q()
     if sport_id:
-        posts = posts.filter(user__athlete__sport_id=sport_id) | posts.filter(user__club__sport_id=sport_id)
-
+        filters &= Q(user__athlete__sport_id=sport_id) | Q(user__club__sport_id=sport_id)
     if city_id:
-        posts = posts.filter(user__athlete__city_id=city_id) | posts.filter(user__club__city_id=city_id)
-
+        filters &= Q(user__athlete__city_id=city_id) | Q(user__club__city_id=city_id)
     if poster_type == 'athlete':
-        posts = posts.filter(user__athlete__isnull=False)
+        filters &= Q(user__athlete__isnull=False)
     elif poster_type == 'club':
-        posts = posts.filter(user__club__isnull=False)
+        filters &= Q(user__club__isnull=False)
 
-    posts = posts.distinct()
+    posts = Post.objects.filter(filters).order_by('-created_at').distinct()
 
-    paginator = Paginator(posts, 3)  # 6 posts per page
+    # Exclude posts by athletes with isPrivate=True
+    posts = posts.exclude(user__athlete__isPrivate=True)
+
+    paginator = Paginator(posts, 3)
     page_number = request.GET.get('page', 1)
     page_obj = paginator.get_page(page_number)
 
@@ -168,9 +167,9 @@ def all_posts(request):
             'has_next': page_obj.has_next(),
         })
 
+
     query_params = request.GET.copy()
-    if 'page' in query_params:
-        del query_params['page']
+    query_params.pop('page', None)
     filter_querystring = query_params.urlencode()
 
     context = {
@@ -184,3 +183,4 @@ def all_posts(request):
     }
 
     return render(request, 'posts/all_posts.html', context)
+

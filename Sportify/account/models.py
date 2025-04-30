@@ -49,7 +49,7 @@ class Club(models.Model):
     sport = models.ForeignKey(Sport, on_delete=models.SET_NULL, null=True)
     clubName = models.CharField(max_length=100)
     phoneNumber = models.CharField(max_length=15)
-    photo = models.ImageField(upload_to='media/clubs/photos/', default="static/image/profile.jpg")
+    photo = models.ImageField(upload_to='media/clubs/photos/', default="static/images/profile.png")
     description = models.TextField(blank=True)
     is_approved = models.BooleanField(default=False)
     is_premium = models.BooleanField(default=False)

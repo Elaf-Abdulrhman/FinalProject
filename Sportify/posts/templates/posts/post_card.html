@@ -5,11 +5,21 @@
 
     <div class="d-flex justify-content-between align-items-start">
         <div class="d-flex align-items-center">
-          <img src="{% if athlete.profilePhoto %}{{ athlete.profilePhoto.url }}{% else %}{% static 'images/profile.png' %}{% endif %}" 
-                       alt="Profile Photo" 
-                       class="rounded-circle me-2" width="40" height="40">
-
-                       <div>
+            <!-- Profile Photo -->
+            {% if post.user.athlete and post.user.athlete.profilePhoto %}
+                <!-- Athlete's Profile Photo -->
+                <img src="{{ post.user.athlete.profilePhoto.url }}" alt="Profile Photo" 
+                     class="rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover; border-radius: 50%; border: 2px solid #ccc;">
+            {% elif post.user.club and post.user.club.photo %}
+                <!-- Club's Profile Photo -->
+                <img src="{{ post.user.club.photo.url }}" alt="Profile Photo" 
+                     class="rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover; border-radius: 50%; border: 2px solid #ccc;">
+            {% else %}
+                <!-- Default Profile Photo -->
+                <img src="{% static 'images/profile.png' %}" alt="Default Profile Photo" 
+                     class="rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover; border-radius: 50%; border: 2px solid #ccc;">
+            {% endif %}
+            <div>
                 <strong>
                     {% if post.user.athlete %}
                         {{ post.user.first_name }}

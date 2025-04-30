@@ -12,28 +12,20 @@
         <input type="text" name="q" class="form-control w-50" placeholder="Search for athletes..." value="{{ request.GET.q }}">
         <button type="submit" class="btn btn-primary ms-2">Search</button>
     </form>
-
-
-    <!-- <div class="row mt-5 row-cols-1 row-cols-md-3 g-4">
-        {% for athlete in athletes %}
-          <div class="col">
-              <div class="d-flex flex-column justify-content-start align-items-start h-100 p-4 shadow">
-                  <img src="{{athlete.profilePhoto.url}}" alt=" profilePhoto " style="width: 10rem;">
-                  <a href="#"> <h3>{{athlete.user.username}}</h3> </a>
-                  <h4>{{athlete.user.first_name}}</h4>
-                  <p>{{athlete.bio}}</p>
-              </div>
-          </div>
-        {% endfor %}
-      </div> -->
-
     Athletes List 
     <div class="row">
         {% for athlete in athletes %}
         <div class="col-md-4 mb-4">
             <div class="card">
                 <div class="card-body">
-                    <img src="{{athlete.profilePhoto.url}}" alt=" profilePhoto " style="width: 5rem;">
+                    {% if athlete.profilePhoto %}
+    <img src="{{ athlete.profilePhoto.url }}" alt="Profile Photo" 
+         class="rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover; border-radius: 50%; border: 2px solid #ccc;">
+{% else %}
+    <!-- Default Profile Photo -->
+    <img src="{% static 'images/profile.png' %}" alt="Default Profile Photo" 
+         class="rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover; border-radius: 50%; border: 2px solid #ccc;">
+{% endif %}
                     <h5>{{ athlete.user.first_name }}</h5>
                     <a class="link-secondary link-offset-3 link-underline-opacity-0 link-underline-opacity-75-hover" href="{% url 'account:profile_view' athlete.user.id %}"><h6 class="card-title">{{ athlete.user.username }}</h6></a>
                     <p class="card-text">{{ athlete.bio|truncatewords:20 }}</p>
