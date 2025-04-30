@@ -151,7 +151,7 @@ MOYASAR_SECRET_KEY = 'sk_test_sF2ML8JKf8QhAL7mrtVBrgXs5p4tjKvVrhFXLJG1'
 
 
 
-
+## Email settings
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
 EMAIL_HOST = 'sandbox.smtp.mailtrap.io'
