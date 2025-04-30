@@ -13,15 +13,18 @@
       <div class="d-flex align-items-center">
         <!-- Profile Photo -->
         {% if post.user.athlete and post.user.athlete.profilePhoto %}
-    <img src="{{ request.user.athlete.profilePhoto.url }}" alt="Profile Photo" 
-         class="rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover; border-radius: 50%; border: 2px solid #ccc;">
-{% elif post.user.club and post.user.club.photo %}
-    <img src="{{ request.user.club.photo.url }}" alt="Profile Photo" class="rounded-circle me-2" style="width: 40px; 
-    height: 40px; object-fit: cover; border-radius: 50%; border: 2px solid #ccc;">
-{% else %}
-    <img src="{% static 'images/profile.png' %}" alt="Default Profile Photo" 
-         class="rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover; border-radius: 50%; border: 2px solid #ccc;">
-{% endif %}
+        <!-- Athlete's Profile Photo -->
+          <img src="{{ post.user.athlete.profilePhoto.url }}" alt="Profile Photo" 
+             class="rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover; border-radius: 50%; border: 2px solid #ccc;">
+        {% elif post.user.club and post.user.club.photo %}
+        <!-- Club's Profile Photo -->
+          <img src="{{ post.user.club.photo.url }}" alt="Profile Photo" 
+             class="rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover; border-radius: 50%; border: 2px solid #ccc;">
+        {% else %}
+        <!-- Default Profile Photo -->
+          <img src="{% static 'images/profile.png' %}" alt="Default Profile Photo" 
+             class="rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover; border-radius: 50%; border: 2px solid #ccc;">
+        {% endif %}
         <div>
           <strong>
             {% if post.user.athlete %}
@@ -89,20 +92,25 @@
   
 </form>
 
-{% if not user.is_superuser%}
-    <form action="{% url 'posts:like_post' post.id %}" method="POST" class="d-inline">
-      {% csrf_token %}
-      {% if liked %}
-        <button type="submit" class="btn btn-sm text-danger border-0 bg-transparent p-0">
-          <i class="bi bi-heart-fill" style="font-size: 1.3rem;"></i> {{ post.total_likes }}
-        </button>
-      {% else %}
-        <button type="submit" class="btn btn-sm text-muted border-0 bg-transparent p-0">
-          <i class="bi bi-heart" style="font-size: 1.3rem;"></i> {{ post.total_likes }}
-        </button>
-      {% endif %}
-    </form>
-{% endif %}  
+ <!-- Like/Unlike -->
+ {% if not user.is_superuser %}
+ <form action="{% url 'posts:like_post' post.id %}" method="POST" class="like-form d-inline">
+     {% csrf_token %}
+     <button type="submit" class="btn btn-sm border-0 bg-transparent p-0 like-btn" data-post-id="{{ post.id }}">
+         {% if post.is_liked %}
+             <i class="bi bi-heart-fill" style="font-size: 1.3rem;"></i> <span class="like-count">{{ post.total_likes }}</span>
+         {% else %}
+             <i class="bi bi-heart" style="font-size: 1.3rem;"></i> <span class="like-count">{{ post.total_likes }}</span>
+         {% endif %}
+     </button>
+ </form>
+ {% else %}
+ <!-- Show non-clickable heart and like count for superusers -->
+ <span class="btn btn-sm border-0 bg-transparent p-0">
+     <i class="bi bi-heart" style="font-size: 1.3rem; color: gray;"></i>
+     <span class="like-count">{{ post.total_likes }}</span>
+ </span>
+ {% endif %} 
 </div>
 
   <!-- Right: Comments count -->

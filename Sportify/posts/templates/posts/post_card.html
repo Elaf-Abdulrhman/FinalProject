@@ -49,18 +49,24 @@
             {% endif %}
 
             <!-- Like/Unlike -->
-            {% if not user.is_superuser%}
-            <form action="{% url 'posts:like_post' post.id %}" method="POST" class="like-form d-inline">
-                {% csrf_token %}
-                <button type="submit" class="btn btn-sm border-0 bg-transparent p-0 like-btn" data-post-id="{{ post.id }}">
-                    {% if post.is_liked %}
-                        <i class="bi bi-heart-fill" style="font-size: 1.3rem;"></i> <span class="like-count">{{ post.total_likes }}</span>
-                    {% else %}
-                        <i class="bi bi-heart" style="font-size: 1.3rem;"></i> <span class="like-count">{{ post.total_likes }}</span>
-                    {% endif %}
-                </button>
-            </form>
-            {% endif %}
+              {% if not user.is_superuser %}
+              <form action="{% url 'posts:like_post' post.id %}" method="POST" class="like-form d-inline">
+                  {% csrf_token %}
+                  <button type="submit" class="btn btn-sm border-0 bg-transparent p-0 like-btn" data-post-id="{{ post.id }}">
+                      {% if post.is_liked %}
+                          <i class="bi bi-heart-fill" style="font-size: 1.3rem;"></i> <span class="like-count">{{ post.total_likes }}</span>
+                      {% else %}
+                          <i class="bi bi-heart" style="font-size: 1.3rem;"></i> <span class="like-count">{{ post.total_likes }}</span>
+                      {% endif %}
+                  </button>
+              </form>
+              {% else %}
+              <!-- Show non-clickable heart and like count for superusers -->
+              <span class="btn btn-sm border-0 bg-transparent p-0">
+                  <i class="bi bi-heart" style="font-size: 1.3rem; color: gray;"></i>
+                  <span class="like-count">{{ post.total_likes }}</span>
+              </span>
+              {% endif %}
         </div>
     </div>
 
