@@ -154,8 +154,8 @@ MOYASAR_SECRET_KEY = 'sk_test_sF2ML8JKf8QhAL7mrtVBrgXs5p4tjKvVrhFXLJG1'
 ## Email settings
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
+# Looking to send emails in production? Check out our Email API/SMTP product!
 EMAIL_HOST = 'sandbox.smtp.mailtrap.io'
-EMAIL_HOST_USER = '610a714a870619'
-EMAIL_HOST_PASSWORD = 'b22bb980dc6572'
-EMAIL_PORT = 2525
-
+EMAIL_HOST_USER = '99de0f668b3ead'
+EMAIL_HOST_PASSWORD = '741b91197d9c9a'
+EMAIL_PORT = '2525'
