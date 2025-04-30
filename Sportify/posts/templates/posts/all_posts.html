@@ -7,7 +7,6 @@
 <div class="container mt-5 p-3" style="max-width: 900px;">
   <h2 class="text-center mb-4">Recent Posts</h2>
 
-  <!-- Filter Form -->
   <form method="get" class="row g-2 mb-4">
     <div class="col-md-3">
       <select name="sport" class="form-select">
@@ -40,26 +39,22 @@
     </div>
   </form>
 
-  <!-- Add Post Button -->
   {% if user.is_authenticated and not user.is_superuser %}
     <div class="text-end mt-4 p-3">
       <a href="{% url 'posts:add_post' %}" class="btn btn-dark">+ Add Post</a>
     </div>
   {% endif %}
 
-  <!-- Posts List -->
   <div id="posts-container">
     {% include 'posts/post_card.html' %}
   </div>
 
-  <!-- Loading Spinner -->
   <div id="loading-spinner" class="text-center my-4" style="display: none;">
     <div class="spinner-border text-primary" role="status">
       <span class="visually-hidden">Loading...</span>
     </div>
   </div>
 
-  <!-- No Posts Message -->
   {% if not posts %}
     <p class="text-center">No posts available yet.</p>
   {% endif %}

@@ -1,11 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse, HttpResponseForbidden
-from django.utils import timezone
-from .models import Offer
-from .forms import OfferForm
-from account.models import Club
-from datetime import timedelta
-from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+
 
 from django.utils import timezone
 from datetime import timedelta
@@ -24,9 +20,10 @@ def add_offer(request):
     if not club.is_premium:
         one_week_ago = timezone.now() - timedelta(days=7)
         offers_last_week = Offer.objects.filter(user=request.user, created_at__gte=one_week_ago).count()
+
         if offers_last_week >= 3:
-            messages.error(request, "You can only post 3 offers per week. Upgrade your plan to post unlimited offers!", "alert-danger")
-            return redirect('offers:all_offers')
+            messages.error(request, "You can only post 3 offers per week. Upgrade your plan to post unlimited offers!","alert-danger")
+            return redirect(request.META.get('HTTP_REFERER', '/'))
 
     if request.method == 'POST':
         form = OfferForm(request.POST, request.FILES)
@@ -87,3 +84,14 @@ def edit_offer(request, pk):
     else:
         form = OfferForm(instance=offer)
     return render(request, 'offers/edit_offer.html', {'form': form, 'offer': offer})
+
+
+
+@login_required
+def my_offers(request):
+    if not hasattr(request.user, 'club'):
+        return redirect('offers:all_offers')
+
+    user_offers = Offer.objects.filter(user=request.user).order_by('-created_at')
+
+    return render(request, 'offers/my_offers.html', {'offers': user_offers})
