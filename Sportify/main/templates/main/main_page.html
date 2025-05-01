@@ -71,6 +71,8 @@ body {
   font-style: normal;
   font-variation-settings:
     "wdth" 89.8;
+    
+
 }
 
 
@@ -159,14 +161,14 @@ body {
             <div class="card d-flex flex-row align-items-center p-3">
                 <!-- Profile Photo -->
                 <div class="me-3">
-                  <img src="{% if athlete.profilePhoto %}{{ athlete.profilePhoto.url }}{% else %}{% static 'images/profile.png' %}{% endif %}" 
-                       alt="Profile Photo" 
+                  <img src="{% if athlete.profilePhoto %}{{ athlete.profilePhoto.url }}{% else %}{% static 'images/profile.png' %}{% endif %}"
+                       alt="Profile Photo"
                        style="width: 5rem; height: 5rem; object-fit: cover; border-radius: 50%; border: 2px solid #ccc;">
                 </div>
                 <!-- Athlete Info -->
                 <div>
                     <h5 class="mb-1">{{ athlete.user.first_name }}</h5>
-                    <a class="link-secondary link-offset-3 link-underline-opacity-0 link-underline-opacity-75-hover" 
+                    <a class="link-secondary link-offset-3 link-underline-opacity-0 link-underline-opacity-75-hover"
                        href="{% url 'account:profile_view' athlete.user.id %}">
                        <h6 class="card-title mb-2">@{{ athlete.user.username }}</h6>
                     </a>

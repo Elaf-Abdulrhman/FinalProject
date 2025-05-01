@@ -14,6 +14,9 @@ class Post(models.Model):
     def total_bookmarks(self):
         return self.bookmarked_by.count()
 
+    def is_liked_by(self, user):
+        return self.likes.filter(user=user).exists()
+
     def __str__(self):
         username = self.user.username if self.user else "Unknown User"
         return f"Post by {username} on {self.created_at.strftime('%Y-%m-%d')}"
