@@ -91,7 +91,10 @@ def login_view(request):
                 pass
 
             login(request, user)
-            return redirect('main:main_page_view')
+            if request.user.is_superuser:
+                return redirect("admins:dashboard")
+            else:
+                return redirect('main:main_page_view')
         else:
             messages.error(request, "Invalid username or password.")
     else:
