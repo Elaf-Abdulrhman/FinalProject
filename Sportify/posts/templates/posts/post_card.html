@@ -35,28 +35,30 @@
             <form action="{% url 'bookmarks:bookmark_post' post.id %}" method="POST" class="bookmark-form d-inline">
                 {% csrf_token %}
                 <button type="submit" class="btn btn-sm border-0 bg-transparent p-0 bookmark-btn" data-post-id="{{ post.id }}">
-                    {% if post.is_bookmarked %}
-                        <i class="bi bi-bookmark-fill" style="font-size: 1.2rem;"></i>
+                   {% if post.id in bookmarked_post_ids %}
+                        <i class="bi bi-bookmark-fill" style="font-size: 1.2rem"></i>
                     {% else %}
-                        <i class="bi bi-bookmark" style="font-size: 1.2rem;"></i>
+                        <i class="bi bi-bookmark" style="font-size: 1.2rem"></i>
                     {% endif %}
+
                 </button>
             </form>
             {% endif %}
 
-            <!-- Like/Unlike -->
-            {% if not user.is_superuser%}
-            <form action="{% url 'posts:like_post' post.id %}" method="POST" class="like-form d-inline">
-                {% csrf_token %}
-                <button type="submit" class="btn btn-sm border-0 bg-transparent p-0 like-btn" data-post-id="{{ post.id }}">
-                    {% if post.is_liked %}
-                        <i class="bi bi-heart-fill" style="font-size: 1.3rem;"></i> <span class="like-count">{{ post.total_likes }}</span>
-                    {% else %}
-                        <i class="bi bi-heart" style="font-size: 1.3rem;"></i> <span class="like-count">{{ post.total_likes }}</span>
-                    {% endif %}
-                </button>
-            </form>
+
+                    {% if not user.is_superuser %}
+                    <form action="{% url 'posts:like_post' post.id %}" method="POST" class="like-form d-inline">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-sm border-0 bg-transparent p-0 like-btn" data-post-id="{{ post.id }}">
+                            {% if post.is_liked %}
+                                <i class="bi bi-heart-fill text-danger" style="font-size: 1.3rem;"></i> <span class="like-count">{{ post.total_likes }}</span>
+                            {% else %}
+                                <i class="bi bi-heart" style="font-size: 1.3rem;"></i> <span class="like-count">{{ post.total_likes }}</span>
+                            {% endif %}
+                        </button>
+                    </form>
             {% endif %}
+
         </div>
     </div>
 
