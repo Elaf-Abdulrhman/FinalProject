@@ -25,8 +25,44 @@ p {
     margin-bottom: 1.5rem;
 }
 
+.club-photo-wrapper {
+    position: relative;
+    width: 8rem;
+    height: 8rem;
+    margin: 1rem;
+  }
 
- 
+  .club-photo-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 3px solid #ccc;
+    transition: transform 0.3s ease;
+  }
+
+  .club-photo-wrapper:hover img {
+    transform: scale(1.05);
+  }
+
+  .club-hover-name {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.7);
+    color: #fff;
+    padding: 0.3rem 0.6rem;
+    border-radius: 12px;
+    font-size: 0.9rem;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    white-space: nowrap;
+  }
+
+  .club-photo-wrapper:hover .club-hover-name {
+    opacity: 1;
+  }
 
 body {
   font-family: "Archivo", sans-serif;
@@ -50,7 +86,7 @@ body {
           <div class="p-5">
             <h2 class="fw-bold" style="color: white;">Welcome To Sportify</h2>
             <p style="color: white;">The platform where talents meet opportunity</p>
-            <a href="{% url 'main:about_page_view' %}" class="btn btn-light btn-lg" style="height: 3rem; width: 11rem;">Get to know us</a>
+            <a href="{% url 'main:about_page_view' %}" class="btn btn-light btn-lg" style="z-index: 10; position: relative; height: 3rem; width: 11rem;">Get to know us</a>
           </div>
         </div>
         <div style="flex: 1; height: 100%; overflow: hidden;">
@@ -65,7 +101,7 @@ body {
           <div class="p-5">
             <h2 class="fw-bold" style="color: white;">Sign Up as a Club</h2>
             <p style="color: white;">The platform where you can find athletes that match your team.</p>
-            <a href="{% url 'main:about_page_view' %}" class="btn btn-light btn-lg" style="height: 3rem; width: 11rem;">Get to know us</a>
+            <a href="{% url 'account:signup_club_view' %}" class="btn btn-light btn-lg" style="z-index: 10; position: relative; height: 3rem; width: 11rem;">Sign Up</a>
           </div>
         </div>
         <div style="flex: 1; height: 100%; overflow: hidden;">
@@ -80,7 +116,7 @@ body {
           <div class="p-5">
             <h2 class="fw-bold" style="color: white;">Sign Up as an Athlete</h2>
             <p style="color: white;">The platform where clubs can find you.</p>
-            <a href="{% url 'main:about_page_view' %}" class="btn btn-light btn-lg" style="height: 3rem; width: 11rem;">Get to know us</a>
+            <a href="{% url 'account:signup_athlete_view' %}" class="btn btn-light btn-lg" style="z-index: 10; position: relative; height: 3rem; width: 11rem;">Sign up</a>
           </div>
         </div>
         <div style="flex: 1; height: 100%; overflow: hidden;">
@@ -97,39 +133,21 @@ body {
   </button>
 
 </div>
-<div class="clubs-section" style="padding: 2rem;">
-    <div class="container">
-        <h2 class="text-center mb-4">Explore Our Clubs</h2>
-        <div class="row justify-content-center">
-            <!-- Club Card -->
-            <div class="  col-6 col-md-3 mb-4">
-                <a href="#" class="card" style="text-decoration: none;    border-radius: 15px;">
-                    <div style="border: 1px solid #ccc ; border-radius: 12px; overflow: hidden; text-align: center; transition: 0.3s; padding: 1rem; height: 250px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                        <img src="{% static 'images/itef.svg.png' %}" alt="Club 1" style="width: 100px; height: 100px; object-fit: cover; border-radius: 50%; margin-bottom: 1rem;">
-                        <h5 style="margin: 0; font-size: 1rem;">Club 1</h5>
-                    </div>
-                </a>
-            </div>
-            <!-- card -->
-            <div class="col-6 col-md-3 mb-4">
-                <a href="#" class="card" style="text-decoration: none;    border-radius: 15px;">
-                    <div style="border: 1px solid #ccc; border-radius: 12px; overflow: hidden; text-align: center; transition: 0.3s; padding: 1rem; height: 250px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                        <img src="{% static 'images/shabab.svg.png' %}" alt="Club 2" style="width: 100px; height: 100px; object-fit: cover; border-radius: 50%; margin-bottom: 1rem;">
-                        <h5 style="margin: 0; font-size: 1rem;">Club 2</h5>
-                    </div>
-                </a>
-            </div>
-            <!-- card -->
-            <div class="col-6 col-md-3 mb-4">
-                <a href="#" class="card" style="text-decoration: none;    border-radius: 15px;">
-                    <div style="border: 1px solid #ccc; border-radius: 12px; overflow: hidden; text-align: center; transition: 0.3s; padding: 1rem; height: 250px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                        <img src="{% static 'images/ta.svg.png' %}" alt="Club 3" style="width: 100px; height: 100px; object-fit: cover; border-radius: 50%; margin-bottom: 1rem;">
-                        <h5 style="margin: 0; font-size: 1rem;">Club 3</h5>
-                    </div>
-                </a>
-            </div>
+
+<div class="clubs-section py-5">
+  <div class="container text-center"> 
+    <h2 class="mb-4">Explore Our Clubs</h2>
+    <div class="d-flex flex-wrap justify-content-center">
+      {% for club in clubs %}
+        <div class="club-photo-wrapper">
+          <a href="{% url 'account:profile_view' club.user.id %}">
+            <img src="{% if club.photo %}{{ club.photo.url }}{% else %}{% static 'images/profile.png' %}{% endif %}" alt="Club Photo">
+            <div class="club-hover-name">{{ club.user.clubName }}</div>
+          </a>
         </div>
+      {% endfor %}
     </div>
+  </div>
 </div>
 
 <div class="athletes-section" style="padding: 2rem;">
