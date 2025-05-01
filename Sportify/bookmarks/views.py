@@ -3,7 +3,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.http import JsonResponse
 from .models import Bookmark
 from posts.models import Post
-from .models import Bookmark
+from django.contrib.auth.models import User
 
 @login_required
 def bookmark_post(request, post_id):
@@ -44,3 +44,20 @@ def all_bookmarks(request):
         'liked_posts': liked_posts,
         'bookmarked_posts': bookmarked_posts,
     })
+
+@login_required
+def bookmark_profile(request, profile_id):
+    profile = get_object_or_404(User, id=profile_id)
+    bookmark, created = Bookmark.objects.get_or_create(user=request.user, profile=profile)
+
+    if not created:
+        # If the bookmark already exists, remove it
+        bookmark.delete()
+
+    # Redirect back to the profile page
+    return redirect('account:profile_view', user_id=profile.id)
+
+@login_required
+def all_bookmarked_profiles(request):
+    bookmarks = Bookmark.objects.filter(user=request.user, profile__isnull=False)
+    return render(request, 'bookmarks/all_bookmarked_profiles.html', {'bookmarks': bookmarks})

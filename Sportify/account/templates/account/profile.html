@@ -56,9 +56,9 @@ h5, h6 {
     <!-- Profile Card -->
     <div class="profile-card d-flex justify-content-between align-items-center mb-5">
         <div class="d-flex align-items-center">
-            {% if request.user.is_authenticated and request.user.athlete %}
-                {% if request.user.athlete.profilePhoto %}
-                    <img src="{{ request.user.athlete.profilePhoto.url }}" alt="Profile Photo" class="profile-img me-3">
+            {% if user.is_authenticated and user.athlete %}
+                {% if user.athlete.profilePhoto %}
+                    <img src="{{ user.athlete.profilePhoto.url }}" alt="Profile Photo" class="profile-img me-3">
                 {% else %}
                     <img src="{% static 'images/userprofile.png' %}" alt="Default Photo" class="profile-img me-3">
                 {% endif %}
@@ -91,7 +91,7 @@ h5, h6 {
 
                 </div>
             {% else %}
-                <img src="{{ request.user.club.photo.url }}" alt="Club Profile Photo" class="profile-img me-3">
+                <img src="{{ user.club.photo.url }}" alt="Club Profile Photo" class="profile-img me-3">
                 <div>
                     <h5 class="fw-bold">{{ user.club.clubName }} <i class="bi bi-patch-check-fill"></i></h5>
                     <h6>@{{ user.username }}</h6>
@@ -198,6 +198,18 @@ h5, h6 {
                     </div>
                 </div>
             </a>
+{% endif %}
+
+{% if request.user.is_authenticated and not user.is_superuser %}
+    <!-- bookmarked profiles Card -->
+    <a href="{% url 'bookmarks:all_bookmarked_profiles' %}" class="text-decoration-none text-dark">
+        <div class="profile-card mb-4 text-center">
+            <h6 class="fw-bold">Bookmarked Profiles</h6>
+            <div class="bookmark-icon d-block mt-2">
+                <i class="bi bi-card-heading"></i>
+            </div>
+        </div>
+    </a>
 {% endif %}
 
         <!-- Offers Card-->

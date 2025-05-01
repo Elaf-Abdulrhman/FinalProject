@@ -1,0 +1,24 @@
+{% extends 'main/base.html' %}
+
+{% block title %}My Bookmarked Profiles{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center mb-4">My Bookmarked Profiles</h2>
+    <div class="row">
+        {% for bookmark in bookmarks %}
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <div class="card-body text-center">
+                    <img src="{{ bookmark.profile.profile.image.url }}" alt="Profile Photo" class="rounded-circle mb-3" style="width: 80px; height: 80px; object-fit: cover;">
+                    <h5 class="card-title">{{ bookmark.profile.username }}</h5>
+                    <a href="{% url 'account:profile_view' bookmark.profile.id %}" class="btn btn-primary btn-sm">View Profile</a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <p class="text-center text-muted">You have no bookmarked profiles.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
