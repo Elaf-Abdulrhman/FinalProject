@@ -200,7 +200,7 @@ h5, h6 {
             </a>
 {% endif %}
 
-{% if request.user.is_authenticated and not user.is_superuser %}
+{% if request.user == user and not user.is_superuser %}
     <!-- bookmarked profiles Card -->
     <a href="{% url 'bookmarks:all_bookmarked_profiles' %}" class="text-decoration-none text-dark">
         <div class="profile-card mb-4 text-center">
