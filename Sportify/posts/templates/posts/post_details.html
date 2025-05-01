@@ -13,15 +13,15 @@
       <div class="d-flex align-items-center">
         <!-- Profile Photo -->
         {% if post.user.athlete and post.user.athlete.profilePhoto %}
-    <img src="{{ request.user.athlete.profilePhoto.url }}" alt="Profile Photo" 
-         class="rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover; border-radius: 50%; border: 2px solid #ccc;">
-{% elif post.user.club and post.user.club.photo %}
-    <img src="{{ request.user.club.photo.url }}" alt="Profile Photo" class="rounded-circle me-2" style="width: 40px; 
-    height: 40px; object-fit: cover; border-radius: 50%; border: 2px solid #ccc;">
-{% else %}
-    <img src="{% static 'images/profile.png' %}" alt="Default Profile Photo" 
-         class="rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover; border-radius: 50%; border: 2px solid #ccc;">
-{% endif %}
+                <img src="{{ post.user.athlete.profilePhoto.url }}" alt="Profile Photo"
+                     class="rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover; border-radius: 50%; border: 2px solid #ccc;">
+            {% elif post.user.club and post.user.club.photo %}
+                <img src="{{ post.user.club.photo.url }}" alt="Profile Photo"
+                     class="rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover; border-radius: 50%; border: 2px solid #ccc;">
+            {% else %}
+                <img src="{% static 'images/profile.png' %}" alt="Default Profile Photo"
+                     class="rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover; border-radius: 50%; border: 2px solid #ccc;">
+            {% endif %}
         <div>
           <strong>
             {% if post.user.athlete %}
