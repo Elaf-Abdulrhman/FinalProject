@@ -207,10 +207,10 @@ h5, h6 {
 
         <!-- Offers Card-->
           {% if user.is_authenticated and user.club %}
-            <a href="{% url 'offers:my_offers' %}" class="text-decoration-none text-dark">
+            <a href="{% url 'offers:my_offers' user.club.id %}" class="text-decoration-none text-dark">
                 <div class="profile-card mb-4 text-center">
                     <h6 class="fw-bold">Offers</h6>
-                                <div class="bookmark-icon d-block mt-2">
+                    <div class="bookmark-icon d-block mt-2">
                         <i class="bi bi-card-heading"></i>
                     </div>
                 </div>

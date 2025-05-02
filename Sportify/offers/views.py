@@ -1,8 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse, HttpResponseForbidden
 from django.contrib.auth.decorators import login_required
-
-
 from django.utils import timezone
 from datetime import timedelta
 from django.contrib import messages
@@ -10,6 +8,7 @@ from django.shortcuts import redirect, render
 from django.http import HttpResponseForbidden
 from .forms import OfferForm
 from .models import Offer
+from account.models import Club
 
 def add_offer(request):
     if not hasattr(request.user, 'club'):
@@ -88,10 +87,11 @@ def edit_offer(request, pk):
 
 
 @login_required
-def my_offers(request):
-    if not hasattr(request.user, 'club'):
-        return redirect('offers:all_offers')
+def my_offers(request, club_id):
+    # Get the club by ID
+    club = get_object_or_404(Club, id=club_id)
 
-    user_offers = Offer.objects.filter(user=request.user).order_by('-created_at')
+    # Filter offers for the specific club
+    club_offers = Offer.objects.filter(user=club.user).order_by('-created_at')
 
-    return render(request, 'offers/my_offers.html', {'offers': user_offers})
+    return render(request, 'offers/my_offers.html', {'offers': club_offers, 'club': club})
