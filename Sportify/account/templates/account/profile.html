@@ -52,7 +52,7 @@ h5, h6 {
 </style>
 
 <div class="container my-5" style="max-width: 1000px;">
-    {% if not request.user == user and not request.user.is_superuser %}
+    {% if request.user.is_authenticated and not request.user == user and not request.user.is_superuser %}
     <form method="post" action="{% url 'bookmarks:bookmark_profile' user.id %}">
         {% csrf_token %}
         <button type="submit" class="btn btn-link p-0">
@@ -206,7 +206,7 @@ h5, h6 {
 
 
         <!-- Offers Card-->
-          {% if user.is_authenticated and user.club %}
+        {% if request.user.is_authenticated and user.club %}
             <a href="{% url 'offers:my_offers' user.club.id %}" class="text-decoration-none text-dark">
                 <div class="profile-card mb-4 text-center">
                     <h6 class="fw-bold">Offers</h6>
