@@ -123,7 +123,7 @@ def profile_view(request: HttpRequest, user_id):
     try:
         athlete = Athlete.objects.get(user=user)
         if athlete.isPrivate and request.user != user:
-            messages.warning(request, "This account is private.")
+            #messages.warning(request, "This account is private.")
             return render(request, "account/private_profile.html")
     except Athlete.DoesNotExist:
         pass
