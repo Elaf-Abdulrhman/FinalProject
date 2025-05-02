@@ -52,7 +52,7 @@ h5, h6 {
 </style>
 
 <div class="container my-5" style="max-width: 1000px;">
-    {% if not request.user == user %}
+    {% if not request.user == user and not request.user.is_superuser %}
     <form method="post" action="{% url 'bookmarks:bookmark_profile' user.id %}">
         {% csrf_token %}
         <button type="submit" class="btn btn-link p-0">
