@@ -52,23 +52,6 @@ h5, h6 {
 </style>
 
 <div class="container my-5" style="max-width: 1000px;">
-    {% if request.user.is_authenticated and not request.user == user and not request.user.is_superuser %}
-    <form method="post" action="{% url 'bookmarks:bookmark_profile' user.id %}">
-        {% csrf_token %}
-        <button type="submit" class="btn btn-link p-0">
-            {% if bookmarked_profiles %}
-                <div class="bookmark-icon d-block mt-2">
-                    <i class="bi bi-bookmark-fill"></i>
-                </div>
-            {% else %}
-                <div class="bookmark-icon d-block mt-2">
-                    <i class="bi bi-bookmark"></i>
-                </div>
-            {% endif %}
-        </button>
-    </form>
-    {% endif %}
-
 
     <!-- Profile Card -->
     <div class="profile-card d-flex justify-content-between align-items-center mb-5">
@@ -85,7 +68,6 @@ h5, h6 {
                         {% endif %}</h5>
                     <h6>@{{ user.username }}</h6>
 
-                    <!-- BIO -->
                     {% if user.athlete.bio %}
                         <div class="small text-muted mb-1">{{ user.athlete.bio }}</div>
                     {% endif %}
@@ -98,10 +80,8 @@ h5, h6 {
                             <div class="me-3"><i class="bi bi-trophy"></i> {{ user.athlete.sport }}</div>
                         {% endif %}
                         {% if user.athlete.dateOfBirth %}
-<div>
-                                {% if user.athlete.dateOfBirth %}
-                            <p><i class="bi bi-calendar"></i> Date of Birth: {{ user.athlete.dateOfBirth|date:"F d, Y" }}</p>
-                        {% endif %}
+                            <div>
+                                <p><i class="bi bi-calendar"></i> Date of Birth: {{ user.athlete.dateOfBirth|date:"F d, Y" }}</p>
                             </div>
                         {% endif %}
                     </div>
@@ -130,7 +110,7 @@ h5, h6 {
             {% endif %}
         </div>
 
-        <div class="d-inline align-items-center">
+        <div class="d-inline align-items-center text-end">
             {% if request.user == user %}
                 {% if user.athlete %}
                     <a href="{% url 'account:edit_profile_athlete_view' user.id %}" class="btn edit-btn me-3">Edit Profile</a>
@@ -139,7 +119,20 @@ h5, h6 {
                 {% endif %}
             {% endif %}
 
-            <div class="social-icons">
+            {% if request.user.is_authenticated and not request.user == user and not request.user.is_superuser %}
+                <form method="post" action="{% url 'bookmarks:bookmark_profile' user.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-link p-0">
+                        {% if is_bookmarked %}
+                            <i class="bi bi-bookmark-fill" style="color: black; font-size: 24px;"></i>
+                        {% else %}
+                            <i class="bi bi-bookmark" style="color: black;font-size: 24px; "></i>
+                        {% endif %}
+                    </button>
+                </form>
+            {% endif %}
+
+            <div class="social-icons mt-2">
                 {% if user.athlete %}
                     {% if user.athlete.facebook %}
                         <a href="{{ user.athlete.facebook }}"><i class="bi bi-facebook"></i></a>
@@ -162,12 +155,11 @@ h5, h6 {
                     {% endif %}
                 {% endif %}
             </div>
-
         </div>
     </div>
 
     <div class="row">
-        <!-- Left Sidebar -->
+
         <div class="col-md-3">
             <div class="profile-card mb-4">
                 {% if request.user.is_authenticated and user.athlete %}
@@ -180,7 +172,6 @@ h5, h6 {
                 {% if request.user.is_authenticated and user.athlete %}
                     <p>Phone: {{ user.athlete.phoneNumber|default:"-" }}</p>
                     <hr>
-
                     {% if user.athlete.height %}
                         <p>Height: {{ user.athlete.height }} cm</p>
                     {% endif %}
@@ -190,76 +181,62 @@ h5, h6 {
                 {% endif %}
             </div>
 
-{% if request.user == user %}
-    <a href="{% url 'bookmarks:all_bookmarks' %}" class="text-decoration-none text-dark">
-            <div class="profile-card mb-4 text-center">
-                <h6 class="fw-bold">Bookmark</h6>
-                <div class="bookmark-icon d-block mt-2">
-                    <i class="bi bi-bookmark"></i>
-                </div>
-                </div>
-                </a>
-        {% endif %}
-
-
-
-
-
-        <!-- Offers Card-->
-        {% if request.user.is_authenticated and user.club %}
-            <a href="{% url 'offers:my_offers' user.club.id %}" class="text-decoration-none text-dark">
-                <div class="profile-card mb-4 text-center">
-                    <h6 class="fw-bold">Offers</h6>
-                    <div class="bookmark-icon d-block mt-2">
-                        <i class="bi bi-card-heading"></i>
+            {% if request.user == user %}
+                <a href="{% url 'bookmarks:all_bookmarks' %}" class="text-decoration-none text-dark">
+                    <div class="profile-card mb-4 text-center">
+                        <h6 class="fw-bold">Bookmark</h6>
+                        <div class="bookmark-icon d-block mt-2">
+                            <i class="bi bi-bookmark"></i>
+                        </div>
                     </div>
-                </div>
-            </a>
-{% endif %}
+                </a>
+            {% endif %}
 
-{% if request.user == user and not user.is_superuser %}
-    <!-- bookmarked profiles Card -->
-    <a href="{% url 'bookmarks:all_bookmarked_profiles' %}" class="text-decoration-none text-dark">
-        <div class="profile-card mb-4 text-center">
-            <h6 class="fw-bold">Bookmarked Profiles</h6>
-            <div class="bookmark-icon d-block mt-2">
-                <i class="bi bi-card-heading"></i>
-            </div>
+            {% if request.user.is_authenticated and user.club %}
+                <a href="{% url 'offers:my_offers' user.club.id %}" class="text-decoration-none text-dark">
+                    <div class="profile-card mb-4 text-center">
+                        <h6 class="fw-bold">Offers</h6>
+                        <div class="bookmark-icon d-block mt-2">
+                            <i class="bi bi-card-heading"></i>
+                        </div>
+                    </div>
+                </a>
+            {% endif %}
+
+            {% if request.user == user and not user.is_superuser %}
+                <a href="{% url 'bookmarks:all_bookmarked_profiles' %}" class="text-decoration-none text-dark">
+                    <div class="profile-card mb-4 text-center">
+                        <h6 class="fw-bold">Bookmarked Profiles</h6>
+                        <div class="bookmark-icon d-block mt-2">
+                            <i class="bi bi-card-heading"></i>
+                        </div>
+                    </div>
+                </a>
+            {% endif %}
         </div>
-    </a>
-{% endif %}
 
-        <!-- Offers Card-->
-        </div>
-
-        <!-- Posts Section -->
+        <!-- Posts -->
         <div class="col-md-9">
             <div class="profile-card">
-                <div class="d-flex justify-content-between align-items-center mb-4"> 
+                <div class="d-flex justify-content-between align-items-center mb-4">
                     {% if request.user == user %}
-                      <h5 class="fw-bold mb-0">My Posts</h5>
-                      <a href="{% url 'posts:add_post' %}" class="dark">
-                        <i class="bi bi-plus-lg" style="color: black; font-size: 24px;"></i>
-                      </a>
+                        <h5 class="fw-bold mb-0">My Posts</h5>
+                        <a href="{% url 'posts:add_post' %}" class="dark">
+                            <i class="bi bi-plus-lg" style="color: black; font-size: 24px;"></i>
+                        </a>
                     {% else %}
-                      <h5 class="fw-bold mb-0">{{ user.username }}'s Posts</h5>
+                        <h5 class="fw-bold mb-0">{{ user.username }}'s Posts</h5>
                     {% endif %}
-                  </div>
-
-
-
-
+                </div>
 
                 <div class="container">
                     <div class="row justify-content-center">
                         <div class="col-md-8">
-
                             {% if posts %}
-                                    {% include "posts/post_card.html" %}
+                                {% include "posts/post_card.html" %}
                             {% else %}
                                 <p class="text-muted text-center">No posts yet.</p>
                             {% endif %}
-
                         </div>
                     </div>
                 </div>
@@ -268,6 +245,5 @@ h5, h6 {
     </div>
 
 </div>
-
 
 {% endblock %}

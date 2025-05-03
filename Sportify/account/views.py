@@ -110,24 +110,25 @@ def logout_view(request):
 
 def profile_view(request: HttpRequest, user_id):
     user = get_object_or_404(User, id=user_id)
-    bookmarked_profiles = Bookmark.objects.filter(user=request.user, profile=user).exists() if request.user.is_authenticated else False
 
-    # Add posts to the context
-    context = {
-        'user': user,
-        'bookmarked_profiles': bookmarked_profiles,
-        'posts': Post.objects.filter(user=user).order_by('-created_at').distinct(),
-    }
+    is_bookmarked = (
+        Bookmark.objects.filter(user=request.user, profile=user).exists()
+        if request.user.is_authenticated else False
+    )
 
-    # Check if the user is an athlete and their profile is private
+    # Check for privacy
     try:
         athlete = Athlete.objects.get(user=user)
         if athlete.isPrivate and request.user != user:
-            #messages.warning(request, "This account is private.")
             return render(request, "account/private_profile.html")
     except Athlete.DoesNotExist:
         pass
 
+    context = {
+        'user': user,
+        'is_bookmarked': is_bookmarked,
+        'posts': Post.objects.filter(user=user).order_by('-created_at').distinct(),
+    }
     return render(request, "account/profile.html", context)
 
 
