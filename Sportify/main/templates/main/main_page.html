@@ -62,59 +62,72 @@ body {
 
 <div id="sportifyCarousel" class="carousel slide" data-bs-ride="carousel" style="overflow: hidden;">
 
-  <div class="carousel-inner">
+  <!-- Carousel Indicators -->
+  <div class="carousel-indicators">
+    <button type="button" data-bs-target="#sportifyCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+    <button type="button" data-bs-target="#sportifyCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
+    <button type="button" data-bs-target="#sportifyCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
+  </div>
 
+  <div class="carousel-inner">
+    <!-- Slide 1 -->
     <div class="carousel-item active">
       <div class="d-flex align-items-center" style="height: 60vh; overflow: hidden;">
         <div class="d-flex flex-column justify-content-center p-5" style="flex: 1; height: 100%; background-color: #0C1518;">
           <div class="p-5">
-            <h2 class="fw-bold" style="color: white;">Welcome To Sportify</h2>
-            <p style="color: white;">The platform where talents meet opportunity</p>
+            <h2 class="fw-bold text-white">Welcome To Sportify</h2>
+            <p class="text-white">The platform where talents meet opportunity</p>
             <a href="{% url 'main:about_page_view' %}" class="btn btn-light btn-lg" style="z-index: 10; position: relative; height: 3rem; width: 11rem;">Get to know us</a>
           </div>
         </div>
         <div style="flex: 1; height: 100%; overflow: hidden;">
-          <img src="{% static 'images/p1.jpg' %}" alt="Sportify" style="width: 100%; height: 100%; object-fit: cover;">
+          <img src="{% static 'images/p1.jpg' %}" alt="Sportify" class="w-100 h-100" style="object-fit: cover;">
         </div>
       </div>
     </div>
 
+    <!-- Slide 2 -->
     <div class="carousel-item">
       <div class="d-flex align-items-center" style="height: 60vh; overflow: hidden;">
         <div class="d-flex flex-column justify-content-center p-5" style="flex: 1; height: 100%; background-color: #0C1518;">
           <div class="p-5">
-            <h2 class="fw-bold" style="color: white;">Sign Up as a Club</h2>
-            <p style="color: white;">The platform where you can find athletes that match your team.</p>
+            <h2 class="fw-bold text-white">Sign Up as a Club</h2>
+            <p class="text-white">The platform where you can find athletes that match your team.</p>
             <a href="{% url 'account:signup_club_view' %}" class="btn btn-light btn-lg" style="z-index: 10; position: relative; height: 3rem; width: 11rem;">Sign Up</a>
           </div>
         </div>
         <div style="flex: 1; height: 100%; overflow: hidden;">
-          <img src="{% static 'images/p3.jpg' %}" alt="Sign Up as Club" style="width: 100%; height: 100%; object-fit: cover;">
+          <img src="{% static 'images/p3.jpg' %}" alt="Sign Up as Club" class="w-100 h-100" style="object-fit: cover;">
         </div>
       </div>
     </div>
 
+    <!-- Slide 3 -->
     <div class="carousel-item">
       <div class="d-flex align-items-center" style="height: 60vh; overflow: hidden;">
         <div class="d-flex flex-column justify-content-center p-5" style="flex: 1; height: 100%; background-color: #0C1518;">
           <div class="p-5">
-            <h2 class="fw-bold" style="color: white;">Sign Up as an Athlete</h2>
-            <p style="color: white;">The platform where clubs can find you.</p>
+            <h2 class="fw-bold text-white">Sign Up as an Athlete</h2>
+            <p class="text-white">The platform where clubs can find you.</p>
             <a href="{% url 'account:signup_athlete_view' %}" class="btn btn-light btn-lg" style="z-index: 10; position: relative; height: 3rem; width: 11rem;">Sign up</a>
           </div>
         </div>
         <div style="flex: 1; height: 100%; overflow: hidden;">
-          <img src="{% static 'images/photo3.jpg' %}" alt="Sign Up as Athlete" style="width: 100%; height: 100%; object-fit: cover;">
+          <img src="{% static 'images/photo3.jpg' %}" alt="Sign Up as Athlete" class="w-100 h-100" style="object-fit: cover;">
         </div>
       </div>
     </div>
-
   </div>
 
-  <button class="carousel-control-prev" type="button" data-bs-target="#sportifyCarousel" data-bs-slide="prev">
+  <!-- Carousel Controls with Arrows 
+  <button class="carousel-control-prev" type="button" data-bs-target="#sportifyCarousel" data-bs-slide="prev" >
+    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Previous</span>
   </button>
   <button class="carousel-control-next" type="button" data-bs-target="#sportifyCarousel" data-bs-slide="next">
-  </button>
+    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Next</span>
+  </button> -->
 
 </div>
 
