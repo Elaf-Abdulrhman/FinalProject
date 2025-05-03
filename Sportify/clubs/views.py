@@ -1,17 +1,29 @@
-from django.shortcuts import render,redirect
-from django.http import HttpRequest,HttpResponse
-from account.models import Club
+from django.shortcuts import render
+from account.models import Club, Sport, City
 from django.db.models import Q
 
-# Create your views here.
 def all_clubs(request):
-    clubs = Club.objects.all()  
+    clubs = Club.objects.all()
+    sports = Sport.objects.all()
+    cities = City.objects.all()
 
-    search_query = request.GET.get("q", "")
-    if search_query:
+    q = request.GET.get("q", "")
+    sport_id = request.GET.get("sport")
+    city_id = request.GET.get("city")
+
+    if q:
         clubs = clubs.filter(
-            Q(clubName__icontains=search_query) |
-            Q(user__username__icontains=search_query)
+            Q(clubName__icontains=q) |
+            Q(user__username__icontains=q)
         )
+    if sport_id:
+        clubs = clubs.filter(sport__id=sport_id)
+    if city_id:
+        clubs = clubs.filter(city__id=city_id)
 
-    return render(request, 'clubs/all_clubs.html', {"clubs": clubs})
+    context = {
+        "clubs": clubs,
+        "sports": sports,
+        "cities": cities
+    }
+    return render(request, 'clubs/all_clubs.html', context)
