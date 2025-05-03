@@ -42,7 +42,6 @@
         
     }
   
-  
   .navbar-brand h5 {
     font-size: 1.5rem;
     font-weight: bold;
@@ -181,17 +180,12 @@ body{
           </li>
 
               <li class="nav-item">
-                  <a class="nav-link" href="{% url 'posts:all_posts'%}">All Posts</a>
+                  <a class="nav-link" href="{% url 'posts:all_posts'%}">Posts</a>
               </li>
 
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="clubsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-              Athletes
-            </a>
-            <ul class="dropdown-menu" aria-labelledby="clubsDropdown">
-              <li><a class="dropdown-item" href="{% url 'athlete:all_athletes'%}">All Athletes</a></li>
-            </ul>
-          </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'athlete:all_athletes'%}">Athletes</a>
+            </li>
 
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" id="clubsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -271,7 +265,6 @@ body{
         </div>
 
         <div class="col mb-3">
-          <h5>Section</h5>
           <ul class="nav flex-column">
             <li class="nav-item mb-2"><a href="{% url 'main:main_page_view'%}" class="nav-link p-0 text-muted">Home</a></li>
             <li class="nav-item mb-2"><a href="{% url 'main:about_page_view' %}" class="nav-link p-0 text-muted">About</a></li>
