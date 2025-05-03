@@ -45,7 +45,6 @@
             </form>
             {% endif %}
 
-
                     {% if not user.is_superuser %}
                     <form action="{% url 'posts:like_post' post.id %}" method="POST" class="like-form d-inline">
                         {% csrf_token %}
