@@ -205,3 +205,24 @@ def all_posts(request):
     }
 
     return render(request, 'posts/all_posts.html', context)
+    
+def latest_posts(request):
+    latest_posts = Post.objects.filter(
+        user__athlete__isPrivate=False
+    ).order_by('-created_at')[:6]
+
+    bookmarked_post_ids = set()
+    if request.user.is_authenticated:
+        bookmarked_post_ids = set(
+            Bookmark.objects.filter(user=request.user).values_list('post_id', flat=True)
+        )
+
+    for post in latest_posts:
+        post.is_liked = post.is_liked_by(request.user) if request.user.is_authenticated else False
+
+    context = {
+        'latest_posts': latest_posts,  # ✅ fixed key
+        'bookmarked_post_ids': bookmarked_post_ids,
+    }
+
+    return render(request, 'main/main_page.html', context)
