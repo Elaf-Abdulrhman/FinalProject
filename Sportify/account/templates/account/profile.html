@@ -49,13 +49,22 @@ h5, h6 {
 .bookmark-icon {
     font-size: 22px;
 }
+body.dark .profile-card{
+    background-color:  rgb(147, 147, 147); 
+    color: black;
+  }
+  body.dark .card{
+    background-color:  rgb(196, 195, 195); 
+    color: black;
+  }
+
 </style>
 
 <div class="container my-5" style="max-width: 1000px;">
 
     <!-- Profile Card -->
     <div class="profile-card d-flex justify-content-between align-items-center mb-5">
-        <div class="d-flex align-items-center">
+        <div class=" d-flex align-items-center">
             {% if user.is_authenticated and user.athlete %}
                 {% if user.athlete.profilePhoto %}
                     <img src="{{ user.athlete.profilePhoto.url }}" alt="Profile Photo" class="profile-img me-3">
@@ -206,7 +215,7 @@ h5, h6 {
         <!-- Posts Section -->
         <div class="col-md-9">
             <div class="profile-card">
-               <div class="d-flex justify-content-between align-items-center mb-4">
+               <div class=" d-flex justify-content-between align-items-center mb-4">
                   <h5 class="fw-bold mb-0">My Posts</h5>
 
                   {% if user.is_authenticated and not user.is_superuser %}

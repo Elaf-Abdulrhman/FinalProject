@@ -88,11 +88,41 @@
 
 body{
     
-      background-color: #f8f9fa;  
+  background-color: #f8f9fa;  
+}
+
+body.dark  {
+  background-color: rgb(40, 40, 40);
+  color: rgb(220, 220, 220);
+}
+
+body.dark h1, body.dark h2, body.dark h3 {
+  color:black;
+} 
+
+
+body.dark hr {
+  background-color: rgb(115, 115, 115);
 }
 
 
 
+.active-icon {
+  background-color: white;
+  border-radius: 50%;
+  color:black;
+}
+
+
+body.dark .card{
+  background-color:  rgb(196, 195, 195); 
+  color: black;
+}
+
+
+body.dark footer.nav-link {
+  color: white;
+}
 
 
   @keyframes fadeIn {
@@ -101,7 +131,7 @@ body{
   }
 </style>
   </head>
-  <body>
+  <body {% if "mode" in request.COOKIES and request.COOKIES.mode == "dark" %} class="dark" {% endif %}>
 <!--  -->
 <div class="container-fluid sticky-top top-navbar py-2">
   <nav class="navbar navbar-expand-lg navbar-light">
@@ -155,6 +185,14 @@ body{
           <li class="nav-item">
             <a class="nav-link" href="{% url 'contact:contact_us_view'%}">Contact Us</a>
           </li>
+
+          <li class="nav-item">
+            <div class="display-mode d-flex align-items-center gap-1">    
+              <a href="{% url 'main:mode_view' 'light' %}?next={{request.path}}" class="nav-link"><span class="material-symbols-outlined {% if 'mode' not in request.COOKIES or 'mode' in request.COOKIES and request.COOKIES.mode != 'dark' %} active-icon {% endif %}">light_mode</span></a>
+              <a href="{% url 'main:mode_view' 'dark' %}?next={{request.path}}" class="nav-link"><span class="material-symbols-outlined {% if 'mode' in request.COOKIES and request.COOKIES.mode == 'dark' %} active-icon {% endif %}">dark_mode</span></a>
+            </div>
+          </li>
+          
         </ul>
       </div>
       <div class="nav-right">
