@@ -10,6 +10,8 @@ from django.shortcuts import render,redirect,get_object_or_404
 from django.contrib.auth import logout,login
 from .forms import AthleteEditForm ,ClubEditForm
 from bookmarks.models import Bookmark
+from django.contrib.auth.models import User
+
 
 # Create your views here.
 
@@ -93,8 +95,10 @@ def login_view(request):
             login(request, user)
             if request.user.is_superuser:
                 return redirect("admins:dashboard")
+            elif hasattr(request.user, 'club'):
+                return redirect('clubs:club_dashboard')
             else:
-                return redirect('main:main_page_view')
+                return redirect('posts:all_posts')
         else:
             messages.error(request, "Invalid username or password.")
     else:

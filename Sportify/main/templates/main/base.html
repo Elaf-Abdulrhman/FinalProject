@@ -185,9 +185,11 @@ body.dark hr {
       <div class="collapse navbar-collapse nav-center" id="navbarsExample07">
         <ul class="navbar-nav d-flex gap-3 align-items-center mb-0">
 
+          {% if not request.user.is_authenticated %}
           <li class="nav-item">
             <a class="nav-link" href="{% url 'main:main_page_view'%}">Home</a>
           </li>
+          {% endif %}
 
           <li class="nav-item">
             <a class="nav-link" href="{% url 'main:about_page_view' %}">About</a>
@@ -216,6 +218,12 @@ body.dark hr {
               <a class="nav-link" href="{% url 'admins:dashboard'%}">Dashboard</a>
             </li>
           {% endif %}
+
+          {% if request.user.is_authenticated and request.user.club %}
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'clubs:club_dashboard'%}">Dashboard</a>
+          </li>
+        {% endif %}
 
           <li class="nav-item">
             <a class="nav-link" href="{% url 'contact:contact_us_view'%}">Contact Us</a>
