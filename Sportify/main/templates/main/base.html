@@ -94,7 +94,21 @@
 
 body{
     
-      background-color: #f8f9fa;  
+  background-color: #f8f9fa;  
+}
+
+body.dark  {
+  background-color: rgb(40, 40, 40);
+  color: rgb(220, 220, 220);
+}
+
+body.dark h1, body.dark h2, body.dark h3 {
+  color:black;
+} 
+
+
+body.dark hr {
+  background-color: rgb(115, 115, 115);
 }
 
 
@@ -162,7 +176,7 @@ body{
   }
 </style>
   </head>
-  <body>
+  <body {% if "mode" in request.COOKIES and request.COOKIES.mode == "dark" %} class="dark" {% endif %}>
 <!--  -->
 <div class="container-fluid sticky-top top-navbar py-2">
   <nav class="navbar navbar-expand-lg navbar-light">
@@ -176,9 +190,11 @@ body{
       <div class="collapse navbar-collapse nav-center" id="navbarsExample07">
         <ul class="navbar-nav d-flex gap-3 align-items-center mb-0">
 
+          {% if not request.user.is_authenticated %}
           <li class="nav-item">
             <a class="nav-link" href="{% url 'main:main_page_view'%}">Home</a>
           </li>
+          {% endif %}
 
           <li class="nav-item">
             <a class="nav-link" href="{% url 'main:about_page_view' %}">About</a>
@@ -208,9 +224,23 @@ body{
             </li>
           {% endif %}
 
+          {% if request.user.is_authenticated and request.user.club %}
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'clubs:club_dashboard'%}">Dashboard</a>
+          </li>
+        {% endif %}
+
           <li class="nav-item">
             <a class="nav-link" href="{% url 'contact:contact_us_view'%}">Contact Us</a>
           </li>
+
+          <li class="nav-item">
+            <div class="display-mode d-flex align-items-center gap-1">    
+              <a href="{% url 'main:mode_view' 'light' %}?next={{request.path}}" class="nav-link"><span class="material-symbols-outlined {% if 'mode' not in request.COOKIES or 'mode' in request.COOKIES and request.COOKIES.mode != 'dark' %} active-icon {% endif %}">light_mode</span></a>
+              <a href="{% url 'main:mode_view' 'dark' %}?next={{request.path}}" class="nav-link"><span class="material-symbols-outlined {% if 'mode' in request.COOKIES and request.COOKIES.mode == 'dark' %} active-icon {% endif %}">dark_mode</span></a>
+            </div>
+          </li>
+          
         </ul>
       </div>
       <div class="nav-right">

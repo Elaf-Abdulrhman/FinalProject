@@ -49,13 +49,32 @@ h5, h6 {
 .bookmark-icon {
     font-size: 22px;
 }
+body.dark .profile-card{
+    background-color: rgb(49, 49, 49);
+    color: white;
+    
+  }
+  body.dark .card{
+    background-color: rgb(62, 62, 62);
+    color: white;
+  }
+  body.dark .me-3{
+    color: white;
+  }
+  body.dark .bi.bi-calendar{
+    color: white;
+  }
+  body.dark .bi.bi-plus-lg{
+    color: white;
+  }
+
 </style>
 
 <div class="container my-5" style="max-width: 1000px;">
 
     <!-- Profile Card -->
-    <div class="profile-card d-flex justify-content-between align-items-center mb-5">
-        <div class="d-flex align-items-center">
+    <div class="profile-card d-flex justify-content-between align-items-center mb-5 shadow">
+        <div class=" d-flex align-items-center">
             {% if user.is_authenticated and user.athlete %}
                 {% if user.athlete.profilePhoto %}
                     <img src="{{ user.athlete.profilePhoto.url }}" alt="Profile Photo" class="profile-img me-3">
@@ -69,7 +88,7 @@ h5, h6 {
                     <h6>@{{ user.username }}</h6>
 
                     {% if user.athlete.bio %}
-                        <div class="small text-muted mb-1">{{ user.athlete.bio }}</div>
+                        <div class="me-3 small mb-1 ">{{ user.athlete.bio }}</div>
                     {% endif %}
 
                     <div class="d-flex flex-wrap small text-muted">

@@ -27,3 +27,7 @@ def all_clubs(request):
         "cities": cities
     }
     return render(request, 'clubs/all_clubs.html', context)
+
+
+def club_dashboard(request):
+    return render(request, 'clubs/club_dashboard.html')
