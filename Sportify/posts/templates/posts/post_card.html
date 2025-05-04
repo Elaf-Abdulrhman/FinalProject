@@ -1,8 +1,6 @@
 {% load static %}
 {% for post in posts %}
 <div class="card mb-3 shadow-sm p-3 position-relative">
-    <a href="{% url 'posts:post_details' post.id %}" class="stretched-link text-decoration-none text-dark"></a>
-
     <div class="d-flex justify-content-between align-items-start">
         <div class="d-flex align-items-center">
             {% if post.user.athlete and post.user.athlete.profilePhoto %}
@@ -32,7 +30,7 @@
         <div class="d-flex gap-3 z-1">
             <!-- Bookmark/Unbookmark -->
              {% if not user.is_superuser%}
-            <form action="{% url 'bookmarks:bookmark_post' post.id %}" method="POST" class="bookmark-form d-inline">
+            <form action="{% url 'bookmarks:bookmark_post' post.id %}" method="POST" class="bookmark-form d-inline position: relative; z-index: 1;">
                 {% csrf_token %}
                 <button type="submit" class="btn btn-sm border-0 bg-transparent p-0 bookmark-btn" data-post-id="{{ post.id }}">
                    {% if post.id in bookmarked_post_ids %}
@@ -46,7 +44,7 @@
             {% endif %}
 
                     {% if not user.is_superuser %}
-                    <form action="{% url 'posts:like_post' post.id %}" method="POST" class="like-form d-inline">
+                    <form action="{% url 'posts:like_post' post.id %}" method="POST" class="like-form d-inline position: relative; z-index: 1;">
                         {% csrf_token %}
                         <button type="submit" class="btn btn-sm border-0 bg-transparent p-0 like-btn" data-post-id="{{ post.id }}">
                             {% if post.is_liked %}
@@ -83,6 +81,8 @@
     <div class="text-end mt-3">
         {{ post.comments.count }} <i class="bi bi-chat" style="font-size: 1.3rem;"></i>
     </div>
+    <!-- Stretched link at the end to avoid covering buttons -->
+  <a href="{% url 'posts:post_details' post.id %}" class="stretched-link text-decoration-none text-dark"></a>
 </div>
 {% endfor %}
 <script>
