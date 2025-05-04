@@ -50,12 +50,22 @@ h5, h6 {
     font-size: 22px;
 }
 body.dark .profile-card{
-    background-color:  rgb(147, 147, 147); 
-    color: black;
+    background-color: rgb(49, 49, 49);
+    color: white;
+    
   }
   body.dark .card{
-    background-color:  rgb(196, 195, 195); 
-    color: black;
+    background-color: rgb(62, 62, 62);
+    color: white;
+  }
+  body.dark .me-3{
+    color: white;
+  }
+  body.dark .bi.bi-calendar{
+    color: white;
+  }
+  body.dark .bi.bi-plus-lg{
+    color: white;
   }
 
 </style>
@@ -63,7 +73,7 @@ body.dark .profile-card{
 <div class="container my-5" style="max-width: 1000px;">
 
     <!-- Profile Card -->
-    <div class="profile-card d-flex justify-content-between align-items-center mb-5">
+    <div class="profile-card d-flex justify-content-between align-items-center mb-5 shadow">
         <div class=" d-flex align-items-center">
             {% if user.is_authenticated and user.athlete %}
                 {% if user.athlete.profilePhoto %}
@@ -79,7 +89,7 @@ body.dark .profile-card{
 
                     <!-- BIO -->
                     {% if user.athlete.bio %}
-                        <div class="small text-muted mb-1">{{ user.athlete.bio }}</div>
+                        <div class="me-3 small mb-1 ">{{ user.athlete.bio }}</div>
                     {% endif %}
 
                     <div class="d-flex flex-wrap small text-muted">
@@ -92,7 +102,7 @@ body.dark .profile-card{
                         {% if user.athlete.dateOfBirth %}
 <div>
                                 {% if user.athlete.dateOfBirth %}
-                            <p><i class="bi bi-calendar"></i> Date of Birth: {{ user.athlete.dateOfBirth|date:"F d, Y" }}</p>
+                                <div class="me-3"><p><i class="bi bi-calendar"></i> Date of Birth: {{ user.athlete.dateOfBirth|date:"F d, Y" }}</p></div>
                         {% endif %}
                             </div>
                         {% endif %}
@@ -161,7 +171,7 @@ body.dark .profile-card{
     <div class="row">
         <!-- Left Sidebar -->
         <div class="col-md-3">
-            <div class="profile-card mb-4">
+            <div class="profile-card mb-4 shadow">
                 {% if request.user.is_authenticated and request.user.athlete %}
                     <h6 class="fw-bold">Achievements</h6>
                     <p>{{ user.athlete.achievements|default:"No achievements yet." }}</p>
@@ -184,7 +194,7 @@ body.dark .profile-card{
 
 {% if request.user == user %}
     <a href="{% url 'bookmarks:all_bookmarks' %}" class="text-decoration-none text-dark">
-            <div class="profile-card mb-4 text-center">
+            <div class="profile-card mb-4 text-center shadow">
                 <h6 class="fw-bold">Bookmark</h6>
                 <div class="bookmark-icon d-block mt-2">
                     <i class="bi bi-bookmark"></i>
@@ -200,7 +210,7 @@ body.dark .profile-card{
         <!-- Offers Card-->
           {% if user.is_authenticated and user.club %}
             <a href="{% url 'offers:my_offers' %}" class="text-decoration-none text-dark">
-                <div class="profile-card mb-4 text-center">
+                <div class="profile-card mb-4 text-center shadow">
                     <h6 class="fw-bold">Offers</h6>
                                 <div class="bookmark-icon d-block mt-2">
                         <i class="bi bi-card-heading"></i>
@@ -214,7 +224,7 @@ body.dark .profile-card{
 
         <!-- Posts Section -->
         <div class="col-md-9">
-            <div class="profile-card">
+            <div class="profile-card shadow">
                <div class=" d-flex justify-content-between align-items-center mb-4">
                   <h5 class="fw-bold mb-0">My Posts</h5>
 

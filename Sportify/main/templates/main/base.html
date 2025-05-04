@@ -115,12 +115,12 @@ body.dark hr {
 
 
 body.dark .card{
-  background-color:  rgb(196, 195, 195); 
-  color: black;
+  background-color: rgb(62, 62, 62);
+  color: white;
 }
 
 
-body.dark footer.nav-link {
+body.dark #nav-item {
   color: white;
 }
 
@@ -252,10 +252,10 @@ body.dark footer.nav-link {
 
         <div class="col mb-3">
           <h5>Section</h5>
-          <ul class="nav flex-column">
-            <li class="nav-item mb-2"><a href="{% url 'main:main_page_view'%}" class="nav-link p-0 text-muted">Home</a></li>
-            <li class="nav-item mb-2"><a href="{% url 'main:about_page_view' %}" class="nav-link p-0 text-muted">About</a></li>
-            <li class="nav-item mb-2"><a href="{% url 'contact:contact_us_view'%}" class="nav-link p-0 text-muted">Contact</a></li>
+          <ul class="nav flex-column" id="nav-item">
+            <li class="nav-item mb-2" id="nav-item"><a href="{% url 'main:main_page_view'%}" class="nav-link p-0 text-muted">Home</a></li>
+            <li class="nav-item mb-2" id="nav-item"><a href="{% url 'main:about_page_view' %}" class="nav-link p-0 text-muted">About</a></li>
+            <li class="nav-item mb-2" id="nav-item"><a href="{% url 'contact:contact_us_view'%}" class="nav-link p-0 text-muted">Contact</a></li>
           </ul>
         </div>
 
