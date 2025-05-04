@@ -186,6 +186,14 @@ body {
             </a>
           </div>
         {% endfor %}
+        {% for club in clubs %}
+          <div class="club-photo-wrapper">
+            <a href="{% url 'account:profile_view' club.user.id %}">
+              <img src="{% if club.photo %}{{ club.photo.url }}{% else %}{% static 'images/profile.png' %}{% endif %}" alt="Club Photo">
+              <div class="club-hover-name">{{ club.user.clubName }}</div>
+            </a>
+          </div>
+        {% endfor %}
       </div>
     </div>
   </div>
