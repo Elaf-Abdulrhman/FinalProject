@@ -10,8 +10,12 @@
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
     cursor: pointer;
-
 }
+
+.pause-animation {
+  animation-play-state: paused !important;
+}
+
 h2 {
     font-size: 2rem;
     font-weight: bold;
@@ -74,19 +78,10 @@ body {
   font-weight: bold;
 }
 
-.club-info-popup {
-  position: absolute;
-  padding: 1rem;
-  background: #fff;
-  border: 1px solid #ccc;
-  border-radius: 10px;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-  z-index: 999;
-  display: none;
-  min-width: 180px;
-  pointer-events: auto;
-  transition: opacity 0.2s;
+.club-photo-wrapper {
+  position: relative;
 }
+
 .clubs-scroll-container {
   position: relative; 
 }
@@ -191,7 +186,6 @@ body {
           </div>
         {% endfor %}
       </div>
-      <div class="club-info-popup" id="clubInfoPopup"></div>
     </div>
   </div>
 </div>
@@ -201,6 +195,7 @@ body {
       <h2 class="text-left mb-4">Explore Our Athletes</h2>
       <div class="row">
         {% for athlete in athletes %}
+        {% if not athlete.isPrivate %}
         <div class="col-md-6 mb-4">
             <div class="card d-flex flex-row align-items-center p-3">
                 <!-- Profile Photo -->
@@ -220,6 +215,7 @@ body {
                 </div>
             </div>
         </div>
+        {% endif %}
         {% endfor %}
       </div>
   </div>
@@ -261,9 +257,9 @@ body {
       {% endfor %}
     </div>
 
-    <div class="text-center d-flex justify-content-end mt-4">
+    <div class="text-center mt-4">
       <a href="{% url 'posts:all_posts' %}" 
-         class="btn rounded-pill shadow-sm transition left-0"
+         class="btn btn-primary px-4 py-2 fs-5 rounded-pill shadow-sm transition"
          style="transition: all 0.3s ease;">
         View All Posts &rarr;
       </a>
@@ -271,73 +267,79 @@ body {
     
   </div>
 </div>
-
 <script>
   const wrapper = document.getElementById("scrollingWrapper");
-  const popup = document.getElementById("clubInfoPopup");
   const container = document.querySelector(".clubs-scroll-container");
-  let hideTimeout;
-
-  function showPopup(target) {
-    const name = target.getAttribute("data-club-name");
-    const id = target.getAttribute("data-club-id");
-
-    popup.innerHTML = `
-      <strong>${name}</strong><br>
-      <a href="/profile_view/${id}">View Profile →</a>
-    `;
-
-    // Temporarily show popup to measure dimensions
-    popup.style.display = "block";
-    popup.style.opacity = "0";
-    popup.style.pointerEvents = "none";
-
-    requestAnimationFrame(() => {
-      const targetRect = target.getBoundingClientRect();
-      const containerRect = container.getBoundingClientRect();
-      const popupWidth = popup.offsetWidth;
-      const popupHeight = popup.offsetHeight;
-      const offsetY = 10;
-
-      // Calculate position relative to container
-      const top = target.offsetTop - popupHeight - offsetY;
-      const left = target.offsetLeft + (target.offsetWidth / 2) - (popupWidth / 2);
-
-      popup.style.top = `${top}px`;
-      popup.style.left = `${left}px`;
-      popup.style.opacity = "1";
-      popup.style.pointerEvents = "auto";
-    });
-
-    clearTimeout(hideTimeout);
-  }
-
-  function hidePopupWithDelay() {
-    hideTimeout = setTimeout(() => {
-      popup.style.display = "none";
-    }, 3000);
-  }
 
   document.querySelectorAll(".club-photo-wrapper").forEach(el => {
+    const infoDiv = document.createElement("div");
+    infoDiv.classList.add("club-info-tooltip");
+    el.appendChild(infoDiv);  // Append info container under each club photo
+
     el.addEventListener("mouseenter", () => {
-      wrapper.style.animationPlayState = "paused";
-      showPopup(el);
+      // Show the club info under the hovered club
+      const name = el.getAttribute("data-club-name");
+      const id = el.getAttribute("data-club-id");
+      
+      infoDiv.innerHTML = `
+        <strong>${name}</strong><br>
+        <a href="/profile_view/${id}">View Profile →</a>
+      `;
+      
+      infoDiv.style.display = "block";
+      wrapper.style.animationPlayState = "paused";  // Pause the scroll animation
     });
 
     el.addEventListener("mouseleave", () => {
-      hidePopupWithDelay();
-      wrapper.style.animationPlayState = "running";
+      infoDiv.style.display = "none";
+      wrapper.style.animationPlayState = "running";  // Resume the scroll animation
     });
   });
-
-  popup.addEventListener("mouseenter", () => {
-    clearTimeout(hideTimeout);
-  });
-
-  popup.addEventListener("mouseleave", () => {
-    hidePopupWithDelay();
-  });
 </script>
+
+<style>
+  .club-info-tooltip {
+    display: none;  /* Initially hidden */
+    position: absolute;
+    background: #fff;
+    padding: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    width: 180px; /* You can adjust this width based on the content */
+    text-align: center;
+    font-size: 14px;
+    transition: opacity 0.3s ease-in-out;
+  }
+
+  .club-photo-wrapper {
+    position: relative;
+    flex: 0 0 auto;
+    margin: 0 1.5rem 2rem;
+    text-align: center;
+  }
+
+  .club-photo-wrapper img {
+    width: 150px;
+    height: 150px;
+    object-fit: contain;
+    border-radius: 50%;
+    border: 3px solid #ccc;
+    background-color: white;
+    padding: 20px;
+    transition: transform 0.3s;
+  }
+
+  .club-photo-wrapper:hover img {
+    transform: scale(1.05);
+  }
+
+  .club-hover-name {
+    margin-top: 0.5rem;
+    font-weight: bold;
+  }
+</style>
+
 
 
 {% endblock %}
