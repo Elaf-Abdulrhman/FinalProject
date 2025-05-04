@@ -216,7 +216,7 @@ body{
               {{ request.user.username }}
             </button>
             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="authDropdown">
-              <li><a class="dropdown-item" href="{% url 'account:profile_view' user_id=user.id %}">Profile</a></li>
+                <li><a class="dropdown-item" href="{% url 'account:profile_view' user_id=request.user.id %}">Profile</a></li>
               <li><a class="dropdown-item" href="{% url 'account:logout_view' %}">Log Out</a></li>
             </ul>
                        {% else %}
