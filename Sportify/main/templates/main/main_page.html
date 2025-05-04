@@ -90,6 +90,11 @@ body {
 .clubs-scroll-container {
   position: relative; 
 }
+.btn.transition:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 123, 255, 0.2);
+}
+
 
 </style>
 
@@ -227,6 +232,7 @@ body {
     <h2 class="text-left mb-4">Latest Posts</h2>
     <div class="row">
       {% for post in latest_posts %}
+      {% if not athlete.isPrivate %}
       <div class="col-md-6 mb-4">
         <div class="card d-flex flex-row align-items-center p-3">
           <div class="me-3">
@@ -253,12 +259,18 @@ body {
           </div>
         </div>
       </div>
+      {% endif %}
       {% endfor %}
     </div>
 
-    <div class="text-center mt-4">
-      <a href="{% url 'posts:all_posts' %}" class="btn btn-outline-primary">View All Posts</a>
+    <div class="text-center d-flex justify-content-end mt-4">
+      <a href="{% url 'posts:all_posts' %}" 
+         class="btn rounded-pill shadow-sm transition left-0"
+         style="transition: all 0.3s ease;">
+        View All Posts &rarr;
+      </a>
     </div>
+    
   </div>
 </div>
 

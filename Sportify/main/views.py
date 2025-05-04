@@ -22,7 +22,7 @@ def main_page_view(request):
     latest_posts = Post.objects.filter(
         Q(user__club__isnull=False) |
         Q(user__athlete__isPrivate=False)
-    ).order_by('-created_at')[:6]
+    ).order_by('-created_at')[:4]
 
     bookmarked_post_ids = set()
     if request.user.is_authenticated:
