@@ -8,20 +8,22 @@
 
   <div class="card shadow-sm p-4">
     <!-- Header with profile and icons -->
-    <div class="d-flex justify-content-between align-items-start">
+    <div class="d-flex justify-content-between align-items-start position-relative z-1">
       <!-- Profile -->
       <div class="d-flex align-items-center">
         <!-- Profile Photo -->
-        {% if post.user.athlete and post.user.athlete.profilePhoto %}
-                <img src="{{ post.user.athlete.profilePhoto.url }}" alt="Profile Photo"
-                     class="rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover; border-radius: 50%; border: 2px solid #ccc;">
-            {% elif post.user.club and post.user.club.photo %}
-                <img src="{{ post.user.club.photo.url }}" alt="Profile Photo"
-                     class="rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover; border-radius: 50%; border: 2px solid #ccc;">
-            {% else %}
-                <img src="{% static 'images/profile.png' %}" alt="Default Profile Photo"
-                     class="rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover; border-radius: 50%; border: 2px solid #ccc;">
-            {% endif %}
+        <a href="{% url 'account:profile_view' post.user.id %}" class="me-2 position-relative z-1">
+          {% if post.user.athlete and post.user.athlete.profilePhoto %}
+              <img src="{{ post.user.athlete.profilePhoto.url }}" alt="Profile Photo"
+                   class="rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover; border-radius: 50%; border: 2px solid #ccc;">
+          {% elif post.user.club and post.user.club.photo %}
+              <img src="{{ post.user.club.photo.url }}" alt="Profile Photo"
+                   class="rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover; border-radius: 50%; border: 2px solid #ccc;">
+          {% else %}
+              <img src="{% static 'images/profile.png' %}" alt="Default Profile Photo"
+                   class="rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover; border-radius: 50%; border: 2px solid #ccc;">
+          {% endif %}
+      </a>
         <div>
           <strong>
             {% if post.user.athlete %}
