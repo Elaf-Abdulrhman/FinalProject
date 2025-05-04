@@ -4,12 +4,18 @@ from django.db.models import Avg
 from account.models import User, Athlete,Club
 
 def main_page_view(request):
-    athletes=Athlete.objects.all()
-    clubs = Club.objects.all() 
-    
-    return render(request, 'main/main_page.html',{"athletes":athletes, "clubs": clubs})
+    if request.user.is_authenticated:
+        if request.user.is_superuser:
+            return redirect("admins:dashboard")
+        elif hasattr(request.user, 'club'):
+            return redirect('clubs:club_dashboard')
+        else:
+            return redirect('posts:all_posts')
 
+    athletes = Athlete.objects.all()
+    clubs = Club.objects.all()
 
+    return render(request, 'main/main_page.html', {"athletes": athletes, "clubs": clubs})
 
 
 
