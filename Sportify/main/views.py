@@ -15,7 +15,7 @@ def main_page_view(request):
         else:
             return redirect('posts:all_posts')
 
-    athletes = Athlete.objects.all()
+    athletes = Athlete.objects.filter(isPrivate=False)
     clubs = Club.objects.all()
 
     #Fetch latest posts from clubs or public athletes

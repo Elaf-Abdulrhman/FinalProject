@@ -3,7 +3,7 @@ from account.models import Athlete, Sport, City
 from django.db.models import Q
 
 def all_athletes(request):
-    athletes = Athlete.objects.all()
+    athletes = Athlete.objects.filter(isPrivate=False)
     sports = Sport.objects.all()
     cities = City.objects.all()
 

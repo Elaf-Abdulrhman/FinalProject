@@ -201,7 +201,6 @@ body {
       <h2 class="text-left mb-4">Explore Our Athletes</h2>
       <div class="row">
         {% for athlete in athletes %}
-        {% if not athlete.isPrivate %}
         <div class="col-md-6 mb-4">
             <div class="card d-flex flex-row align-items-center p-3">
                 <!-- Profile Photo -->
@@ -221,7 +220,6 @@ body {
                 </div>
             </div>
         </div>
-        {% endif %}
         {% endfor %}
       </div>
   </div>
