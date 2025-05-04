@@ -1,15 +1,16 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from .models import Post,Comment,Like
+from .models import Post,Comment,Like,PostImage
 from .forms import PostForm,CommentForm
 from django.core.paginator import Paginator
 from django.db.models import Q
 from account.models import Athlete, Club, Sport, City
 from django.template.loader import render_to_string
 from django.http import JsonResponse
-from bookmarks.models import Bookmark  # Import the Bookmark model
+from bookmarks.models import Bookmark
 from posts.models import Post, Like
+
 
 
 
@@ -18,15 +19,28 @@ from posts.models import Post, Like
 def add_post(request):
     if request.method == 'POST':
         form = PostForm(request.POST, request.FILES)
+        images = request.FILES.getlist('images')  # multiple images
+        video = request.FILES.get('video')        # optional video
+
         if form.is_valid():
             post = form.save(commit=False)
             post.user = request.user
+
+            if video:
+                post.video = video
+
             post.save()
-            messages.success(request, "Post created successfully!")
-            return redirect(request.META.get('HTTP_REFERER', '/'))
+
+            # Save extra uploaded images
+            for image in images:
+                PostImage.objects.create(post=post, image=image)
+
+            return redirect('posts:post_details', post_id=post.id)
     else:
         form = PostForm()
+
     return render(request, 'posts/add_post.html', {'form': form})
+
 
 
 
@@ -125,18 +139,7 @@ def edit_post(request, pk):
     return render(request, 'posts/edit_post.html', {'form': form, 'post': post})
 
 
-@login_required
-def like_post(request, post_id):
-    post = get_object_or_404(Post, id=post_id)
-    like, created = Like.objects.get_or_create(user=request.user, post=post)
 
-    if not created:
-        like.delete()
-
-    # Redirect back to the same page
-    return redirect(request.META.get('HTTP_REFERER', 'posts:all_posts'))
-
-# posts/views.py
 
 @login_required
 def like_post(request, post_id):
@@ -205,3 +208,5 @@ def all_posts(request):
     }
 
     return render(request, 'posts/all_posts.html', context)
+
+

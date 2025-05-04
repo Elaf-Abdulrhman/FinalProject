@@ -1,27 +1,24 @@
 {% extends 'main/base.html' %}
 {% load static %}
+
 {% block title %}Post Details{% endblock %}
 
 {% block content %}
 <div class="container mt-5 p-3" style="max-width: 900px;">
-  <h3 class="text-center">@{{ post.user.username }}'s post</h3>
+  <h3 class="text-center">Post</h3>
+  <br>
 
   <div class="card shadow-sm p-4">
     <!-- Header with profile and icons -->
     <div class="d-flex justify-content-between align-items-start">
-      <!-- Profile -->
       <div class="d-flex align-items-center">
-        <!-- Profile Photo -->
         {% if post.user.athlete and post.user.athlete.profilePhoto %}
-                <img src="{{ post.user.athlete.profilePhoto.url }}" alt="Profile Photo"
-                     class="rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover; border-radius: 50%; border: 2px solid #ccc;">
-            {% elif post.user.club and post.user.club.photo %}
-                <img src="{{ post.user.club.photo.url }}" alt="Profile Photo"
-                     class="rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover; border-radius: 50%; border: 2px solid #ccc;">
-            {% else %}
-                <img src="{% static 'images/profile.png' %}" alt="Default Profile Photo"
-                     class="rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover; border-radius: 50%; border: 2px solid #ccc;">
-            {% endif %}
+          <img src="{{ post.user.athlete.profilePhoto.url }}" alt="Profile Photo" class="rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover; border: 2px solid #ccc;">
+        {% elif post.user.club and post.user.club.photo %}
+          <img src="{{ post.user.club.photo.url }}" alt="Profile Photo" class="rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover; border: 2px solid #ccc;">
+        {% else %}
+          <img src="{% static 'images/profile.png' %}" alt="Default Profile Photo" class="rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover; border: 2px solid #ccc;">
+        {% endif %}
         <div>
           <strong>
             {% if post.user.athlete %}
@@ -32,7 +29,9 @@
               {{ post.user.username }}
             {% endif %}
           </strong><br>
-          <small class="text-muted">@{{ post.user.username }}</small>
+          <a href="{% url 'account:profile_view' post.user.id %}" style="text-decoration: none">
+            <small class="text-muted">@{{ post.user.username }}</small>
+          </a>
         </div>
       </div>
 
@@ -55,9 +54,22 @@
     <div class="text-start mt-4">
       <p>{{ post.content }}</p>
 
-      {% if post.photo %}
-        <div class="text-center">
-          <img src="{{ post.photo.url }}" alt="Post Image" class="img-fluid rounded mb-3" style="max-height: 300px;">
+      {% if post.photo or post.images.all %}
+        <div class="row row-cols-3 g-2 mb-3">
+          {% if post.photo %}
+            <div class="col">
+              <a href="{{ post.photo.url }}" class="glightbox" data-gallery="post-{{ post.id }}">
+                <img src="{{ post.photo.url }}" class="img-fluid rounded" style="object-fit: cover; height: 150px; width: 100%;">
+              </a>
+            </div>
+          {% endif %}
+          {% for image in post.images.all %}
+            <div class="col">
+              <a href="{{ image.image.url }}" class="glightbox" data-gallery="post-{{ post.id }}">
+                <img src="{{ image.image.url }}" class="img-fluid rounded" style="object-fit: cover; height: 150px; width: 100%;">
+              </a>
+            </div>
+          {% endfor %}
         </div>
       {% endif %}
 
@@ -69,56 +81,57 @@
       {% endif %}
     </div>
 
+    <!-- Like & Bookmark -->
+    <div class="d-flex justify-content-between align-items-center mt-3">
+      <div class="d-flex gap-3 align-items-center">
+        {% if user.is_authenticated and not user.is_superuser %}
+          <form action="{% url 'bookmarks:bookmark_post' post.id %}" method="POST" class="d-inline">
+            {% csrf_token %}
+            {% if bookmarked %}
+              <button type="submit" class="btn btn-sm text-primary border-0 bg-transparent p-0">
+                <i class="bi bi-bookmark-fill" style="font-size: 1.3rem; color: black"></i>
+              </button>
+            {% else %}
+              <button type="submit" class="btn btn-sm text-muted border-0 bg-transparent p-0">
+                <i class="bi bi-bookmark" style="font-size: 1.3rem;"></i>
+              </button>
+            {% endif %}
+          </form>
 
-<div class="d-flex justify-content-between align-items-center mt-3">
-  <!-- Left: Bookmark + Like -->
-  <div class="d-flex gap-3 align-items-center">
-{% if not user.is_superuser%}
-    <form action="{% url 'bookmarks:bookmark_post' post.id %}" method="POST" class="d-inline">
-    {% csrf_token %}
-    {% if bookmarked %}
-        <button type="submit" class="btn btn-sm text-primary border-0 bg-transparent p-0">
-            <i class="bi bi-bookmark-fill" style="font-size: 1.3rem; color: black"></i>
-        </button>
-    {% else %}
-        <button type="submit" class="btn btn-sm text-muted border-0 bg-transparent p-0">
+          <form action="{% url 'posts:like_post' post.id %}" method="POST" class="d-inline">
+            {% csrf_token %}
+            {% if liked %}
+              <button type="submit" class="btn btn-sm text-danger border-0 bg-transparent p-0">
+                <i class="bi bi-heart-fill" style="font-size: 1.3rem;"></i> {{ post.total_likes }}
+              </button>
+            {% else %}
+              <button type="submit" class="btn btn-sm text-muted border-0 bg-transparent p-0">
+                <i class="bi bi-heart" style="font-size: 1.3rem;"></i> {{ post.total_likes }}
+              </button>
+            {% endif %}
+          </form>
+        {% else %}
+          <button class="btn btn-sm border-0 bg-transparent p-0" onclick="showLoginAlert()">
             <i class="bi bi-bookmark" style="font-size: 1.3rem;"></i>
-        </button>
-    {% endif %}
-{% endif %}
-  
-</form>
+          </button>
+          <button class="btn btn-sm border-0 bg-transparent p-0" onclick="showLoginAlert()">
+            <i class="bi bi-heart" style="font-size: 1.3rem;"></i>
+          </button>
+        {% endif %}
+      </div>
 
-{% if not user.is_superuser%}
-    <form action="{% url 'posts:like_post' post.id %}" method="POST" class="d-inline">
-      {% csrf_token %}
-      {% if liked %}
-        <button type="submit" class="btn btn-sm text-danger border-0 bg-transparent p-0">
-          <i class="bi bi-heart-fill" style="font-size: 1.3rem;"></i> {{ post.total_likes }}
-        </button>
-      {% else %}
-        <button type="submit" class="btn btn-sm text-muted border-0 bg-transparent p-0">
-          <i class="bi bi-heart" style="font-size: 1.3rem;"></i> {{ post.total_likes }}
-        </button>
-      {% endif %}
-    </form>
-{% endif %}  
-</div>
+      <div class="d-flex align-items-center text-muted">
+        {{ comments.count }}
+        <i class="bi bi-chat ms-1" style="font-size: 1.3rem;"></i>
+      </div>
+    </div>
 
-  <!-- Right: Comments count -->
-  <div class="d-flex align-items-center text-muted">
-    {{ comments.count }}
-    <i class="bi bi-chat ms-1" style="font-size: 1.3rem;"></i>
-  </div>
-</div>
+    <div class="text-end text-muted small mt-2">
+      {{ post.created_at|date:"M d, Y" }} at {{ post.created_at|time:"H:i A" }}
+    </div>
 
-<div class="text-end text-muted small mt-2">
-            <i ></i> {{ post.created_at|date:"M d, Y" }}
-            <i > </i> {{ post.created_at|time:"H:i A" }}
-        </div>
-
-    <!-- Delete Modal -->
     {% if user == post.user %}
+      <!-- Delete Modal -->
       <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
         <div class="modal-dialog">
           <div class="modal-content">
@@ -153,8 +166,8 @@
       <div class="flex-grow-1 me-2">
         {{ form.content }}
       </div>
-      {% if not user.is_superuser%}
-      <button type="submit" class="btn btn-dark btn-sm">Comment</button>
+      {% if not user.is_superuser %}
+        <button type="submit" class="btn btn-dark btn-sm">Comment</button>
       {% endif %}
     </form>
   {% else %}
@@ -167,9 +180,8 @@
         <div class="card mb-2">
           <div class="card-body position-relative">
             <strong>{{ comment.user.username }}</strong>
-
             <p class="mt-2 mb-0">{{ comment.content }}</p>
-          <br>
+            <br>
             <small class="text-muted">{{ comment.created_at|date:"F d, Y H:i" }}</small>
             {% if comment.user == user %}
               <form action="{% url 'posts:delete_comment' comment.id %}" method="POST" class="position-absolute top-0 end-0 mt-2 me-2">
@@ -187,4 +199,14 @@
     <p class="text-muted">No comments yet.</p>
   {% endif %}
 </div>
+
+<script>
+  function showLoginAlert() {
+    alert("You must be a logged in user to like or bookmark posts.");
+  }
+
+  document.addEventListener("DOMContentLoaded", function () {
+    GLightbox({ selector: '.glightbox' });
+  });
+</script>
 {% endblock %}
