@@ -125,6 +125,10 @@ USE_I18N = True
 USE_TZ = True
 
 
+
+
+
+
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
@@ -155,7 +159,6 @@ MOYASAR_SECRET_KEY = 'sk_test_sF2ML8JKf8QhAL7mrtVBrgXs5p4tjKvVrhFXLJG1'
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
 EMAIL_HOST = 'sandbox.smtp.mailtrap.io'
-EMAIL_HOST_USER = '610a714a870619'
-EMAIL_HOST_PASSWORD = 'b22bb980dc6572'
-EMAIL_PORT = 2525
-
+EMAIL_HOST_USER = '99de0f668b3ead'
+EMAIL_HOST_PASSWORD = '741b91197d9c9a'
+EMAIL_PORT = '2525'

@@ -1,43 +1,70 @@
 {% extends 'main/base.html' %}
+{% load static %}
 
-{% block title %} Contact us {% endblock %}
+{% block title %}Contact Us{% endblock %}
 
 {% block content %}
-<div class="container p-5">
-<h1>Contact us</h1>
+<style>
+  .equal-height {
+    height: 100%;
+  }
 
+  .form-container,
+  .image-container {
+    min-height: 100%;
+  }
 
+  .image-container img {
+    object-fit: cover;
+    height: 100%;
+    width: 100%;
+    border-radius: 0.5rem;
+  }
+</style>
 
+<div class="container py-5">
+  <h1 class="text-center mb-5 fw-bold">Get in Touch</h1>
 
-<form method="post" action="{% url 'contact:contact_us_view'%}">
-    {% csrf_token %}
+  <div class="row g-4">
+    <!-- Contact Form -->
+    <div class="col-md-6">
+      <div class="form-container h-100 p-4 bg-light rounded-3 shadow">
+        <form method="post" action="{% url 'contact:contact_us_view' %}" class="h-100 d-flex flex-column justify-content-between">
+          {% csrf_token %}
 
-    <div class="row align-items-center mt-4">
-
-        <div class="col-md-6 d-flex flex-column gap-3">
-            <label class="form-label">First name:</label>
-            <input type="text" placeholder="First name" name="first_name" class="form-control" required minlength="2" maxlength="512"/>
-
-            <label class="form-label">Last name:</label>
-            <input type="text" placeholder="Last name" name="last_name" class="form-control" required minlength="2" maxlength="512"/>
-
-            <label class="form-label">Email address:</label>
-            <input type="email" name="email" class="form-control" id="email" placeholder="name@example.com" required>
-
-            <label class="form-label">Your message:</label>
-            <textarea class="form-control" name="message" id="message" rows="4" style="height: 150px;"></textarea>
-
-
-            <div class="d-flex gap-2">
-                <input type="submit" value="Submit" class="btn btn-dark mt-2" />
+          <div>
+            <div class="mb-3">
+              <label class="form-label">First Name</label>
+              <input type="text" name="first_name" class="form-control" placeholder="John" required minlength="2" maxlength="512">
             </div>
-        </div>
 
-        <div class="col-md-6 text-center">
-            <img src="#" class="img-fluid bg-black rounded shadow" style="max-width: 100%; height: auto;" alt="design"/>
-        </div>
+            <div class="mb-3">
+              <label class="form-label">Last Name</label>
+              <input type="text" name="last_name" class="form-control" placeholder="Doe" required minlength="2" maxlength="512">
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Email Address</label>
+              <input type="email" name="email" class="form-control" placeholder="name@example.com" required>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Your Message</label>
+              <textarea name="message" class="form-control" rows="5" placeholder="Write your message here..." required></textarea>
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-dark px-4 mt-3">Submit</button>
+        </form>
+      </div>
     </div>
-</form>
 
+    <!-- Contact Image -->
+    <div class="col-md-6">
+      <div class="image-container h-100 rounded-3 overflow-hidden shadow">
+        <img src="{% static 'images/sport.jpeg' %}" alt="Contact us" class="img-fluid">
+      </div>
+    </div>
+  </div>
 </div>
 {% endblock %}

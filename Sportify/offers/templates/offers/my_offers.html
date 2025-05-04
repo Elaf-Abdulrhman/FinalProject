@@ -1,41 +1,46 @@
 {% extends 'main/base.html' %}
 {% load static %}
 
-{% block title %}My Offers | Sportify{% endblock %}
+{% block title %}{{ club.clubName }}'s Offers{% endblock %}
 
 {% block content %}
 <div class="container mt-5">
-    <h2 class="text-center mb-4">My Offers</h2>
+    <h2 class="text-center mb-4">{{ club.clubName }}'s Offers</h2>
 
-    {% if offers %}
-        <div class="row">
- <div class="d-flex justify-content-start gap-3 p-3">
-            <a href="{% url 'offers:add_offer' %}" class="btn btn-dark px-4">Add a new offer!</a>
-            <a href="{% url 'subscriptions:plus_plan' %}" class="btn btn-dark px-4">UPGRADE</a>
-        </div>
-            {% for offer in offers %}
-                <div class="col-md-4 mb-4">
-                    <div class="card h-100 shadow">
-                        {% if offer.photo %}
-                            <img src="{{ offer.photo.url }}" class="card-img-top" alt="{{ offer.title }}" style="height: 200px; object-fit: cover;">
-                        {% endif %}
-                        <div class="card-body">
-                            <h5 class="card-title">{{ offer.title }}</h5>
-                            <p class="card-text">{{ offer.content|truncatewords:20 }}</p>
-                            <p class="text-muted small">Posted: {{ offer.created_at|date:"M d, Y" }}</p>
-                        </div>
-                        <div class="card-footer d-flex justify-content-between">
-                            <a href="{% url 'offers:edit_offer' offer.id %}" class="btn btn-sm btn-outline-primary">Edit</a>
-                            <a href="{% url 'offers:delete_offer' offer.id %}" class="btn btn-sm btn-outline-danger">Delete</a>
-                        </div>
-                    </div>
-                </div>
-            {% endfor %}
-        </div>
-    {% else %}
-        <p class="text-center text-muted">You haven't posted any offers yet.</p>
+    {% if request.user == club.user %}
+    <div class="d-flex justify-content-start gap-3 p-3">
+        <a href="{% url 'offers:add_offer' %}" class="btn btn-dark px-4">Add a new offer!</a>
+        <a href="{% url 'subscriptions:plus_plan' %}" class="btn btn-dark px-4">UPGRADE</a>
+    </div>
     {% endif %}
+
+    <div class="row">
+        {% for offer in offers %}
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                {% if offer.photo %}
+                    <img src="{{ offer.photo.url }}" class="card-img-top" alt="{{ offer.title }}" style="height: 200px; object-fit: cover;">
+                {% endif %}
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">{{ offer.title }}</h5>
+                    <p class="card-text">{{ offer.content|truncatewords:20 }}</p>
+                    <p class="text-muted small">Posted: {{ offer.created_at|date:"M d, Y" }}</p>
+                    {% if request.user.is_authenticated and request.user.athlete %}
+                        <a href="{% url 'offers:offer_details' offer.id %}" class="btn btn-warning btn-sm mt-auto">Apply</a>
+                    {% else %}
+                        <a href="{% url 'offers:offer_details' offer.id %}" class="btn btn-primary btn-sm mt-auto">View Details</a>
+                    {% endif %}                </div>
+                {% if request.user == club.user %}
+                <div class="card-footer d-flex justify-content-between">
+                    <a href="{% url 'offers:edit_offer' offer.id %}" class="btn btn-sm btn-outline-primary">Edit</a>
+                    <a href="{% url 'offers:delete_offer' offer.id %}" class="btn btn-sm btn-outline-danger">Delete</a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% empty %}
+        <p class="text-center text-muted">No offers available for this club.</p>
+        {% endfor %}
+    </div>
 </div>
-
-
 {% endblock %}

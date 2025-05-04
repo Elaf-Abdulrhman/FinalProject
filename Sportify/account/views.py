@@ -9,6 +9,8 @@ from django.http import HttpRequest
 from django.shortcuts import render,redirect,get_object_or_404
 from django.contrib.auth import logout,login
 from .forms import AthleteEditForm ,ClubEditForm
+from bookmarks.models import Bookmark
+
 # Create your views here.
 
 
@@ -109,15 +111,25 @@ def logout_view(request):
 def profile_view(request: HttpRequest, user_id):
     user = get_object_or_404(User, id=user_id)
 
+    is_bookmarked = (
+        Bookmark.objects.filter(user=request.user, profile=user).exists()
+        if request.user.is_authenticated else False
+    )
+
+    # Check for privacy
     try:
         athlete = Athlete.objects.get(user=user)
         if athlete.isPrivate and request.user != user:
-            messages.warning(request, "This account is private.")
             return render(request, "account/private_profile.html")
     except Athlete.DoesNotExist:
         pass
-    posts = Post.objects.filter(user=user).order_by('-created_at').distinct()
-    return render(request, "account/profile.html", {'user': user, 'posts': posts})
+
+    context = {
+        'user': user,
+        'is_bookmarked': is_bookmarked,
+        'posts': Post.objects.filter(user=user).order_by('-created_at').distinct(),
+    }
+    return render(request, "account/profile.html", context)
 
 
 def edit_profile_athlete_view(request: HttpRequest, user_id):

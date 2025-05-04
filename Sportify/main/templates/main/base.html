@@ -23,6 +23,8 @@
         <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:ital,wght@0,200..900;1,200..900&display=swap" rel="stylesheet">
 
     <link href="{% static 'css/base.css' %}" rel="stylesheet" />
+    <link rel="icon" type="image/x-icon" href="{% static 'images/favicon.ico' %}">
+    
  <style>
   .navbar-nav .nav-link {
     transition: color 0.3s ease-in-out, transform 0.3s ease-in-out;
@@ -39,7 +41,6 @@
         border-radius: 20px;
         
     }
-  
   
   .navbar-brand h5 {
     font-size: 1.5rem;
@@ -106,24 +107,63 @@ body.dark hr {
 }
 
 
+#preloader {
+  background: black;
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  animation: fadeOut 1s ease-in-out forwards; /* Add fade-out animation */
+  animation-delay: 0s; /* Loader will stay for 3 seconds */
+}
 
-.active-icon {
-  background-color: white;
+.loader {
+  text-align: center;
+}
+
+.loader .text {
+  color: lightsalmon;
+  margin-bottom: 15px; /* Adjust margin to move text above dots */
+  font-size: 1.2rem;
+  font-weight: bold;
+  font-family: sans-serif;
+  letter-spacing: 1px;
+}
+
+.loader .dot {
+  height: 12px;
+  width: 12px;
+  margin: 0 5px;
+  background-color: lightsalmon;
   border-radius: 50%;
-  color:black;
+  display: inline-block;
+  animation: bounce 1.4s infinite ease-in-out both;
 }
 
-
-body.dark .card{
-  background-color: rgb(62, 62, 62);
-  color: white;
+.loader .dot:nth-child(2) {
+  animation-delay: 0.2s;
+}
+.loader .dot:nth-child(3) {
+  animation-delay: 0.4s;
 }
 
-
-body.dark #nav-item {
-  color: white;
+@keyframes bounce {
+  0%, 80%, 100% {
+    transform: scale(0);
+  } 40% {
+    transform: scale(1.0);
+  }
 }
 
+@keyframes fadeOut {
+  to {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
 
   @keyframes fadeIn {
     from { opacity: 0; transform: translateY(10px); }
@@ -154,17 +194,12 @@ body.dark #nav-item {
           </li>
 
               <li class="nav-item">
-                  <a class="nav-link" href="{% url 'posts:all_posts'%}">All Posts</a>
+                  <a class="nav-link" href="{% url 'posts:all_posts'%}">Posts</a>
               </li>
 
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="clubsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-              Athletes
-            </a>
-            <ul class="dropdown-menu" aria-labelledby="clubsDropdown">
-              <li><a class="dropdown-item" href="{% url 'athlete:all_athletes'%}">All Athletes</a></li>
-            </ul>
-          </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'athlete:all_athletes'%}">Athletes</a>
+            </li>
 
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" id="clubsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -196,13 +231,14 @@ body.dark #nav-item {
         </ul>
       </div>
       <div class="nav-right">
+      
         <div class="nav-item dropdown">
           {% if request.user.is_authenticated %}
             <button class="btn btn-light dropdown-toggle" href="#" id="authDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
               {{ request.user.username }}
             </button>
             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="authDropdown">
-              <li><a class="dropdown-item" href="{% url 'account:profile_view' user_id=user.id %}">Profile</a></li>
+                <li><a class="dropdown-item" href="{% url 'account:profile_view' user_id=request.user.id %}">Profile</a></li>
               <li><a class="dropdown-item" href="{% url 'account:logout_view' %}">Log Out</a></li>
             </ul>
                        {% else %}
@@ -251,14 +287,22 @@ body.dark #nav-item {
         </div>
 
         <div class="col mb-3">
-          <h5>Section</h5>
-          <ul class="nav flex-column" id="nav-item">
-            <li class="nav-item mb-2" id="nav-item"><a href="{% url 'main:main_page_view'%}" class="nav-link p-0 text-muted">Home</a></li>
-            <li class="nav-item mb-2" id="nav-item"><a href="{% url 'main:about_page_view' %}" class="nav-link p-0 text-muted">About</a></li>
-            <li class="nav-item mb-2" id="nav-item"><a href="{% url 'contact:contact_us_view'%}" class="nav-link p-0 text-muted">Contact</a></li>
+          <ul class="nav flex-column">
+            <li class="nav-item mb-2"><a href="{% url 'main:main_page_view'%}" class="nav-link p-0 text-muted">Home</a></li>
+            <li class="nav-item mb-2"><a href="{% url 'main:about_page_view' %}" class="nav-link p-0 text-muted">About</a></li>
+            <li class="nav-item mb-2"><a href="{% url 'contact:contact_us_view'%}" class="nav-link p-0 text-muted">Contact</a></li>
           </ul>
         </div>
 
+
+<!-- Preloader -->
+<div id="preloader">
+  <div class="loader">
+    <div class="text">Loading</div>
+    <div class="dot"></div>
+    <div class="dot"></div>
+    <div class="dot"></div>
+  </div>
 
 
       </footer>

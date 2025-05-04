@@ -20,12 +20,16 @@
         {% for offer in offers %}
         <div class="card mb-3 shadow-sm p-2 d-flex flex-row align-items-center justify-content-between">
             <div class="d-flex align-items-center gap-3">
-                <img src="{{ offer.user.club.photo.url }}" alt="Profile" width="40" height="40" class="rounded-circle">
+                <img src="{{ offer.user.club.photo.url  }}" alt="Profile" width="40" height="40" class="rounded-circle">
                 <div>
                     <h6 class="mb-0">{{ offer.title }}</h6>
                 </div>
             </div>
-            <a href="{% url 'offers:offer_details' offer.id %}" class="btn btn-dark btn-sm">apply</a>
+            {% if user.is_superuser %}
+                <a href="{% url 'offers:offer_details' offer.id %}" class="btn btn-primary btn-sm">view</a>
+            {% else %}
+                <a href="{% url 'offers:offer_details' offer.id %}" class="btn btn-dark btn-sm">apply</a>
+            {% endif %}
         </div>
         {% empty %}
         <div class="alert alert-info text-center">No offers yet.</div>
