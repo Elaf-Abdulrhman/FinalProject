@@ -17,6 +17,7 @@ urlpatterns = [
 
 
 path('application/<int:application_id>/', views.application_detail, name='application_detail'),
+path('application/<int:application_id>/response/', views.application_response_detail, name='application_response_detail'),
 
 ]
 

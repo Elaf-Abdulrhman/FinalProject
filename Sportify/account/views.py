@@ -96,7 +96,7 @@ def login_view(request):
             if request.user.is_superuser:
                 return redirect("admins:dashboard")
             elif hasattr(request.user, 'club'):
-                return redirect('clubs:club_dashboard')
+                return redirect('account:profile_view', request.user.id)
             else:
                 return redirect('posts:all_posts')
         else:

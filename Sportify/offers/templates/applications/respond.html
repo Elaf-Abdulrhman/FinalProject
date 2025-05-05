@@ -1,12 +1,52 @@
 {% extends 'main/base.html' %}
 {% block title %}Respond to Application{% endblock %}
+{% load static %}
+
 {% block content %}
-<div class="container mt-5">
-    <h3 class="mb-4">Respond to {{ application.athlete.username }}'s Application</h3>
-    <form method="POST">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="btn btn-success">Submit Response</button>
-    </form>
+<div class="container mt-5" style="max-width: 700px;">
+    <div class="card shadow-sm bg-white">
+        <div class="card-body">
+
+            <h3 class="mb-4 text-center">Respond to <span class="text-primary">{{ application.athlete.first_name }}</span>'s Application</h3>
+
+            <div class="d-flex align-items-center mb-4">
+                {% if application.athlete.athlete and application.athlete.athlete.profilePhoto %}
+                    <img src="{{ application.athlete.athlete.profilePhoto.url }}" alt="Profile Photo"
+                         class="rounded-circle me-3"
+                         style="width: 60px; height: 60px; object-fit: cover; border: 2px solid #ccc;">
+                {% else %}
+                    <img src="{% static 'images/profile.png' %}" alt="Default Profile"
+                         class="rounded-circle me-3"
+                         style="width: 60px; height: 60px; object-fit: cover; border: 2px solid #ccc;">
+                {% endif %}
+
+                <div>
+                    <h5 class="mb-1">{{ application.athlete.first_name }}</h5>
+                    <a href="{% url 'account:profile_view' application.athlete.id %}" class="text-muted text-decoration-none">
+                        @{{ application.athlete.username }}
+                    </a>
+                </div>
+            </div>
+
+            <form method="POST">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label for="id_status" class="form-label">Status</label>
+                    {{ form.status }}
+                </div>
+
+
+                <div class="mb-4">
+                    <label for="id_response_message" class="form-label">Message to Athlete:</label>
+                  <textarea name="response_message" id="id_response_message" class="form-control shadow-sm border-0 rounded-4 p-3" rows="4" placeholder="your response...." required></textarea>
+                </div>
+
+                <div class="d-flex justify-content-end">
+                    <button type="submit" class="btn btn-success px-4">Submit Response</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
 </div>
 {% endblock %}

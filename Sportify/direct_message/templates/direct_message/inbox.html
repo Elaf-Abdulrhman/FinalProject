@@ -2,7 +2,9 @@
 {% load custom_filters %}  <!-- Load custom filters here -->
 
 {% block content %}
+    <div class="container mt-5" style="max-width: 900px">
 <h2>Your Inbox</h2>
+
 <div class="list-group">
     {% for user in users %}
         <a href="{% url 'direct_message:direct_chat_view' user.username %}" class="list-group-item list-group-item-action">
@@ -21,4 +23,5 @@
         </a>
     {% endfor %}
 </div>
+    </div>
 {% endblock %}

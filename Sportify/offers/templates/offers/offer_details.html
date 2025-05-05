@@ -18,9 +18,10 @@
                             </a>
                     </div>
                 </div>
-
+<br>
         <div class="text-center">
             <h4 class="fw-bold">{{ offer.title }}</h4>
+<br>
 
 
             {% if offer.photo %}
@@ -32,6 +33,13 @@
 
         <p class="my-3">{{ offer.content }}</p>
         </div>
+            {% if offer.date %}
+                <p><strong>Date:</strong> {{ offer.date|date:"M d, Y" }} at {{ offer.date|time:"H:i" }}</p>
+            {% endif %}
+
+            {% if offer.location %}
+                <p><strong>Location:</strong> {{ offer.location }}</p>
+            {% endif %}
 
         <div class="d-flex flex-column align-items-center gap-2 mb-3">
             {% if offer.url %}

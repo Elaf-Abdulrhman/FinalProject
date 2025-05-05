@@ -1,6 +1,8 @@
 {% extends "main/base.html" %}
 
 {% block content %}
+        <div class="container mt-5" style="max-width: 900px">
+
 <div class="chat-box" style="border: 1px solid #ccc; height: 300px; overflow-y: scroll; padding: 1rem;">
   {% for message in messages %}
     <div style="margin-bottom: 0.5rem; {% if message.sender == request.user %}text-align: right;{% endif %}">
@@ -16,4 +18,5 @@
   <textarea name="content" rows="2" class="form-control" placeholder="Type a message..."></textarea>
   <button class="btn btn-primary mt-2">Send</button>
 </form>
+        </div>
 {% endblock %}
