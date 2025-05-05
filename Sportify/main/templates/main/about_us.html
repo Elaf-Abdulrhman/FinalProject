@@ -47,8 +47,9 @@
   <div class="row g-4">
     <div class="col-md-4">
       <div class="card bg-dark text-center p-4 border-0">
-        <img src="{% static 'images/profile.png' %}" class="rounded-circle mx-auto mb-3" width="120" alt="Team Member">
-        <h5 class="text-white">Elaf Alshanqiti</h5>
+        <a href="https://www.linkedin.com/in/elaf-alshanqiti/" target="_blank" class="text-white mt-3" style="text-decoration: none;">
+        <img src="{% static 'images/logo_elaf.jpeg' %}" class="rounded-circle mx-auto mb-3" width="120" alt="Team Member">
+        <h5 class="text-white">Elaf Alshanqiti</h5></a>
       </div>
     </div>
     <div class="col-md-4">
@@ -67,7 +68,7 @@
 </div>
 
 <div class="text-center py-5 bg-dark">
-  <h2 class="text-warning mb-3">Join the Us</h2>
+  <h2 class="text-warning mb-3">Join Us</h2>
   <p class="text-white">Whether you're scouting or showcasing — Sportify is your home turf.</p>
   <a href="{% url 'account:login_view' %}" class="btn btn-warning btn-lg mt-3">Get Started</a>
 </div>

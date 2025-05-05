@@ -10,8 +10,12 @@
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
     cursor: pointer;
-
 }
+
+.pause-animation {
+  animation-play-state: paused !important;
+}
+
 h2 {
     font-size: 2rem;
     font-weight: bold;
@@ -74,19 +78,10 @@ body {
   font-weight: bold;
 }
 
-.club-info-popup {
-  position: absolute;
-  padding: 1rem;
-  background: #fff;
-  border: 1px solid #ccc;
-  border-radius: 10px;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-  z-index: 999;
-  display: none;
-  min-width: 180px;
-  pointer-events: auto;
-  transition: opacity 0.2s;
+.club-photo-wrapper {
+  position: relative;
 }
+
 .clubs-scroll-container {
   position: relative; 
 }
@@ -95,6 +90,16 @@ body {
   box-shadow: 0 8px 20px rgba(0, 123, 255, 0.2);
 }
 
+.bg-cover {
+    background-size: cover;
+  }
+  .bg-center {
+    background-position: center;
+  }
+  .athlete-card:hover .position-absolute {
+    background: rgba(0, 0, 0, 0.75);
+    transition: background 0.3s ease;
+  }
 
 </style>
 
@@ -142,19 +147,25 @@ body {
 
     <!-- Slide 3 -->
     <div class="carousel-item">
-      <div class="d-flex align-items-center" style="height: 60vh; overflow: hidden;">
-        <div class="d-flex flex-column justify-content-center p-5" style="flex: 1; height: 100%; background-color: #0C1518;">
+      <div class="d-flex align-items-center" style="height: 70vh; overflow: hidden;">
+        <!-- Left content with background -->
+        <div class="d-flex flex-column justify-content-center p-5" style="flex: 1; height: 100%; background-color: black;">
           <div class="p-5">
-            <h2 class="fw-bold text-white">Sign Up as an Athlete</h2>
-            <p class="text-white">The platform where clubs can find you.</p>
+            <h2 class="fw-bold text-white">Yasser has accomplished his dream and became a football player</h2>
+            <p class="text-white">Join us and be the next Saudi sport star!</p>
             <a href="{% url 'account:signup_athlete_view' %}" class="btn btn-light btn-lg" style="z-index: 10; position: relative; height: 3rem; width: 11rem;">Sign up</a>
           </div>
         </div>
-        <div style="flex: 1; height: 100%; overflow: hidden;">
-          <img src="{% static 'images/photo3.jpg' %}" alt="Sign Up as Athlete" class="w-100 h-100" style="object-fit: cover;">
+    
+        <!-- Video content -->
+        <div style="flex: 1; display: flex; justify-content: center; align-items: center; height: 100%; overflow: hidden; background-color: black;">
+          <video autoplay loop muted style="max-width: 100%; max-height: 100%; object-fit: contain;">
+            <source src="{% static 'video/player_vid.mp4' %}" type="video/mp4">
+            Your browser does not support the video tag.
+          </video>
         </div>
       </div>
-    </div>
+    </div>    
   </div>
 
   <!-- Carousel Controls with Arrows 
@@ -191,153 +202,162 @@ body {
           </div>
         {% endfor %}
       </div>
-      <div class="club-info-popup" id="clubInfoPopup"></div>
     </div>
   </div>
 </div>
 
-<div class="athletes-section" style="padding: 2rem;">
+<div class="athletes-section py-5" style="background-color: #f9f9f9;">
   <div class="container">
-      <h2 class="text-left mb-4">Explore Our Athletes</h2>
-      <div class="row">
-        {% for athlete in athletes %}
-        <div class="col-md-6 mb-4">
-            <div class="card d-flex flex-row align-items-center p-3">
-                <!-- Profile Photo -->
-                <div class="me-3">
-                  <img src="{% if athlete.profilePhoto %}{{ athlete.profilePhoto.url }}{% else %}{% static 'images/profile.png' %}{% endif %}"
-                       alt="Profile Photo"
-                       style="width: 5rem; height: 5rem; object-fit: cover; border-radius: 50%; border: 2px solid #ccc;">
-                </div>
-                <!-- Athlete Info -->
-                <div>
-                    <h5 class="mb-1">{{ athlete.user.first_name }}</h5>
-                    <a class="link-secondary link-offset-3 link-underline-opacity-0 link-underline-opacity-75-hover"
-                       href="{% url 'account:profile_view' athlete.user.id %}">
-                       <h6 class="card-title mb-2">@{{ athlete.user.username }}</h6>
-                    </a>
-                    <p class="card-text">{{ athlete.bio|truncatewords:20 }}</p>
-                </div>
+    <h2 class="mb-4 fw-bold text-dark">🏅 Meet the Athletes</h2>
+    <div class="row g-4">
+      {% for athlete in athletes %}
+      {% if not athlete.isPrivate %}
+      <div class="col-md-4">
+        <a href="{% url 'account:profile_view' athlete.user.id %}" class="text-decoration-none athlete-card">
+          <div class="position-relative overflow-hidden rounded-4 shadow-sm" style="height: 320px;">
+            <!-- Square Image Background -->
+            <div class="h-100 w-100 bg-cover bg-center"
+                 style="background-image: url('{% if athlete.profilePhoto %}{{ athlete.profilePhoto.url }}{% else %}{% static 'images/profile.png' %}{% endif %}');">
             </div>
-        </div>
-        {% endfor %}
+
+            <!-- Overlay Box -->
+            <div class="position-absolute bottom-0 w-100 p-3"
+                 style="background: rgba(0, 0, 0, 0.6); color: white;">
+              <h5 class="mb-0">{{ athlete.user.first_name }}</h5>
+              <p class="small mb-0 text-truncate">@{{ athlete.user.username }}</p>
+              <p class="small mt-2 mb-0" style="line-height: 1.2;">{{ athlete.bio|truncatewords:15 }}</p>
+            </div>
+          </div>
+        </a>
       </div>
+      {% endif %}
+      {% endfor %}
+    </div>
   </div>
 </div>
+
+
 
 <div class="posts-section" style="padding: 2rem;">
   <div class="container">
     <h2 class="text-left mb-4">Latest Posts</h2>
     <div class="row">
       {% for post in latest_posts %}
-      {% if not athlete.isPrivate %}
       <div class="col-md-6 mb-4">
-        <div class="card d-flex flex-row align-items-center p-3">
-          <div class="me-3">
-            {% if post.user.athlete and post.user.athlete.profilePhoto %}
-            <img src="{{ post.user.athlete.profilePhoto.url }}" alt="Profile Photo"
-                 class="rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover; border-radius: 50%; border: 2px solid #ccc;">
-        {% elif post.user.club and post.user.club.photo %}
-            <img src="{{ post.user.club.photo.url }}" alt="Profile Photo"
-                 class="rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover; border-radius: 50%; border: 2px solid #ccc;">
-        {% else %}
-            <img src="{% static 'images/profile.png' %}" alt="Default Profile Photo"
-                 class="rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover; border-radius: 50%; border: 2px solid #ccc;">
-        {% endif %}
-
+        <div class="card d-flex flex-row align-items-center p-3 position-relative">
+          <div class="me-3 position-relative" style="z-index: 2;">
+            <a href="{% url 'account:profile_view' post.user.id %}" class="text-decoration-none d-flex align-items-center text-dark">
+              {% if post.user.athlete and post.user.athlete.profilePhoto %}
+                <img src="{{ post.user.athlete.profilePhoto.url }}" alt="Profile Photo"
+                     class="rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover; border: 2px solid #ccc;">
+              {% elif post.user.club and post.user.club.photo %}
+                <img src="{{ post.user.club.photo.url }}" alt="Profile Photo"
+                     class="rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover; border: 2px solid #ccc;">
+              {% else %}
+                <img src="{% static 'images/profile.png' %}" alt="Default Profile Photo"
+                     class="rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover; border: 2px solid #ccc;">
+              {% endif %}
+            </a>
           </div>
-          <div>
-            <h5 class="mb-1">{{ post.user }}</h5>
-            <a class="link-secondary link-offset-3 link-underline-opacity-0 link-underline-opacity-75-hover"
-               href="{% url 'account:profile_view' post.user.id %}">
-               <h6 class="card-title mb-2">@{{ post.user.username }}</h6>
+          <div class="position-relative" style="z-index: 2;">
+            <a href="{% url 'account:profile_view' post.user.id %}" class="link-secondary link-underline-opacity-0 link-underline-opacity-75-hover">
+              <h5 class="mb-1 text-dark">{{ post.user }}</h5>
+              <h6 class="card-title mb-2">@{{ post.user.username }}</h6>
             </a>
             <p class="card-text">{{ post.content|truncatewords:20 }}</p>
             <p class="card-text"><small class="text-muted">{{ post.created_at|date:"F j, Y" }}</small></p>
           </div>
+
+          <!-- Full card click to post details -->
+          <a href="{% url 'posts:post_details' post.id %}" class="stretched-link" style="z-index: 1;"></a>
         </div>
       </div>
-      {% endif %}
       {% endfor %}
     </div>
 
-    <div class="text-center d-flex justify-content-end mt-4">
+    <div class="text-center mt-4">
       <a href="{% url 'posts:all_posts' %}" 
-         class="btn rounded-pill shadow-sm transition left-0"
+         class="btn btn-primary px-4 py-2 fs-5 rounded-pill shadow-sm transition"
          style="transition: all 0.3s ease;">
         View All Posts &rarr;
       </a>
     </div>
-    
   </div>
 </div>
 
 <script>
   const wrapper = document.getElementById("scrollingWrapper");
-  const popup = document.getElementById("clubInfoPopup");
   const container = document.querySelector(".clubs-scroll-container");
-  let hideTimeout;
-
-  function showPopup(target) {
-    const name = target.getAttribute("data-club-name");
-    const id = target.getAttribute("data-club-id");
-
-    popup.innerHTML = `
-      <strong>${name}</strong><br>
-      <a href="/profile_view/${id}">View Profile →</a>
-    `;
-
-    // Temporarily show popup to measure dimensions
-    popup.style.display = "block";
-    popup.style.opacity = "0";
-    popup.style.pointerEvents = "none";
-
-    requestAnimationFrame(() => {
-      const targetRect = target.getBoundingClientRect();
-      const containerRect = container.getBoundingClientRect();
-      const popupWidth = popup.offsetWidth;
-      const popupHeight = popup.offsetHeight;
-      const offsetY = 10;
-
-      // Calculate position relative to container
-      const top = target.offsetTop - popupHeight - offsetY;
-      const left = target.offsetLeft + (target.offsetWidth / 2) - (popupWidth / 2);
-
-      popup.style.top = `${top}px`;
-      popup.style.left = `${left}px`;
-      popup.style.opacity = "1";
-      popup.style.pointerEvents = "auto";
-    });
-
-    clearTimeout(hideTimeout);
-  }
-
-  function hidePopupWithDelay() {
-    hideTimeout = setTimeout(() => {
-      popup.style.display = "none";
-    }, 3000);
-  }
 
   document.querySelectorAll(".club-photo-wrapper").forEach(el => {
+    const infoDiv = document.createElement("div");
+    infoDiv.classList.add("club-info-tooltip");
+    el.appendChild(infoDiv);  // Append info container under each club photo
+
     el.addEventListener("mouseenter", () => {
-      wrapper.style.animationPlayState = "paused";
-      showPopup(el);
+      // Show the club info under the hovered club
+      const name = el.getAttribute("data-club-name");
+      const id = el.getAttribute("data-club-id");
+      
+      infoDiv.innerHTML = `
+        <strong>${name}</strong><br>
+        <a href="/profile_view/${id}">View Profile →</a>
+      `;
+      
+      infoDiv.style.display = "block";
+      wrapper.style.animationPlayState = "paused";  // Pause the scroll animation
     });
 
     el.addEventListener("mouseleave", () => {
-      hidePopupWithDelay();
-      wrapper.style.animationPlayState = "running";
+      infoDiv.style.display = "none";
+      wrapper.style.animationPlayState = "running";  // Resume the scroll animation
     });
   });
-
-  popup.addEventListener("mouseenter", () => {
-    clearTimeout(hideTimeout);
-  });
-
-  popup.addEventListener("mouseleave", () => {
-    hidePopupWithDelay();
-  });
 </script>
+
+<style>
+  .club-info-tooltip {
+    display: none;  /* Initially hidden */
+    position: absolute;
+    background: #fff;
+    padding: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    width: 180px; /* You can adjust this width based on the content */
+    text-align: center;
+    font-size: 14px;
+    transition: opacity 0.3s ease-in-out;
+  }
+
+  .club-photo-wrapper {
+    position: relative;
+    flex: 0 0 auto;
+    margin: 0 1.5rem 2rem;
+    text-align: center;
+  }
+
+  .club-photo-wrapper img {
+    width: 150px;
+    height: 150px;
+    object-fit: contain;
+    border-radius: 50%;
+    border: 3px solid #ccc;
+    background-color: white;
+    padding: 20px;
+    transition: transform 0.3s;
+  }
+
+  .club-photo-wrapper:hover img {
+    transform: scale(1.05);
+  }
+
+  .club-hover-name {
+    margin-top: 0.5rem;
+    font-weight: bold;
+  }
+</style>
+
 
 
 {% endblock %}

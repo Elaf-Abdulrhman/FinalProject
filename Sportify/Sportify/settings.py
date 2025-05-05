@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'clubs',
     'subscriptions',
     'bookmarks',
+    'direct_message',
     'admins.apps.AdminConfig',  # Ensure this matches the app's configuration
 ]
 
