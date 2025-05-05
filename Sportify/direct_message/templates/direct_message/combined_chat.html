@@ -1,0 +1,44 @@
+{% extends "main/base.html" %}
+{% block content %}
+
+<div class="container mt-4">
+  <div class="row">
+    <!-- Inbox / user list -->
+    <div class="col-md-4 border-end">
+      <h5>Inbox</h5>
+      <ul class="list-group">
+        {% for user in users %}
+          <a href="{% url 'direct_message:chat_page' user.username %}" class="list-group-item list-group-item-action {% if selected_user == user %}active{% endif %}">
+            {{ user.username }}
+          </a>
+        {% endfor %}
+      </ul>
+    </div>
+
+    <!-- Chat area -->
+    <div class="col-md-8">
+      {% if selected_user %}
+        <h5>Chat with {{ selected_user.username }}</h5>
+        <div class="border rounded p-3 mb-3" style="height: 300px; overflow-y: scroll;">
+          {% for message in chat_messages %}
+            <div class="mb-2 {% if message.sender == request.user %}text-end{% endif %}">
+              <strong>{{ message.sender.username }}:</strong> {{ message.content }}<br>
+              <small class="text-muted">{{ message.timestamp|date:"M d, H:i" }}</small>
+            </div>
+          {% endfor %}
+        </div>
+        <form method="post">
+          {% csrf_token %}
+          <div class="input-group">
+            <textarea name="content" class="form-control" rows="2" placeholder="Type a message..."></textarea>
+            <button class="btn btn-primary" type="submit">Send</button>
+          </div>
+        </form>
+      {% else %}
+        <p>Select a user to start chatting.</p>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+{% endblock %}

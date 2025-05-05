@@ -4,6 +4,6 @@ from . import views
 app_name = 'direct_message'
 
 urlpatterns = [
-    path('inbox/', views.inbox_view, name='inbox_view'),
-    path('<str:username>/', views.direct_chat_view, name='direct_chat_view'),
+    path('', views.chat_page_view, name='chat_page_view'),
+    path('<str:username>/', views.chat_page_view, name='chat_page'),
 ]
