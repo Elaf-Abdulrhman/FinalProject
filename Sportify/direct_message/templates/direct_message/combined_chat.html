@@ -33,13 +33,21 @@
         <h4 class="mb-3">Chat with {{ selected_user.username }}</h4>
 
         <div class="chat-box border rounded p-3 mb-3" style="height: 400px; overflow-y: scroll;">
-          {% for message in chat_messages %}
-            <div class="mb-2 {% if message.sender == request.user %}text-end{% endif %}">
-              <strong>{{ message.sender.username }}:</strong> {{ message.content }}<br>
-              <small class="text-muted">{{ message.timestamp|date:"M d, H:i" }}</small>
+          {% regroup chat_messages by timestamp.date as date_groups %}
+        
+          {% for day in date_groups %}
+            <div class="text-center text-muted my-3">
+              <strong>{{ day.grouper|date:"F j" }}</strong>
             </div>
+        
+            {% for message in day.list %}
+              <div class="mb-2 {% if message.sender == request.user %}text-end{% endif %}">
+                <strong>{{ message.sender.username }}:</strong> {{ message.content }}<br>
+                <small class="text-muted">{{ message.timestamp|date:"H:i" }}</small>
+              </div>
+            {% endfor %}
           {% endfor %}
-        </div>
+        </div>        
 
         <!-- Message form -->
         <form method="POST">
