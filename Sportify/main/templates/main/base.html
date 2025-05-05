@@ -84,9 +84,8 @@
 
 
 
-
-  .Sportify {
-  font-family: "Source Code Pro", monospace;
+#sportify {
+  font-family: 'Noto Sans', 'Segoe UI', sans-serif;
   font-optical-sizing: auto;
   font-weight: 900;
   font-style: normal;
@@ -176,7 +175,7 @@ body.dark hr {
   }
 </style>
   </head>
-  <body {% if "mode" in request.COOKIES and request.COOKIES.mode == "dark" %} class="dark" {% endif %}>
+  <body {% if "mode" in request.COOKIES and request.COOKIES.mode == "dark" %} class="dark" {% endif %} id="sportify">
 <!--  -->
 <div class="container-fluid sticky-top top-navbar py-2">
   <nav class="navbar navbar-expand-lg navbar-light">
