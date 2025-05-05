@@ -22,7 +22,7 @@
             {{ user.username }}
           </a>
         {% empty %}
-          <li class="list-group-item text-muted">No conversations yet.</li>
+          <li class="list-group-item text-muted">No registed user exist with this username</li>
         {% endfor %}
       </ul>
     </div>
@@ -30,8 +30,6 @@
     <!-- RIGHT: Chat box -->
     <div class="col-md-8">
       {% if selected_user %}
-        <h4 class="mb-3">Chat with {{ selected_user.username }}</h4>
-
         <div class="chat-box border rounded p-3 mb-3" style="height: 400px; overflow-y: scroll;">
           {% regroup chat_messages by timestamp.date as date_groups %}
         
@@ -42,7 +40,14 @@
         
             {% for message in day.list %}
               <div class="mb-2 {% if message.sender == request.user %}text-end{% endif %}">
-                <strong>{{ message.sender.username }}:</strong> {{ message.content }}<br>
+                {% if message.sender.athlete and message.sender.athlete.profilePhoto %}
+                  <img src="{{ message.sender.athlete.profilePhoto.url }}" alt="Profile Photo" class="rounded-circle" style="width: 40px; height: 40px; object-fit: cover;">
+                {% elif message.sender.club and message.sender.club.photo %}
+                  <img src="{{ message.sender.club.photo.url }}" alt="Club Photo" class="rounded-circle" style="width: 40px; height: 40px; object-fit: cover;">
+                {% else %}
+                  <img src="{% static 'images/profile.png' %}" alt="Default Photo" class="rounded-circle" style="width: 40px; height: 40px; object-fit: cover;">
+                {% endif %}
+                {{ message.content }}<br>
                 <small class="text-muted">{{ message.timestamp|date:"H:i" }}</small>
               </div>
             {% endfor %}
