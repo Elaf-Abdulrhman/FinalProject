@@ -7,47 +7,75 @@
 <div class="container mt-5">
     <div class="card p-4 shadow-sm mx-auto" style="max-width: 700px;">
 
-        <div class="text-center mb-4">
-            <img src="{{ offer.user.club.photo.url }}" alt="Profile" width="60" height="60" class="rounded-circle mb-2">
-            <h5 class="mb-0">{{ offer.user.first_name }} {{ offer.user.last_name }}</h5>
-            <small class="text-muted">@{{ offer.user.username }}</small>
-        </div>
+        <div class="d-flex align-items-center gap-3 p-3 border-bottom">
+                    <img src="{{ offer.user.club.photo.url }}" alt="Profile Photo"
+                         class="rounded-circle me-2"
+                         style="width: 40px; height: 40px; object-fit: cover; border: 2px solid #ccc;">
+                    <div>
+                        <strong>{{ offer.user.club.clubName}}</strong><br>
+                        <a href="{% url 'account:profile_view' offer.user.id %}" class="text-muted text-decoration-none">
+                                @{{ offer.user.username }}
+                            </a>
+                    </div>
+                </div>
 
         <div class="text-center">
             <h4 class="fw-bold">{{ offer.title }}</h4>
-            <p class="my-3">{{ offer.content }}</p>
+
 
             {% if offer.photo %}
-            <img src="{{ offer.photo.url }}" class="img-fluid rounded mb-3" alt="Offer Photo" style="max-height: 300px;">
+                <img src="{{ offer.photo.url }}" class="img-fluid rounded mb-3" alt="Offer Photo" style="max-height: 300px;">
             {% else %}
-            <div class="bg-light p-5 mb-3 rounded">No Image</div>
+                <div class="bg-light p-5 mb-3 rounded">No Image</div>
             {% endif %}
+
+
+        <p class="my-3">{{ offer.content }}</p>
         </div>
 
         <div class="d-flex flex-column align-items-center gap-2 mb-3">
             {% if offer.url %}
-            <a href="{{ offer.url }}" target="_blank" class="btn btn-dark w-50">Click here to go to the website</a>
+                <a href="{{ offer.url }}" target="_blank" class="btn btn-outline-dark w-100">Visit Website</a>
             {% endif %}
             {% if offer.email %}
-            <a href="mailto:{{ offer.email }}" class="btn btn-dark w-50">Email</a>
+                <a href="mailto:{{ offer.email }}" class="btn btn-outline-dark w-100">Email</a>
             {% endif %}
             {% if offer.phone_number %}
-            <a href="tel:{{ offer.phone_number }}" class="btn btn-dark w-50">Number</a>
+                <a href="tel:{{ offer.phone_number }}" class="btn btn-outline-dark w-100">Call</a>
             {% endif %}
         </div>
-
+                    <small class="text-muted"><i class="bi bi-gender-ambiguous"></i>
+                        {% if offer.gender == 'M' %}Male{% elif offer.gender == 'F' %}Female{% else %}All{% endif %}
+                    </small>
         <div class="text-start text-muted small mt-2">
+            <i class="bi bi-trophy"></i>{{ offer.user.club.sport }}
             <i class="bi bi-calendar"></i> {{ offer.created_at|date:"M d, Y" }}
             <i class="bi bi-clock ms-2"></i> {{ offer.created_at|time:"H:i A" }}
         </div>
+
+                   {% if user.is_authenticated and user.athlete %}
+                <hr class="my-4">
+                {% if has_applied %}
+                    <div class="alert alert-success text-center">You have already applied to this offer.</div>
+                {% else %}
+                    <form method="post" action="{% url 'offers:apply_to_offer' offer.id %}">
+                        {% csrf_token %}
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-dark">Apply to this Offer</button>
+                        </div>
+                    </form>
+                {% endif %}
+            {% endif %}
+
 
         {% if request.user == offer.user %}
         <div class="d-flex justify-content-center gap-2 mt-4">
             <a href="{% url 'offers:edit_offer' offer.id %}" class="btn btn-outline-primary">Edit</a>
 
+                    <a href="{% url 'offers:offer_applicants' offer.id %}" class="btn btn-sm btn-outline-info">View Applicants</a>
             <!-- Delete Button trigger modal -->
             <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
-              Delete
+                Delete
             </button>
         </div>
         {% endif %}

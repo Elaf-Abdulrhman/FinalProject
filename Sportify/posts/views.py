@@ -208,10 +208,7 @@ def all_posts(request):
     }
 
     return render(request, 'posts/all_posts.html', context)
-<<<<<<< HEAD
 
-
-=======
     
 def latest_posts(request):
     latest_posts = Post.objects.filter(
@@ -233,4 +230,3 @@ def latest_posts(request):
     }
 
     return render(request, 'main/main_page.html', context)
->>>>>>> 4fde38e91e1eff263532da9cb2bc088956ebbd3e

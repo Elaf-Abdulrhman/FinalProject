@@ -1,6 +1,5 @@
 {% load static %}
 {% for post in posts %}
-<<<<<<< HEAD
 <div class="card mb-3 shadow-sm p-3 position-relative post-card" data-url="{% url 'posts:post_details' post.id %}">
 
   <!-- Header: User Info + Actions -->
@@ -24,44 +23,15 @@
               {{ post.user.first_name }}
             {% elif post.user.club %}
               {{ post.user.club.clubName }} <i class="bi bi-patch-check-fill"></i>
-=======
-<div class="card mb-3 shadow-sm p-3 position-relative z-1">
-    <div class="d-flex justify-content-between align-items-start">
-        <div class="d-flex align-items-center">
-          <a href="{% url 'account:profile_view' post.user.id %}" class="me-2 position-relative z-2">
-            {% if post.user.athlete and post.user.athlete.profilePhoto %}
-                <img src="{{ post.user.athlete.profilePhoto.url }}" alt="Profile Photo"
-                     class="rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover; border-radius: 50%; border: 2px solid #ccc;">
-            {% elif post.user.club and post.user.club.photo %}
-                <img src="{{ post.user.club.photo.url }}" alt="Profile Photo"
-                     class="rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover; border-radius: 50%; border: 2px solid #ccc;">
->>>>>>> 4fde38e91e1eff263532da9cb2bc088956ebbd3e
             {% else %}
               {{ post.user.username }}
             {% endif %}
-<<<<<<< HEAD
           </strong><br>
           <small class="text-muted">@{{ post.user.username }}</small>
-=======
-        </a>
-            <div>
-                <strong>
-                    {% if post.user.athlete %}
-                        {{ post.user.first_name }}
-                    {% elif post.user.club %}
-                        {{ post.user.club.clubName }} <i class="bi bi-patch-check-fill"></i>
-                    {% else %}
-                        {{ post.user.username }}
-                    {% endif %}
-                </strong><br>
-                <small class="text-muted">@{{ post.user.username }}</small>
-            </div>
->>>>>>> 4fde38e91e1eff263532da9cb2bc088956ebbd3e
         </div>
       </a>
     </div>
 
-<<<<<<< HEAD
     <div class="d-flex gap-3 z-2">
       {% if user.is_authenticated and not user.is_superuser %}
         <!-- Bookmark -->
@@ -72,49 +42,20 @@
               <i class="bi bi-bookmark-fill" style="font-size: 1.2rem;"></i>
             {% else %}
               <i class="bi bi-bookmark" style="font-size: 1.2rem;"></i>
-=======
-        <div class="d-flex gap-3 z-1">
-            <!-- Bookmark/Unbookmark -->
-             {% if not user.is_superuser%}
-            <form action="{% url 'bookmarks:bookmark_post' post.id %}" method="POST" class="bookmark-form d-inline position: relative; z-index: 1;">
-                {% csrf_token %}
-                <button type="submit" class="btn btn-sm border-0 bg-transparent p-0 bookmark-btn" data-post-id="{{ post.id }}">
-                   {% if post.id in bookmarked_post_ids %}
-                        <i class="bi bi-bookmark-fill" style="font-size: 1.2rem"></i>
-                    {% else %}
-                        <i class="bi bi-bookmark" style="font-size: 1.2rem"></i>
-                    {% endif %}
-
-                </button>
-            </form>
->>>>>>> 4fde38e91e1eff263532da9cb2bc088956ebbd3e
             {% endif %}
           </button>
         </form>
 
-<<<<<<< HEAD
         <!-- Like -->
         <form action="{% url 'posts:like_post' post.id %}" method="POST" class="like-form d-inline">
           {% csrf_token %}
           <button type="submit" class="btn btn-sm border-0 bg-transparent p-0 like-btn" data-post-id="{{ post.id }}">
             {% if post.is_liked %}
-              <i class="bi bi-heart-fill text-danger" style="font-size: 1.3rem;"></i> <span class="like-count">{{ post.total_likes }}</span>
+              <i class="bi bi-heart-fill text-danger" style="font-size: 1.3rem;"></i>
             {% else %}
-              <i class="bi bi-heart" style="font-size: 1.3rem;"></i> <span class="like-count">{{ post.total_likes }}</span>
-=======
-                    {% if not user.is_superuser %}
-                    <form action="{% url 'posts:like_post' post.id %}" method="POST" class="like-form d-inline position: relative; z-index: 1;">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-sm border-0 bg-transparent p-0 like-btn" data-post-id="{{ post.id }}">
-                            {% if post.is_liked %}
-                                <i class="bi bi-heart-fill text-danger" style="font-size: 1.3rem;"></i> <span class="like-count">{{ post.total_likes }}</span>
-                            {% else %}
-                                <i class="bi bi-heart" style="font-size: 1.3rem;"></i> <span class="like-count">{{ post.total_likes }}</span>
-                            {% endif %}
-                        </button>
-                    </form>
->>>>>>> 4fde38e91e1eff263532da9cb2bc088956ebbd3e
+              <i class="bi bi-heart" style="font-size: 1.3rem;"></i>
             {% endif %}
+            <span class="like-count">{{ post.total_likes }}</span>
           </button>
         </form>
       {% else %}
@@ -158,7 +99,6 @@
         Your browser does not support the video tag.
       </video>
     </div>
-<<<<<<< HEAD
     {% endif %}
   </div>
 
@@ -166,14 +106,11 @@
   <div class="text-end mt-3">
     {{ post.comments.count }} <i class="bi bi-chat" style="font-size: 1.3rem;"></i>
   </div>
-=======
-    <!-- Stretched link at the end to avoid covering buttons -->
+
+  <!-- Clickable area -->
   <a href="{% url 'posts:post_details' post.id %}" class="stretched-link text-decoration-none text-dark"></a>
->>>>>>> 4fde38e91e1eff263532da9cb2bc088956ebbd3e
 </div>
 {% endfor %}
-
-
 
 <script>
   function showLoginAlert() {
