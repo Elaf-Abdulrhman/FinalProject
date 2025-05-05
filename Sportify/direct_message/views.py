@@ -61,7 +61,6 @@ def chat_page_view(request, username=None):
             return redirect('direct_message:chat_page', username=selected_user.username)
 
     return render(request, 'direct_message/combined_chat.html', {
-        'users': users,
         'selected_user': selected_user,
         'chat_messages': chat_messages,
         'search_query': search_query,
