@@ -34,8 +34,5 @@ urlpatterns = [
     path('subscriptions/', include('subscriptions.urls')),
     path('bookmarks/', include('bookmarks.urls')),
     path('admins/', include('admins.urls')),
-
-
-
-    path('i18n/setlang/', set_language, name='set_language'),
+    path('direct_message/', include('direct_message.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -90,6 +90,16 @@ body {
   box-shadow: 0 8px 20px rgba(0, 123, 255, 0.2);
 }
 
+.bg-cover {
+    background-size: cover;
+  }
+  .bg-center {
+    background-position: center;
+  }
+  .athlete-card:hover .position-absolute {
+    background: rgba(0, 0, 0, 0.75);
+    transition: background 0.3s ease;
+  }
 
 </style>
 
@@ -190,36 +200,38 @@ body {
   </div>
 </div>
 
-<div class="athletes-section" style="padding: 2rem;">
+<div class="athletes-section py-5" style="background-color: #f9f9f9;">
   <div class="container">
-      <h2 class="text-left mb-4">Explore Our Athletes</h2>
-      <div class="row">
-        {% for athlete in athletes %}
-        {% if not athlete.isPrivate %}
-        <div class="col-md-6 mb-4">
-            <div class="card d-flex flex-row align-items-center p-3">
-                <!-- Profile Photo -->
-                <div class="me-3">
-                  <img src="{% if athlete.profilePhoto %}{{ athlete.profilePhoto.url }}{% else %}{% static 'images/profile.png' %}{% endif %}"
-                       alt="Profile Photo"
-                       style="width: 5rem; height: 5rem; object-fit: cover; border-radius: 50%; border: 2px solid #ccc;">
-                </div>
-                <!-- Athlete Info -->
-                <div>
-                    <h5 class="mb-1">{{ athlete.user.first_name }}</h5>
-                    <a class="link-secondary link-offset-3 link-underline-opacity-0 link-underline-opacity-75-hover"
-                       href="{% url 'account:profile_view' athlete.user.id %}">
-                       <h6 class="card-title mb-2">@{{ athlete.user.username }}</h6>
-                    </a>
-                    <p class="card-text">{{ athlete.bio|truncatewords:20 }}</p>
-                </div>
+    <h2 class="mb-4 fw-bold text-dark">🏅 Meet the Athletes</h2>
+    <div class="row g-4">
+      {% for athlete in athletes %}
+      {% if not athlete.isPrivate %}
+      <div class="col-md-4">
+        <a href="{% url 'account:profile_view' athlete.user.id %}" class="text-decoration-none athlete-card">
+          <div class="position-relative overflow-hidden rounded-4 shadow-sm" style="height: 320px;">
+            <!-- Square Image Background -->
+            <div class="h-100 w-100 bg-cover bg-center"
+                 style="background-image: url('{% if athlete.profilePhoto %}{{ athlete.profilePhoto.url }}{% else %}{% static 'images/profile.png' %}{% endif %}');">
             </div>
-        </div>
-        {% endif %}
-        {% endfor %}
+
+            <!-- Overlay Box -->
+            <div class="position-absolute bottom-0 w-100 p-3"
+                 style="background: rgba(0, 0, 0, 0.6); color: white;">
+              <h5 class="mb-0">{{ athlete.user.first_name }}</h5>
+              <p class="small mb-0 text-truncate">@{{ athlete.user.username }}</p>
+              <p class="small mt-2 mb-0" style="line-height: 1.2;">{{ athlete.bio|truncatewords:15 }}</p>
+            </div>
+          </div>
+        </a>
       </div>
+      {% endif %}
+      {% endfor %}
+    </div>
   </div>
 </div>
+
+
+
 <div class="posts-section" style="padding: 2rem;">
   <div class="container">
     <h2 class="text-left mb-4">Latest Posts</h2>
