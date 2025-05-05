@@ -35,7 +35,6 @@ class Athlete(models.Model):
     bio = models.TextField(blank=True) 
     isAvailable = models.BooleanField(default=True)
     isPrivate = models.BooleanField(default=False)
-    achievements = models.TextField(blank=True)
     facebook = models.URLField(blank=True)
     twitterX = models.URLField(blank=True)
     instagram = models.URLField(blank=True)
@@ -59,3 +58,10 @@ class Club(models.Model):
     def __str__(self):
         return f"{self.clubName} ({'Approved' if self.is_approved else 'Pending'})"
 
+class Achievement(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    title = models.CharField(max_length=150,blank=True)
+    dateOfStart = models.DateTimeField()
+    dateOfEnd = models.DateTimeField()
+    content= models.TextField(blank=True) 
+    file = models.ImageField(upload_to='athletes/photos/')
