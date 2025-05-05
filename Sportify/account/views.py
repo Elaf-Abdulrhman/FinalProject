@@ -1,8 +1,8 @@
 import os
-
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm,User
-from .forms import UserSignupForm, AthleteSignupForm, ClubSignupForm, ClubUserSignupForm
-from .models import Athlete, Club
+from .forms import UserSignupForm, AthleteSignupForm, ClubSignupForm, ClubUserSignupForm,AchievementForm
+from .models import Athlete, Club,Achievement
 from posts.models import Post
 from django.contrib import messages
 from django.http import HttpRequest
@@ -127,11 +127,14 @@ def profile_view(request: HttpRequest, user_id):
             return render(request, "account/private_profile.html")
     except Athlete.DoesNotExist:
         pass
-
+ 
+    achievements = Achievement.objects.filter(user=user)
     context = {
         'user': user,
         'is_bookmarked': is_bookmarked,
         'posts': Post.objects.filter(user=user).order_by('-created_at').distinct(),
+        'user': user,
+        'achievements': achievements,  
     }
     return render(request, "account/profile.html", context)
 
@@ -165,3 +168,35 @@ def edit_profile_club_view(request: HttpRequest, user_id):
 
     return render(request, "account/edit_club_profile.html", {"form": form})
 
+@login_required
+def add_achievement(request, user_id):
+    user = get_object_or_404(User, id=user_id)  # Get the user by ID
+    athlete = get_object_or_404(Athlete, user=user)  # Get the athlete profile for the user
+    if request.method == 'POST':
+        form = AchievementForm(request.POST, request.FILES)
+
+        if form.is_valid():
+            achievement = form.save(commit=False)
+            achievement.user = request.user
+
+            achievement.save()
+
+            return redirect('account:profile_view', user_id=user_id)
+    else:
+        form = AchievementForm()
+
+    return render(request, 'account/add_achievement.html', {'form': form})
+
+
+
+@login_required
+def delete_achievement(request, user_id,pk):
+    achievement = get_object_or_404(Achievement, pk=pk, user__id=user_id)
+    if achievement.user == request.user:
+        if request.method == 'POST':
+            achievement.delete()
+            messages.success(request, "achievement deleted.")
+            return redirect('account:profile_view', user_id=user_id)
+    else:
+        messages.error(request, "You are not authorized to delete this achievement.")
+    return render(request, 'account/delete_achievement.html', {'achievement': achievement})

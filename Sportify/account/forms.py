@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from .models import Athlete, Club
+from .models import Athlete, Club,Achievement
 
 
 
@@ -40,11 +40,10 @@ class AthleteEditForm(forms.ModelForm):
         fields = [
             'profilePhoto', 'phoneNumber', 'dateOfBirth', 'sport', 'playingPosition',
             'height', 'weight', 'gender', 'isAvailable', 'isPrivate', 'city',
-            'bio', 'achievements', 'facebook', 'twitterX', 'instagram'  # <- Added here
+            'bio', 'facebook', 'twitterX', 'instagram'  # <- Added here
         ]
         widgets = {
             'bio': forms.Textarea(attrs={'rows': 3}),
-            'achievements': forms.Textarea(attrs={'rows': 3}),
             'dateOfBirth': forms.DateInput(attrs={'type': 'date'}),
         }
 
@@ -100,3 +99,8 @@ class ClubEditForm(forms.ModelForm):
             user.save()
             club.save()
         return club
+    
+class AchievementForm(forms.ModelForm):
+    class Meta:
+        model = Achievement
+        fields = [ 'title','dateOfStart','dateOfEnd','content', 'file']

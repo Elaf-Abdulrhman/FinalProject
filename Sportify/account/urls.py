@@ -17,6 +17,8 @@ urlpatterns = [
     path('logout/', views.logout_view, name='logout_view'),
     path('edit/athlete/<int:user_id>/', views.edit_profile_athlete_view, name='edit_profile_athlete_view'),
     path('edit/club/<int:user_id>/', views.edit_profile_club_view, name='edit_profile_club_view'),
+    path('add/<int:user_id>', views.add_achievement, name='add_achievement'),
+    path('delete/<int:user_id>/<int:pk>/', views.delete_achievement, name='delete_achievement'),
 
     path('reset_password/', auth_views.PasswordResetView.as_view(
         template_name='account/Reset_password.html',
