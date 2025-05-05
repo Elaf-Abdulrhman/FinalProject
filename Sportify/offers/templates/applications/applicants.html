@@ -1,0 +1,20 @@
+{% extends 'main/base.html' %}
+{% block title %}Applicants for {{ offer.title }}{% endblock %}
+{% block content %}
+<div class="container mt-5">
+    <h3 class="mb-4">Applicants for <strong>{{ offer.title }}</strong></h3>
+    {% for app in applications %}
+        <div class="card mb-3">
+            <div class="card-body">
+                <h5>{{ app.athlete.username }}</h5>
+                <p>Status: <strong>{{ app.get_status_display }}</strong></p>
+                {% if app.status == "pending" %}
+                    <a href="{% url 'offers:respond_to_application' app.id %}" class="btn btn-sm btn-outline-primary">Respond</a>
+                {% endif %}
+            </div>
+        </div>
+    {% empty %}
+        <div class="alert alert-info">No applications yet.</div>
+    {% endfor %}
+</div>
+{% endblock %}

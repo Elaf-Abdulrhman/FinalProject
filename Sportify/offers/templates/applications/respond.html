@@ -1,0 +1,12 @@
+{% extends 'main/base.html' %}
+{% block title %}Respond to Application{% endblock %}
+{% block content %}
+<div class="container mt-5">
+    <h3 class="mb-4">Respond to {{ application.athlete.username }}'s Application</h3>
+    <form method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-success">Submit Response</button>
+    </form>
+</div>
+{% endblock %}

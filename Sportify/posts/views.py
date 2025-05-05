@@ -9,6 +9,11 @@ from account.models import Athlete, Club, Sport, City
 from django.template.loader import render_to_string
 from django.http import JsonResponse
 from bookmarks.models import Bookmark
+from posts.models import Post, Like
+
+
+
+
 
 @login_required
 def add_post(request):
@@ -35,6 +40,19 @@ def add_post(request):
         form = PostForm()
 
     return render(request, 'posts/add_post.html', {'form': form})
+
+
+
+
+# def all_posts(request):
+#     post_list = Post.objects.all().order_by('-created_at')
+#     paginator = Paginator(post_list, 6)
+#
+#     page_number = request.GET.get('page')
+#     posts = paginator.get_page(page_number)
+#
+#     return render(request, 'posts/all_posts.html', {'posts': posts})
+
 
 def post_details(request, post_id):
     post = get_object_or_404(Post, pk=post_id)
@@ -71,6 +89,8 @@ def post_details(request, post_id):
         'liked': liked,
         'bookmarked': bookmarked,
     })
+
+
 
 @login_required
 def delete_comment(request, comment_id):
@@ -117,6 +137,9 @@ def edit_post(request, pk):
     else:
         form = PostForm(instance=post)
     return render(request, 'posts/edit_post.html', {'form': form, 'post': post})
+
+
+
 
 @login_required
 def like_post(request, post_id):
@@ -185,29 +208,25 @@ def all_posts(request):
     }
 
     return render(request, 'posts/all_posts.html', context)
+
     
 def latest_posts(request):
-    # Fetch latest posts from public athletes and posts from clubs
     latest_posts = Post.objects.filter(
-        Q(user__athlete__isPrivate=False) | Q(user__club__isnull=False)
+        user__athlete__isPrivate=False
     ).order_by('-created_at')[:6]
 
-    # Set of bookmarked post IDs for the authenticated user
     bookmarked_post_ids = set()
     if request.user.is_authenticated:
         bookmarked_post_ids = set(
             Bookmark.objects.filter(user=request.user).values_list('post_id', flat=True)
         )
 
-    # Add 'is_liked' status to posts
     for post in latest_posts:
         post.is_liked = post.is_liked_by(request.user) if request.user.is_authenticated else False
 
-    # Context to pass to the template
     context = {
-        'latest_posts': latest_posts,  # List of latest posts
-        'bookmarked_post_ids': bookmarked_post_ids,  # Bookmarked post IDs
+        'latest_posts': latest_posts,  # ✅ fixed key
+        'bookmarked_post_ids': bookmarked_post_ids,
     }
 
-    # Return the rendered template with context
     return render(request, 'main/main_page.html', context)

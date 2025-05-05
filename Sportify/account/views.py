@@ -120,7 +120,7 @@ def profile_view(request: HttpRequest, user_id):
         if request.user.is_authenticated else False
     )
 
-    # Check for privacy
+
     try:
         athlete = Athlete.objects.get(user=user)
         if athlete.isPrivate and request.user != user:
