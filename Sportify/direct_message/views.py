@@ -4,6 +4,8 @@ from django.contrib.auth.models import User
 from .models import Message
 from django.db.models import Q, Max, Count
 from django.contrib import messages
+from django.http import HttpResponseRedirect
+from django.urls import reverse
 
 @login_required
 def chat_page_view(request, username=None):
@@ -95,25 +97,25 @@ def chat_page_view(request, username=None):
     })
 
 @login_required
-def edit_message(request, message_id):
-    message = get_object_or_404(Message, id=message_id, sender=request.user)
+def edit_message_view(request, message_id):
+    message_obj = get_object_or_404(Message, id=message_id, sender=request.user)
+
     if request.method == 'POST':
         new_content = request.POST.get('content')
         if new_content:
-            message.content = new_content
-            message.edited = True
-            message.save()
-            return redirect('direct_message:chat_page', username=message.recipient.username if request.user == message.sender else message.sender.username)
-    return render(request, 'direct_message/edit_message.html', {'message': message})
+            message_obj.content = new_content
+            message_obj.save()
+            return redirect('direct_message:chat_page', username=message_obj.recipient.username)
+    
+    return render(request, 'direct_message/edit_message.html', {'message': message_obj})
 
 
 @login_required
-def delete_message(request, message_id):
-    message = get_object_or_404(Message, id=message_id)
-    if request.method == 'POST':
-        message.soft_delete(request.user)
-        return redirect('direct_message:chat_page', username=message.recipient.username if request.user == message.sender else message.sender.username)
-
+def delete_message_view(request, message_id):
+    message_obj = get_object_or_404(Message, id=message_id, sender=request.user)
+    recipient_username = message_obj.recipient.username
+    message_obj.delete()
+    return redirect('direct_message:chat_page', username=recipient_username)
 @login_required
 def clear_conversation(request, username):
     other_user = get_object_or_404(User, username=username)
