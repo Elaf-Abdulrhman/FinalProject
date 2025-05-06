@@ -252,10 +252,11 @@ body.dark hr {
       
         <div class="nav-item dropdown d-flex align-items-center">
           {% if request.user.is_authenticated %}
-        
+            {% if not request.user.is_superuser %}
             <a href="{% url 'direct_message:chat_page_view' %}" class="me-2 text-white" title="Messages">
               <i class="fas fa-inbox fa-lg"></i>
             </a>
+            {% endif %}
         
             <div class="dropdown">
               <button class="btn btn-light dropdown-toggle" id="authDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">

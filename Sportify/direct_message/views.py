@@ -7,6 +7,9 @@ from django.db.models import Q, Max
 
 @login_required
 def chat_page_view(request, username=None):
+    if request.user.is_superuser:
+        return redirect('admins:dashboard')
+    
     search_query = request.GET.get('q', '')
     selected_user = None
     chat_messages = []
