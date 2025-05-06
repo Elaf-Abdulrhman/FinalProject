@@ -1,14 +1,23 @@
 {% extends "main/base.html" %}
+{% load custom_filters %}
 {% load static %}
 
 {% block content %}
 <div class="container my-4">
+  {% if messages %}
+    <ul class="messages">
+      {% for message in messages %}
+        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+
   <div class="row">
     <!-- Left Sidebar: User List and Search -->
-  <div class="col-md-4">
-    <form method="get" class="mb-3">
-      <input type="text" name="q" class="form-control" placeholder="Search users..." value="{{ search_query }}">
-    </form>
+    <div class="col-md-4">
+      <form method="get" class="mb-3">
+        <input type="text" name="q" class="form-control" placeholder="Search users..." value="{{ search_query }}">
+      </form>
 
       <ul class="list-group">
         {% for user in users %}
@@ -20,7 +29,13 @@
           {% else %}
             <img src="{% static 'images/profile.png' %}" class="rounded-circle me-2" style="width: 35px; height: 35px; object-fit: cover;">
           {% endif %}
-          {{ user.username }}
+
+          <div class="d-flex justify-content-between w-100 align-items-center">
+            <span>{{ user.username }}</span>
+            {% if unread_counts|get_item:user.id %}
+              <span class="badge bg-danger ms-2">{{ unread_counts|get_item:user.id }}</span>
+            {% endif %}
+          </div>
         </a>
         {% endfor %}
       </ul>
@@ -29,8 +44,6 @@
     <!-- Right Panel: Chat -->
     <div class="col-md-8">
       {% if selected_user %}
-      <h5 class="mb-3">Chat with {{ selected_user.username }}</h5>
-
       <div class="chat-box border rounded p-3 mb-3" style="height: 400px; overflow-y: scroll;">
         {% regroup chat_messages by timestamp.date as date_groups %}
         {% for group in date_groups %}
@@ -39,57 +52,99 @@
           </div>
           {% for message in group.list %}
           {% if message.sender != request.user %}
-          <!-- Sender (current user) - align left -->
+          <!-- Other user's message - align left -->
           <div class="d-flex align-items-start mb-3">
-            <!-- Profile image on left -->
             <div class="me-2">
               {% if message.sender.athlete and message.sender.athlete.profilePhoto %}
-                <img src="{{ message.sender.athlete.profilePhoto.url }}" alt="Profile Photo"
-                     class="rounded-circle" style="width: 35px; height: 35px; object-fit: cover;">
+                <img src="{{ message.sender.athlete.profilePhoto.url }}" class="rounded-circle" style="width: 35px; height: 35px; object-fit: cover;">
               {% elif message.sender.club and message.sender.club.photo %}
-                <img src="{{ message.sender.club.photo.url }}" alt="Profile Photo"
-                     class="rounded-circle" style="width: 35px; height: 35px; object-fit: cover;">
+                <img src="{{ message.sender.club.photo.url }}" class="rounded-circle" style="width: 35px; height: 35px; object-fit: cover;">
               {% else %}
-                <img src="{% static 'images/profile.png' %}" alt="Default Profile Photo"
-                     class="rounded-circle" style="width: 35px; height: 35px; object-fit: cover;">
+                <img src="{% static 'images/profile.png' %}" class="rounded-circle" style="width: 35px; height: 35px; object-fit: cover;">
               {% endif %}
             </div>
-            <!-- Message content -->
             <div style="max-width: 75%;">
               <div class="bg-light p-2 rounded">
-                <p class="mb-1">{{ message.content }}</p>
-                <small class="text-muted">{{ message.timestamp|date:"H:i" }}</small>
+                {% if message.deleted_for_everyone %}
+                  <p class="mb-1 fst-italic text-muted">{{ message.content }}</p>
+                {% else %}
+                  <p class="mb-1">{{ message.content }}</p>
+                {% endif %}
+                <small class="text-muted">
+                  {{ message.timestamp|date:"H:i" }}
+                  {% if message.is_read %}
+                    <span title="Seen">✓✓</span>
+                  {% else %}
+                    <span title="Unread">✓</span>
+                  {% endif %}
+                </small>
               </div>
             </div>
           </div>
-        {% else %}
-          <!-- Recipient (other user) - align right -->
+          {% else %}
+          <!-- Current user's message - align right -->
           <div class="d-flex align-items-start justify-content-end mb-3">
-            <!-- Message content -->
             <div style="max-width: 75%;">
-              <div class="bg-primary text-white p-2 rounded">
-                <p class="mb-1">{{ message.content }}</p>
-                <small class="text-light">{{ message.timestamp|date:"H:i" }}</small>
+              <div class="bg-primary text-white p-2 rounded position-relative">
+                {% if message.deleted_for_everyone %}
+                  <p class="mb-1 fst-italic text-light">{{ message.content }}</p>
+                {% else %}
+                  <p class="mb-1">{{ message.content }}</p>
+                  <small class="text-light">
+                    {{ message.timestamp|date:"H:i" }}
+                    {% if message.recipient == selected_user %}
+                      {% if message.is_read %}
+                        <span title="Seen">✓✓</span>
+                      {% else %}
+                        <span title="Sent">✓</span>
+                      {% endif %}
+                    {% endif %}
+                  </small>                  
+                  {% if not message.deleted_for_everyone %}
+                  <div class="mt-1">
+                    <a href="{% url 'direct_message:edit_message' message.id %}" class="text-light text-decoration-underline me-2" style="font-size: 0.8rem;">Edit</a>
+                    <div class="dropdown d-inline-block">
+                      <a href="#" class="text-light text-decoration-underline dropdown-toggle" style="font-size: 0.8rem;" data-bs-toggle="dropdown">Delete</a>
+                      <ul class="dropdown-menu">
+                        <li>
+                          <form method="post" action="{% url 'direct_message:delete_message_for_me' message.id %}" onsubmit="return confirm('Delete this message only for you?')">
+                            {% csrf_token %}
+                            <button type="submit" class="dropdown-item text-dark">Delete for Me</button>
+                          </form>
+                        </li>
+                        <li>
+                          <form method="post" action="{% url 'direct_message:delete_message_for_everyone' message.id %}" onsubmit="return confirm('Delete this message for everyone?')">
+                            {% csrf_token %}
+                            <button type="submit" class="dropdown-item text-danger">Delete for Everyone</button>
+                          </form>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                  {% endif %}
+                {% endif %}
               </div>
             </div>
-            <!-- Profile image on right -->
             <div class="ms-2">
               {% if message.sender.athlete and message.sender.athlete.profilePhoto %}
-                <img src="{{ message.sender.athlete.profilePhoto.url }}" alt="Profile Photo"
-                     class="rounded-circle" style="width: 35px; height: 35px; object-fit: cover;">
+                <img src="{{ message.sender.athlete.profilePhoto.url }}" alt="Profile Photo" class="rounded-circle" style="width: 35px; height: 35px; object-fit: cover;">
               {% elif message.sender.club and message.sender.club.photo %}
-                <img src="{{ message.sender.club.photo.url }}" alt="Profile Photo"
-                     class="rounded-circle" style="width: 35px; height: 35px; object-fit: cover;">
+                <img src="{{ message.sender.club.photo.url }}" alt="Profile Photo" class="rounded-circle" style="width: 35px; height: 35px; object-fit: cover;">
               {% else %}
-                <img src="{% static 'images/profile.png' %}" alt="Default Profile Photo"
-                     class="rounded-circle" style="width: 35px; height: 35px; object-fit: cover;">
+                <img src="{% static 'images/profile.png' %}" alt="Default Profile Photo" class="rounded-circle" style="width: 35px; height: 35px; object-fit: cover;">
               {% endif %}
             </div>
           </div>
-        {% endif %}
+          {% endif %}
           {% endfor %}
         {% endfor %}
       </div>
+
+      <!-- Clear conversation -->
+      <form method="post" action="{% url 'direct_message:clear_conversation' selected_user.username %}">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-sm btn-outline-warning">Clear Conversation</button>
+      </form>
 
       <!-- Send Message -->
       <form method="POST" class="mt-3">

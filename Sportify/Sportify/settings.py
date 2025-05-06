@@ -14,6 +14,12 @@ from pathlib import Path
 import os
 
 from dotenv import load_dotenv
+from django.contrib.messages import constants as messages
+
+MESSAGE_TAGS = {
+    messages.ERROR: 'error',
+    messages.SUCCESS: 'success',
+}
 
 load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -76,6 +82,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'direct_message.context_processors.unread_message_count',
             ],
         },
     },
@@ -147,14 +154,9 @@ MEDIA_ROOT = os.path.join(BASE_DIR,'media' )
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# Moyasar settings
+# Moyasar settings ()
 MOYASAR_PUBLISHABLE_KEY = 'pk_test_wJ4i6psLToc8uJ2J3PFADniiS16MFzhhcDZ86Kk9'
 MOYASAR_SECRET_KEY = 'sk_test_sF2ML8JKf8QhAL7mrtVBrgXs5p4tjKvVrhFXLJG1'
-
-
-
-
-
 
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'

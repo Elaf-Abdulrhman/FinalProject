@@ -252,10 +252,16 @@ body.dark hr {
       
         <div class="nav-item dropdown d-flex align-items-center">
           {% if request.user.is_authenticated %}
-        
-            <a href="{% url 'direct_message:chat_page_view' %}" class="me-2 text-white" title="Messages">
+            {% if not request.user.is_superuser %}
+            <a href="{% url 'direct_message:chat_page_view' %}" class="position-relative me-4 text-white" title="Messages">
               <i class="fas fa-inbox fa-lg"></i>
+              {% if unread_message_count > 0 %}
+                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                  {{ unread_message_count }}
+                </span>
+              {% endif %}
             </a>
+            {% endif %}
         
            <div class="dropdown">
               <button class="btn btn-light dropdown-toggle d-flex align-items-center gap-2" id="authDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -301,7 +307,6 @@ body.dark hr {
   </div>
 {% endif %}
 
-
     {% block content %}
     {% endblock %}
 
@@ -330,15 +335,6 @@ body.dark hr {
           <a href="{% url 'contact:contact_us_view' %}" class="nav-link p-0 text-muted">Contact</a>
         </li>
       </ul>
-    </div>
-
-    <!-- Search  -->
-    <div class="col mb-3">
-      <h5>Search</h5>
-      <form class="d-flex" method="GET" action="#">
-        <input class="form-control me-2" type="search" name="q" placeholder="Search..." aria-label="Search">
-        <button class="btn btn-outline-secondary" type="submit">Go</button>
-      </form>
     </div>
 
     <div class="col mb-3">

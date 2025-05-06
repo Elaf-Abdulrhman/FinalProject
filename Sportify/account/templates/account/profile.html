@@ -98,7 +98,11 @@ body.dark .profile-card{
                         {% if user.athlete.sport %}
                             <div class="me-3"><i class="bi bi-trophy"></i> {{ user.athlete.sport }}</div>
                         {% endif %}
-
+                        {% if user.athlete.dateOfBirth %}
+                            <div>
+                                <p><i class="bi bi-calendar"></i> Date of Birth: {{ user.athlete.dateOfBirth|date:"F d, Y" }}</p>
+                            </div>
+                        {% endif %}
                     </div>
 
                 </div>
@@ -124,8 +128,8 @@ body.dark .profile-card{
                 </div>
             {% endif %}
             <!-- Message Icon (white, spaced) -->
-             {% if request.user.is_authenticated and not request.user == user %}
-              <a href="{% url 'direct_message:chat_page_view' %}" class="me-2 text-black" title="Messages">
+             {% if request.user.is_authenticated and not request.user == user  %}
+              <a href="{% url 'direct_message:chat_page' username=user.username %}" class="me-2 text-black" title="Messages">
                 <i class="fas fa-inbox fa-lg"></i>
               </a>
             {% endif %}
@@ -184,32 +188,53 @@ body.dark .profile-card{
         <div class="col-md-3">
             <div class="profile-card mb-4">
                 {% if request.user.is_authenticated and user.athlete %}
-                    <h6 class="fw-bold">Achievements</h6>
-                    <p>{{ user.athlete.achievements|default:"No achievements yet." }}</p>
+                <h6 class="fw-bold">Achievements</h6>
+                {%for achievement in achievements%}
+             <div class="profile-card mb-4">
+                <p>{{ achievement.title|default:"No achievements yet." }}</p>
+                <p>{{achievement.dateOfStart}}</p>
+                <p>{{achievement.dateOfEnd}}</p>
+                <p>{{achievement.content}}</p>
+                {% if achievement.file %}
+                    <img src="{{user.achievement.file.url }}" alt="achievement file"  style="width: 10rem;">
+                {% else %}
+                    <P>There is no file</P>
+                {% endif %}
+                {%if request.user == user %}
+                <a href="{% url 'account:delete_achievement' user.id achievement.id %}" class="btn btn-danger"style="width: 7rem;font-size: 10px;">Delete Achievement</a>
+                {% endif %}
+             </div>
+                {%endfor%}
+
+               {% endif %}
+               {%if request.user == user %}
+                    <a href="{% url 'account:add_achievement' user.id %}" class="btn edit-btn me-3">Add Achievement</a>
                 {% endif %}
                 <hr>
-                <h6 class="fw-bold">Contact Info</h6>
+                <h6 class="fw-bold mt-2" >Contact Info</h6>
                 <p>Email: {{ user.email }}</p>
                 {% if request.user.is_authenticated and user.athlete %}
                     <p>Phone: {{ user.athlete.phoneNumber|default:"-" }}</p>
                     <hr>
+                    {% if user.athlete.height %}
+                        <p>Height: {{ user.athlete.height }} cm</p>
+                    {% endif %}
+                    {% if user.athlete.weight %}
+                        <p>Weight: {{ user.athlete.weight }} kg</p>
+                    {% endif %}
                 {% endif %}
             </div>
 
             {% if request.user == user %}
                 <a href="{% url 'bookmarks:all_bookmarks' %}" class="text-decoration-none text-dark">
                     <div class="profile-card mb-4 text-center">
-                        <h6 class="fw-bold">Bookmarked Posts</h6>
+                        <h6 class="fw-bold">Bookmark</h6>
                         <div class="bookmark-icon d-block mt-2">
                             <i class="bi bi-bookmark"></i>
                         </div>
                     </div>
                 </a>
             {% endif %}
-
-
-
-
 
             {% if request.user.is_authenticated and user.club %}
                 <a href="{% url 'offers:my_offers' user.club.id %}" class="text-decoration-none text-dark">
@@ -227,19 +252,7 @@ body.dark .profile-card{
                     <div class="profile-card mb-4 text-center">
                         <h6 class="fw-bold">Bookmarked Profiles</h6>
                         <div class="bookmark-icon d-block mt-2">
-                            <i class="bi bi-bookmark"></i>
-                        </div>
-                    </div>
-                </a>
-            {% endif %}
-
-
-         {% if request.user.is_authenticated and user.athlete %}
-        <a href="{% url 'offers:my_applications' %}" class="text-decoration-none text-dark">
-                    <div class="profile-card mb-4 text-center">
-                        <h6 class="fw-bold">My Applications</h6>
-                        <div class="bookmark-icon d-block mt-2">
-                            <i class="bi bi-file-post-fill"></i>
+                            <i class="bi bi-card-heading"></i>
                         </div>
                     </div>
                 </a>

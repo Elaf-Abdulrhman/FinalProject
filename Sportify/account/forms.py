@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from .models import Athlete, Club
+from .models import Athlete, Club,Achievement
 
 
 
@@ -40,17 +40,16 @@ class AthleteEditForm(forms.ModelForm):
         fields = [
             'profilePhoto', 'phoneNumber', 'dateOfBirth', 'sport', 'playingPosition',
             'height', 'weight', 'gender', 'isAvailable', 'isPrivate', 'city',
-            'bio', 'achievements', 'facebook', 'twitterX', 'instagram'  # <- Added here
+            'bio', 'facebook', 'twitterX', 'instagram'  # <- Added here
         ]
         widgets = {
             'bio': forms.Textarea(attrs={'rows': 3}),
-            'achievements': forms.Textarea(attrs={'rows': 3}),
             'dateOfBirth': forms.DateInput(attrs={'type': 'date'}),
         }
 
-    def __init__(self, *args, **kwargs):
+    def _init_(self, *args, **kwargs):
         user = kwargs.pop('user', None)
-        super(AthleteEditForm, self).__init__(*args, **kwargs)
+        super(AthleteEditForm, self)._init_(*args, **kwargs)
         if user:
             self.fields['first_name'].initial = user.first_name
             self.fields['last_name'].initial = user.last_name
@@ -84,9 +83,9 @@ class ClubEditForm(forms.ModelForm):
             'description': forms.Textarea(attrs={'rows': 3}),
         }
 
-    def __init__(self, *args, **kwargs):
+    def _init_(self, *args, **kwargs):
         user = kwargs.pop('user', None)
-        super(ClubEditForm, self).__init__(*args, **kwargs)
+        super(ClubEditForm, self)._init_(*args, **kwargs)
         if user:
             self.fields['username'].initial = user.username
             self.fields['email'].initial = user.email
@@ -100,3 +99,8 @@ class ClubEditForm(forms.ModelForm):
             user.save()
             club.save()
         return club
+    
+class AchievementForm(forms.ModelForm):
+    class Meta:
+        model = Achievement
+        fields = [ 'title','dateOfStart','dateOfEnd','content', 'file']
