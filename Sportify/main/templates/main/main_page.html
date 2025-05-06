@@ -101,90 +101,114 @@ body {
     transition: background 0.3s ease;
   }
 
+
+  .hero-section {
+    position: relative;
+    height: 75vh; 
+    display: flex;
+    overflow: hidden;
+  }
+
+  .hero-img {
+    flex: 1;
+    background-size: cover;
+    background-position: center;
+    filter: brightness(0.7);
+  }
+
+  .hero-overlay {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 1;
+  }
+
+  .hero-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 2;
+    text-align: center;
+    color: white;
+    max-width: 900px;
+    padding: 0 1rem;
+  }
+
+  .hero-content h1 {
+    font-size: 3rem;
+    font-weight: 700;
+  }
+
+  .hero-content p {
+    font-size: 1.15rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .hero-content .btn-warning {
+    background-color: orange;
+    border: none;
+    font-weight: 600;
+  }
+
+  .text-slide {
+    display: none;
+    animation: fadeIn 1s ease-in-out forwards;
+  }
+
+  .text-slide.active {
+    display: block;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
 </style>
 
-<div id="sportifyCarousel" class="carousel slide" data-bs-ride="carousel" style="overflow: hidden;">
+<div class="hero-section">
+  <!-- Background Images -->
+  <div class="hero-img" style="background-image: url('{% static 'images/1.jpg' %}');"></div>
+  <div class="hero-img" style="background-image: url('{% static 'images/2.jpg' %}');"></div>
+  <div class="hero-img" style="background-image: url('{% static 'images/3.jpg' %}');"></div>
 
-  <!-- Carousel Indicators -->
-  <div class="carousel-indicators">
-    <button type="button" data-bs-target="#sportifyCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
-    <button type="button" data-bs-target="#sportifyCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
-    <button type="button" data-bs-target="#sportifyCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
+  <!-- Overlay -->
+  <div class="hero-overlay"></div>
+
+  <!-- Centered Text -->
+  <div class="hero-content">
+    <div id="slide1" class="text-slide active">
+      <small class="text-uppercase"></small>
+      <h1>SPORTIFY</h1>
+        <hr>
+      <p>The all-in-one networking hub uniting football, basketball, volleyball, and tennis — where athletic dreams meet real-world opportunities.</p>
+    </div>
+
+    <div id="slide2" class="text-slide">
+      <small class="text-uppercase">FOR CLUBS & SCOUTS</small>
+      <h1>BUILD YOUR FUTURE TEAM</h1>
+      <p>Discover multi-sport talent in one place — connect, evaluate, and recruit the next generation of champions effortlessly.</p>
+    </div>
+
+    <div id="slide3" class="text-slide">
+      <small class="text-uppercase">FOR ATHLETES</small>
+      <h1>SHOWCASE YOUR SKILLS</h1>
+      <p>Create your profile, get seen by real clubs, and take the next step in your athletic journey — Sportify is your stage.</p>
+    </div>
+
+
+    <a href="#" class="btn btn-warning btn-lg me-3 px-4 py-2">Sign Up Now</a>
+    <a href="#" class="btn btn-outline-light btn-lg px-4 py-2">Get To Know Us</a>
   </div>
-
-  <div class="carousel-inner">
-    <!-- Slide 1 -->
-    <div class="carousel-item active">
-      <div class="d-flex align-items-center" style="height: 60vh; overflow: hidden;">
-        <div class="d-flex flex-column justify-content-center p-5" style="flex: 1; height: 100%; background-color: #0C1518;">
-          <div class="p-5">
-            <h2 class="fw-bold text-white">Welcome To Sportify</h2>
-            <p class="text-white">The platform where talents meet opportunity</p>
-            <a href="{% url 'main:about_page_view' %}" class="btn btn-light btn-lg" style="z-index: 10; position: relative; height: 3rem; width: 11rem;">Get to know us</a>
-          </div>
-        </div>
-        <div style="flex: 1; height: 100%; overflow: hidden;">
-          <img src="{% static 'images/p1.jpg' %}" alt="Sportify" class="fit" style="object-fit: cover;">
-        </div>
-      </div>
-    </div>
-
-    <!-- Slide 2 -->
-    <div class="carousel-item">
-      <div class="d-flex align-items-center" style="height: 60vh; overflow: hidden;">
-        <div class="d-flex flex-column justify-content-center p-5" style="flex: 1; height: 100%; background-color: #0C1518;">
-          <div class="p-5">
-            <h2 class="fw-bold text-white">Join as a club to discover and connect with athletes who are the perfect fit for your team.</h2>
-            <p class="text-white"></p>
-            <a href="{% url 'account:signup_club_view' %}" class="btn btn-light btn-lg" style="z-index: 10; position: relative; height: 3rem; width: 11rem;">Sign Up</a>
-          </div>
-        </div>
-        <div style="flex: 1; height: 100%; overflow: hidden;">
-          <img src="{% static 'images/p3.jpg' %}" alt="Sign Up as Club" class="w-100 h-100" style="object-fit: cover;">
-        </div>
-      </div>
-    </div>
-
-    <!-- Slide 3 -->
-    <div class="carousel-item">
-      <div class="d-flex align-items-center" style="height: 60vh; overflow: hidden;">
-        <!-- Left content with background -->
-        <div class="d-flex flex-column justify-content-center p-5" style="flex: 1; height: 100%; background-color: #0C1518;">
-          <div class="p-5">
-            <h2 class="fw-bold text-white">Yasser has accomplished his dream and became a football player</h2>
-            <p class="text-white">Join us and be the next Saudi sport star!</p>
-            <a href="{% url 'account:signup_athlete_view' %}" class="btn btn-light btn-lg" style="z-index: 10; position: relative; height: 3rem; width: 11rem;">Sign up</a>
-          </div>
-        </div>
-
-        <!-- Video content -->
-        <div style="flex: 1; display: flex; justify-content: center; align-items: center; height: 100%; overflow: hidden; background-color: black;">
-          <video autoplay loop muted style="max-width: 100%; max-height: 100%; object-fit: contain;">
-            <source src="{% static 'video/player_vid.mp4' %}" type="video/mp4">
-            Your browser does not support the video tag.
-          </video>
-        </div>
-      </div>
-    </div>
-  </div>
-
-{#  Carousel Controls with Arrows#}
-  <button class="carousel-control-prev" type="button" data-bs-target="#sportifyCarousel" data-bs-slide="prev" >
-    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-    <span class="visually-hidden">Previous</span>
-  </button>
-  <button class="carousel-control-next" type="button" data-bs-target="#sportifyCarousel" data-bs-slide="next">
-    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-    <span class="visually-hidden">Next</span>
-  </button> 
-
 </div>
 
 <div class="clubs-section py-5">
   <div class="container text-center">
     <h2 class="mb-4">Explore Our Clubs</h2>
     <div class="clubs-scroll-container position-relative">
-    
+
       <div class="scrolling-wrapper" id="scrollingWrapper">
         {% for club in clubs %}
   <a href="{% url 'account:profile_view' club.user.id %}" class="club-photo-wrapper"
@@ -201,7 +225,7 @@ body {
   </a>
 {% endfor %}
 
-       
+
       </div>
     </div>
   </div>
@@ -209,7 +233,7 @@ body {
 
 <div class="athletes-section py-5" style="background-color: #f9f9f9;">
   <div class="container">
-    <h2 class="mb-4 fw-bold text-dark">üèÖ Meet the Athletes</h2>
+    <h2 class="mb-4 fw-bold text-dark">Meet the Athletes</h2>
     <div class="row g-4">
       {% for athlete in athletes %}
       {% if not athlete.isPrivate %}
@@ -285,7 +309,30 @@ body {
 </div>
 
 <script>
-  
+const slides = document.querySelectorAll('.text-slide');
+  const container = document.querySelector('.hero-content');
+  let current = 0;
+  let interval = null;
+
+  function showNextSlide() {
+    slides[current].classList.remove('active');
+    current = (current + 1) % slides.length;
+    slides[current].classList.add('active');
+  }
+
+  function startRotation() {
+    interval = setInterval(showNextSlide, 3000);
+  }
+
+  function stopRotation() {
+    clearInterval(interval);
+  }
+
+  container.addEventListener('mouseenter', stopRotation);
+  container.addEventListener('mouseleave', startRotation);
+
+  // Start the rotation initially
+  startRotation();
 </script>
 
 <style>

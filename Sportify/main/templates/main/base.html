@@ -257,9 +257,14 @@ body.dark hr {
               <i class="fas fa-inbox fa-lg"></i>
             </a>
         
-            <div class="dropdown">
-              <button class="btn btn-light dropdown-toggle" id="authDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                {{ request.user.username }}
+           <div class="dropdown">
+              <button class="btn btn-light dropdown-toggle d-flex align-items-center gap-2" id="authDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                {% if request.user.athlete and request.user.athlete.profilePhoto %}
+                  <img src="{{ request.user.athlete.profilePhoto.url }}" alt="Profile Photo" class="rounded-circle border border-2" style="width: 28px; height: 28px; object-fit: cover;">
+                {% elif request.user.club and request.user.club.photo %}
+                  <img src="{{ request.user.club.photo.url }}" alt="Club Photo" class="rounded-circle border border-2" style="width: 28px; height: 28px; object-fit: cover;">
+                {% endif %}
+                
               </button>
               <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="authDropdown">
                 <li><a class="dropdown-item" href="{% url 'account:profile_view' user_id=request.user.id %}">Profile</a></li>
@@ -269,7 +274,7 @@ body.dark hr {
         
           {% else %}
             <button class="btn btn-dark dropdown-toggle" type="button" id="authDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-              Signup / Signin
+             Sign in
             </button>
             <ul class="dropdown-menu" aria-labelledby="authDropdown">
               <li><a class="dropdown-item" href="{% url 'account:sign_up_as_view' %}">Sign Up as</a></li>
