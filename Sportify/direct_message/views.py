@@ -3,53 +3,59 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.models import User
 from .models import Message
+from django.db.models import Q, Max
 
-# messages/views.py
+from django.contrib.auth.models import User
+from django.db.models import Q, Max
+from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib.auth.decorators import login_required
+from .models import Message
+
 @login_required
-def inbox_view(request):
-    users = User.objects.exclude(id=request.user.id)
+def chat_page_view(request, username=None):
+    search_query = request.GET.get('q', '')
 
-    # Prepare the unread counts for each user
-    unread_counts = {}
-    for user in users:
-        unread_count = Message.objects.filter(
-            recipient=user, 
+    # ✅ Search for all users except the logged-in user
+    if search_query:
+        users = User.objects.filter(username__icontains=search_query).exclude(id=request.user.id)
+    else:
+        # If no search query, fetch all users except the logged-in user
+        users = User.objects.exclude(id=request.user.id)
+
+    # Prepare to display the chat if a user is selected
+    selected_user = None
+    chat_messages = []
+
+    if username:
+        selected_user = get_object_or_404(User, username=username)
+
+        # Mark messages as read
+        Message.objects.filter(
+            sender=selected_user,
+            recipient=request.user,
             is_read=False
-        ).exclude(sender=request.user).count()
-        unread_counts[user.id] = unread_count  # Store unread count by user ID
+        ).update(is_read=True)
 
-    # Pass unread_counts dictionary to the template
-    return render(request, 'direct_message/inbox.html', {
-        'users': users,
-        'unread_counts': unread_counts
-    })
+        # Get conversation between the logged-in user and the selected user
+        chat_messages = Message.objects.filter(
+            Q(sender=request.user, recipient=selected_user) |
+            Q(sender=selected_user, recipient=request.user)
+        ).order_by('timestamp')
 
-@login_required
-def direct_chat_view(request, username):
-    other_user = get_object_or_404(User, username=username)
-
-    # Mark messages as read
-    unread_messages = Message.objects.filter(
-        recipient=request.user,
-        sender=other_user,
-        is_read=False
-    )
-    unread_messages.update(is_read=True)  # Update all unread messages to 'read'
-
-    if request.method == 'POST':
+    # Handle sending a message
+    if request.method == 'POST' and selected_user:
         content = request.POST.get('content')
         if content:
-            Message.objects.create(sender=request.user, recipient=other_user, content=content)
-            return redirect('direct_message:direct_chat_view', username=username)
+            Message.objects.create(
+                sender=request.user,
+                recipient=selected_user,
+                content=content
+            )
+            return redirect('direct_message:chat_page', username=selected_user.username)
 
-    # Fetch the messages between the two users
-    messages = Message.objects.filter(
-        sender__in=[request.user, other_user],
-        recipient__in=[request.user, other_user]
-    )
-
-    return render(request, 'direct_message/chat.html', {
-        'messages': messages,
-        'other_user': other_user
+    return render(request, 'direct_message/combined_chat.html', {
+        'users': users,
+        'selected_user': selected_user,
+        'chat_messages': chat_messages,
+        'search_query': search_query,
     })
-

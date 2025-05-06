@@ -123,6 +123,12 @@ body.dark .profile-card{
 
                 </div>
             {% endif %}
+            <!-- Message Icon (white, spaced) -->
+             {% if request.user.is_authenticated and not request.user == user %}
+              <a href="{% url 'direct_message:chat_page_view' %}" class="me-2 text-black" title="Messages">
+                <i class="fas fa-inbox fa-lg"></i>
+              </a>
+            {% endif %}
         </div>
 
         <div class="d-inline align-items-center text-end">
