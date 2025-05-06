@@ -3,6 +3,14 @@
 
 {% block content %}
 <div class="container my-4">
+  {% if messages %}
+        <ul class="messages">
+          {% for message in messages %}
+            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+      
   <div class="row">
     <!-- Left Sidebar: User List and Search -->
   <div class="col-md-4">
@@ -101,6 +109,7 @@
       {% else %}
       <div class="text-muted">Select a user to start chatting.</div>
       {% endif %}
+
     </div>
   </div>
 </div>

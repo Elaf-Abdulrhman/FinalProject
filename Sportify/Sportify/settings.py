@@ -14,6 +14,12 @@ from pathlib import Path
 import os
 
 from dotenv import load_dotenv
+from django.contrib.messages import constants as messages
+
+MESSAGE_TAGS = {
+    messages.ERROR: 'error',
+    messages.SUCCESS: 'success',
+}
 
 load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.

@@ -209,7 +209,7 @@ body.dark .profile-card{
                     <a href="{% url 'account:add_achievement' user.id %}" class="btn edit-btn me-3">Add Achievement</a>
                 {% endif %}
                 <hr>
-                <h6 class="fw-bold mt-2">Contact Info</h6>
+                <h6 class="fw-bold mt-2" >Contact Info</h6>
                 <p>Email: {{ user.email }}</p>
                 {% if request.user.is_authenticated and user.athlete %}
                     <p>Phone: {{ user.athlete.phoneNumber|default:"-" }}</p>
