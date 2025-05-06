@@ -1,22 +1,23 @@
 {% extends "main/base.html" %}
+{% load custom_filters %}
 {% load static %}
 
 {% block content %}
 <div class="container my-4">
   {% if messages %}
-        <ul class="messages">
-          {% for message in messages %}
-            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-          {% endfor %}
-        </ul>
-      {% endif %}
-      
+    <ul class="messages">
+      {% for message in messages %}
+        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+  
   <div class="row">
     <!-- Left Sidebar: User List and Search -->
-  <div class="col-md-4">
-    <form method="get" class="mb-3">
-      <input type="text" name="q" class="form-control" placeholder="Search users..." value="{{ search_query }}">
-    </form>
+    <div class="col-md-4">
+      <form method="get" class="mb-3">
+        <input type="text" name="q" class="form-control" placeholder="Search users..." value="{{ search_query }}">
+      </form>
 
       <ul class="list-group">
         {% for user in users %}
@@ -28,7 +29,13 @@
           {% else %}
             <img src="{% static 'images/profile.png' %}" class="rounded-circle me-2" style="width: 35px; height: 35px; object-fit: cover;">
           {% endif %}
-          {{ user.username }}
+
+          <div class="d-flex justify-content-between w-100 align-items-center">
+            <span>{{ user.username }}</span>
+            {% if unread_counts|get_item:user.id %}
+              <span class="badge bg-danger ms-2">{{ unread_counts|get_item:user.id }}</span>
+            {% endif %}
+          </div>
         </a>
         {% endfor %}
       </ul>
@@ -45,7 +52,7 @@
           </div>
           {% for message in group.list %}
           {% if message.sender != request.user %}
-          <!-- Sender (current user) - align left -->
+          <!-- Sender (not current user) - align left -->
           <div class="d-flex align-items-start mb-3">
             <!-- Profile image on left -->
             <div class="me-2">
@@ -68,17 +75,15 @@
               </div>
             </div>
           </div>
-        {% else %}
-          <!-- Recipient (other user) - align right -->
+          {% else %}
+          <!-- Current user's message - align right -->
           <div class="d-flex align-items-start justify-content-end mb-3">
-            <!-- Message content -->
             <div style="max-width: 75%;">
               <div class="bg-primary text-white p-2 rounded">
                 <p class="mb-1">{{ message.content }}</p>
                 <small class="text-light">{{ message.timestamp|date:"H:i" }}</small>
               </div>
             </div>
-            <!-- Profile image on right -->
             <div class="ms-2">
               {% if message.sender.athlete and message.sender.athlete.profilePhoto %}
                 <img src="{{ message.sender.athlete.profilePhoto.url }}" alt="Profile Photo"
@@ -92,7 +97,7 @@
               {% endif %}
             </div>
           </div>
-        {% endif %}
+          {% endif %}
           {% endfor %}
         {% endfor %}
       </div>
@@ -109,7 +114,6 @@
       {% else %}
       <div class="text-muted">Select a user to start chatting.</div>
       {% endif %}
-
     </div>
   </div>
 </div>
