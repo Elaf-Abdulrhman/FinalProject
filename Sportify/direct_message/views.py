@@ -5,26 +5,21 @@ from django.contrib.auth.models import User
 from .models import Message
 from django.db.models import Q, Max
 
-from django.contrib.auth.models import User
-from django.db.models import Q, Max
-from django.shortcuts import render, get_object_or_404, redirect
-from django.contrib.auth.decorators import login_required
-from .models import Message
-
 @login_required
 def chat_page_view(request, username=None):
     search_query = request.GET.get('q', '')
-
-    # ✅ Search for all users except the logged-in user
-    if search_query:
-        users = User.objects.filter(username__icontains=search_query).exclude(id=request.user.id)
-    else:
-        # If no search query, fetch all users except the logged-in user
-        users = User.objects.exclude(id=request.user.id)
-
-    # Prepare to display the chat if a user is selected
     selected_user = None
     chat_messages = []
+
+    if search_query:
+        # Show matching users except the current user
+        users = User.objects.filter(username__icontains=search_query).exclude(id=request.user.id)
+    else:
+        # Only users the current user has had conversations with
+        users = User.objects.filter(
+            Q(sent_messages__recipient=request.user) |
+            Q(received_messages__sender=request.user)
+        ).exclude(id=request.user.id).distinct()
 
     if username:
         selected_user = get_object_or_404(User, username=username)
@@ -36,7 +31,7 @@ def chat_page_view(request, username=None):
             is_read=False
         ).update(is_read=True)
 
-        # Get conversation between the logged-in user and the selected user
+        # Get the conversation
         chat_messages = Message.objects.filter(
             Q(sender=request.user, recipient=selected_user) |
             Q(sender=selected_user, recipient=request.user)
