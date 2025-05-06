@@ -70,7 +70,14 @@
                 {% else %}
                   <p class="mb-1">{{ message.content }}</p>
                 {% endif %}
-                <small class="text-muted">{{ message.timestamp|date:"H:i" }}</small>
+                <small class="text-muted">
+                  {{ message.timestamp|date:"H:i" }}
+                  {% if message.is_read %}
+                    <span title="Seen">✓✓</span>
+                  {% else %}
+                    <span title="Unread">✓</span>
+                  {% endif %}
+                </small>
               </div>
             </div>
           </div>
@@ -83,7 +90,16 @@
                   <p class="mb-1 fst-italic text-light">{{ message.content }}</p>
                 {% else %}
                   <p class="mb-1">{{ message.content }}</p>
-                  <small class="text-light">{{ message.timestamp|date:"H:i" }}</small>
+                  <small class="text-light">
+                    {{ message.timestamp|date:"H:i" }}
+                    {% if message.recipient == selected_user %}
+                      {% if message.is_read %}
+                        <span title="Seen">✓✓</span>
+                      {% else %}
+                        <span title="Sent">✓</span>
+                      {% endif %}
+                    {% endif %}
+                  </small>                  
                   {% if not message.deleted_for_everyone %}
                   <div class="mt-1">
                     <a href="{% url 'direct_message:edit_message' message.id %}" class="text-light text-decoration-underline me-2" style="font-size: 0.8rem;">Edit</a>

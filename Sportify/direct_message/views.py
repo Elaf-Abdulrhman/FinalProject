@@ -18,18 +18,19 @@ def chat_page_view(request, username=None):
     unread_counts = {}
 
     if search_query:
+        # If user is searching
         users = User.objects.filter(
             username__icontains=search_query,
             is_superuser=False
         ).exclude(id=request.user.id)
     else:
-        # Filter messages that the current user has not deleted
+        # Get message queryset where current user is involved and has not deleted messages
         messages_qs = Message.objects.filter(
             Q(sender=request.user, sender_deleted=False) |
             Q(recipient=request.user, recipient_deleted=False)
         )
 
-        # Get users with whom the current user has chatted (filtered)
+        # Track last interaction time with each user
         sent_times = messages_qs.filter(sender=request.user).values('recipient').annotate(last=Max('timestamp'))
         received_times = messages_qs.filter(recipient=request.user).values('sender').annotate(last=Max('timestamp'))
 
@@ -41,7 +42,7 @@ def chat_page_view(request, username=None):
             if not existing or entry['last'] > existing:
                 last_message_map[entry['sender']] = entry['last']
 
-        # Get unread message counts (only if not deleted by recipient)
+        # Get unread message counts for badge display
         unread_counts_qs = (
             Message.objects
             .filter(recipient=request.user, is_read=False, recipient_deleted=False)
@@ -50,11 +51,12 @@ def chat_page_view(request, username=None):
         )
         unread_counts = {entry['sender']: entry['count'] for entry in unread_counts_qs}
 
-        # Filter users who are in the last_message_map and exclude superuser/self
+        # Get user list sorted by last message timestamp
         user_ids = last_message_map.keys()
         users_qs = User.objects.filter(id__in=user_ids, is_superuser=False).exclude(id=request.user.id)
         users = sorted(users_qs, key=lambda u: last_message_map[u.id], reverse=True)
 
+    # If user selected from chat list or URL
     if username:
         try:
             selected_user = User.objects.get(username=username)
@@ -62,14 +64,14 @@ def chat_page_view(request, username=None):
                 selected_user = None
                 messages.error(request, "You cannot chat with this user.")
             else:
-                # Mark messages from selected user as read
+                # Mark unread messages from selected_user as read
                 Message.objects.filter(
                     sender=selected_user,
                     recipient=request.user,
                     is_read=False
                 ).update(is_read=True)
 
-                # Load chat messages (respecting delete flags)
+                # Load conversation messages (respecting delete flags)
                 chat_messages = Message.objects.filter(
                     Q(sender=request.user, recipient=selected_user, sender_deleted=False) |
                     Q(sender=selected_user, recipient=request.user, recipient_deleted=False)
@@ -77,7 +79,7 @@ def chat_page_view(request, username=None):
         except User.DoesNotExist:
             messages.error(request, f"No user found with username '{username}'.")
 
-    # Handle sending a message
+    # Handle sending message
     if request.method == 'POST' and selected_user:
         content = request.POST.get('content')
         if content:
