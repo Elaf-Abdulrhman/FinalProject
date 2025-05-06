@@ -98,11 +98,7 @@ body.dark .profile-card{
                         {% if user.athlete.sport %}
                             <div class="me-3"><i class="bi bi-trophy"></i> {{ user.athlete.sport }}</div>
                         {% endif %}
-                        {% if user.athlete.dateOfBirth %}
-                            <div>
-                                <p><i class="bi bi-calendar"></i> Date of Birth: {{ user.athlete.dateOfBirth|date:"F d, Y" }}</p>
-                            </div>
-                        {% endif %}
+
                     </div>
 
                 </div>
@@ -197,25 +193,23 @@ body.dark .profile-card{
                 {% if request.user.is_authenticated and user.athlete %}
                     <p>Phone: {{ user.athlete.phoneNumber|default:"-" }}</p>
                     <hr>
-                    {% if user.athlete.height %}
-                        <p>Height: {{ user.athlete.height }} cm</p>
-                    {% endif %}
-                    {% if user.athlete.weight %}
-                        <p>Weight: {{ user.athlete.weight }} kg</p>
-                    {% endif %}
                 {% endif %}
             </div>
 
             {% if request.user == user %}
                 <a href="{% url 'bookmarks:all_bookmarks' %}" class="text-decoration-none text-dark">
                     <div class="profile-card mb-4 text-center">
-                        <h6 class="fw-bold">Bookmark</h6>
+                        <h6 class="fw-bold">Bookmarked Posts</h6>
                         <div class="bookmark-icon d-block mt-2">
                             <i class="bi bi-bookmark"></i>
                         </div>
                     </div>
                 </a>
             {% endif %}
+
+
+
+
 
             {% if request.user.is_authenticated and user.club %}
                 <a href="{% url 'offers:my_offers' user.club.id %}" class="text-decoration-none text-dark">
@@ -233,7 +227,19 @@ body.dark .profile-card{
                     <div class="profile-card mb-4 text-center">
                         <h6 class="fw-bold">Bookmarked Profiles</h6>
                         <div class="bookmark-icon d-block mt-2">
-                            <i class="bi bi-card-heading"></i>
+                            <i class="bi bi-bookmark"></i>
+                        </div>
+                    </div>
+                </a>
+            {% endif %}
+
+
+         {% if request.user.is_authenticated and user.athlete %}
+        <a href="{% url 'offers:my_applications' %}" class="text-decoration-none text-dark">
+                    <div class="profile-card mb-4 text-center">
+                        <h6 class="fw-bold">My Applications</h6>
+                        <div class="bookmark-icon d-block mt-2">
+                            <i class="bi bi-file-post-fill"></i>
                         </div>
                     </div>
                 </a>

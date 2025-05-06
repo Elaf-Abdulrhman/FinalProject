@@ -20,7 +20,11 @@
              class="rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover; border-radius: 50%; border: 2px solid #ccc;">
     {% endif %}
       <div>
-        <strong>{{ request.user.first_name|default:"Your name" }}</strong><br>
+      {% if request.user.club %}
+       <strong>{{ request.user.club.clubName}}&nbsp;<i class="bi bi-patch-check-fill"></i></strong><br>
+{% else %}
+        <strong>{{ request.user.first_name}}</strong><br>
+          {% endif %}
         <small class="text-muted">@{{ request.user.username }}</small>
       </div>
     </div>

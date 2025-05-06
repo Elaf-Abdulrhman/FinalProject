@@ -29,5 +29,3 @@ def all_clubs(request):
     return render(request, 'clubs/all_clubs.html', context)
 
 
-def club_dashboard(request):
-    return render(request, 'clubs/club_dashboard.html')

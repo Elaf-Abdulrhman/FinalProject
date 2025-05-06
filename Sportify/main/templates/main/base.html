@@ -56,6 +56,7 @@
 
   .navbar-brand h5:hover {
     transform: scale(1.1);
+      
   }
 
   .top-navbar {
@@ -84,8 +85,9 @@
 
 
 
-#sportify {
-  font-family: 'Noto Sans', 'Segoe UI', sans-serif;
+
+  .Sportify {
+  font-family: "Source Code Pro", monospace;
   font-optical-sizing: auto;
   font-weight: 900;
   font-style: normal;
@@ -175,14 +177,22 @@ body.dark hr {
   }
 </style>
   </head>
-  <body {% if "mode" in request.COOKIES and request.COOKIES.mode == "dark" %} class="dark" {% endif %} id="sportify">
+  <body {% if "mode" in request.COOKIES and request.COOKIES.mode == "dark" %} class="dark" {% endif %}>
 <!--  -->
 <div class="container-fluid sticky-top top-navbar py-2">
   <nav class="navbar navbar-expand-lg navbar-light">
     <div class="container d-flex justify-content-between align-items-center">
-        <a class="navbar-brand me-4" href="/">
-           <img src="{% static 'images/logo_white.png' %}" alt="Sport" class="Sportify" style="height: 40px;" />
-      </a>
+     <a class="navbar-brand me-4"
+   href="{% if not user.is_authenticated %}/
+         {% elif user.is_superuser %}/admins/dashboard/
+         {% elif user.is_authenticated and user.athlete %}/posts/
+         {% elif user.is_authenticated and user.club %}/account/profile/{{ user.id }}/
+         {% else %}/
+         {% endif %}">
+  <img src="{% static 'images/logo_white.png' %}" alt="Sport" class="Sportify" style="height: 40px;" />
+</a>
+
+
 
 
 
@@ -223,11 +233,7 @@ body.dark hr {
             </li>
           {% endif %}
 
-          {% if request.user.is_authenticated and request.user.club %}
-          <li class="nav-item">
-            <a class="nav-link" href="{% url 'clubs:club_dashboard'%}">Dashboard</a>
-          </li>
-        {% endif %}
+         
 
           <li class="nav-item">
             <a class="nav-link" href="{% url 'contact:contact_us_view'%}">Contact Us</a>
@@ -247,12 +253,10 @@ body.dark hr {
         <div class="nav-item dropdown d-flex align-items-center">
           {% if request.user.is_authenticated %}
         
-            <!-- Message Icon (white, spaced) -->
             <a href="{% url 'direct_message:chat_page_view' %}" class="me-2 text-white" title="Messages">
               <i class="fas fa-inbox fa-lg"></i>
             </a>
         
-            <!-- Username Dropdown -->
             <div class="dropdown">
               <button class="btn btn-light dropdown-toggle" id="authDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                 {{ request.user.username }}
@@ -264,7 +268,6 @@ body.dark hr {
             </div>
         
           {% else %}
-            <!-- Guest login/signup buttons -->
             <button class="btn btn-dark dropdown-toggle" type="button" id="authDropdown" data-bs-toggle="dropdown" aria-expanded="false">
               Signup / Signin
             </button>
@@ -298,39 +301,69 @@ body.dark hr {
     {% endblock %}
 
 
-
-    <div class="container">
-      <footer class="row row-cols-1 row-cols-sm-2 row-cols-md-5 py-5 my-5 border-top">
-        <div class="col mb-3">
-            <img src="{% static 'images/logo.png' %}" alt="Sport" class="navbar-brand" style="height: 40px;" />
-          <p class="text-muted">© 2025</p>
-        </div>
-
-        <div class="col mb-3">
-
-        </div>
-
-        <div class="col mb-3">
-          <ul class="nav flex-column">
-            <li class="nav-item mb-2"><a href="{% url 'main:main_page_view'%}" class="nav-link p-0 text-muted">Home</a></li>
-            <li class="nav-item mb-2"><a href="{% url 'main:about_page_view' %}" class="nav-link p-0 text-muted">About</a></li>
-            <li class="nav-item mb-2"><a href="{% url 'contact:contact_us_view'%}" class="nav-link p-0 text-muted">Contact</a></li>
-          </ul>
-        </div>
-
-
-<!-- Preloader -->
-<div id="preloader">
-  <div class="loader">
-    <div class="text">Loading</div>
-    <div class="dot"></div>
-    <div class="dot"></div>
-    <div class="dot"></div>
-  </div>
-
-</div>
-      </footer>
+<div class="container">
+  <footer class="row row-cols-1 row-cols-sm-2 row-cols-md-5 py-5 my-5 border-top">
+    
+    <div class="col mb-3">
+      <img src="{% static 'images/logo.png' %}" alt="Sport" class="navbar-brand" style="height: 40px;" />
+      <p class="text-muted mt-2">© 2025 Sportify</p>
     </div>
+
+  
+    <div class="col mb-3"></div>
+
+    <div class="col mb-3">
+      <h5>Links</h5>
+      <ul class="nav flex-column">
+        <li class="nav-item mb-2">
+          <a href="{% url 'main:main_page_view' %}" class="nav-link p-0 text-muted">Home</a>
+        </li>
+        <li class="nav-item mb-2">
+          <a href="{% url 'main:about_page_view' %}" class="nav-link p-0 text-muted">About</a>
+        </li>
+        <li class="nav-item mb-2">
+          <a href="{% url 'contact:contact_us_view' %}" class="nav-link p-0 text-muted">Contact</a>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Search  -->
+    <div class="col mb-3">
+      <h5>Search</h5>
+      <form class="d-flex" method="GET" action="#">
+        <input class="form-control me-2" type="search" name="q" placeholder="Search..." aria-label="Search">
+        <button class="btn btn-outline-secondary" type="submit">Go</button>
+      </form>
+    </div>
+
+    <div class="col mb-3">
+      <h5>Follow Us</h5>
+      <div class="d-flex gap-3">
+        <a href="#" target="_blank" class="text-muted fs-4">
+          <i class="bi bi-facebook"></i>
+        </a>
+        <a href="#" target="_blank" class="text-muted fs-4">
+          <i class="bi bi-twitter-x"></i>
+        </a>
+        <a href="#" target="_blank" class="text-muted fs-4">
+          <i class="bi bi-instagram"></i>
+        </a>
+      </div>
+    </div>
+
+  </footer>
+
+  <div id="preloader">
+    <div class="loader">
+      <div class="text">Loading</div>
+      <div class="dot"></div>
+      <div class="dot"></div>
+      <div class="dot"></div>
+    </div>
+  </div>
+</div>
+
+
 <script src="https://cdn.jsdelivr.net/npm/glightbox/dist/js/glightbox.min.js"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>

@@ -31,6 +31,17 @@
                 <option value="F" {% if form.gender.value == 'F' %}selected{% endif %}>Female</option>
             </select>
         </div>
+      <div class="mb-3">
+    <label for="date" class="form-label">Tryout Date & Time</label>
+    <input type="datetime-local" name="date" class="form-control" id="date"
+           value="{{ form.date.value|default_if_none:'' }}">
+</div>
+    <div class="mb-3">
+    <label for="location" class="form-label">Location</label>
+    <input type="text" name="location" class="form-control" id="location"
+           value="{{ form.location.value|default_if_none:'' }}">
+</div>
+
         <div class="mb-3">
             <label for="email" class="form-label">Email (Optional)</label>
             <input type="email" class="form-control" id="email" name="email" value="{{ form.email.value|default_if_none:'' }}">

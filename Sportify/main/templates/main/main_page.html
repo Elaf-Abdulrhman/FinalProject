@@ -37,7 +37,7 @@ body {
   font-style: normal;
   font-variation-settings:
     "wdth" 89.8;
-    
+
 
 }
 @keyframes scroll {
@@ -83,7 +83,7 @@ body {
 }
 
 .clubs-scroll-container {
-  position: relative; 
+  position: relative;
 }
 .btn.transition:hover {
   transform: translateY(-2px);
@@ -118,13 +118,13 @@ body {
       <div class="d-flex align-items-center" style="height: 60vh; overflow: hidden;">
         <div class="d-flex flex-column justify-content-center p-5" style="flex: 1; height: 100%; background-color: #0C1518;">
           <div class="p-5">
-            <h2 class="fw-bold text-white">Sportify</h2>
+            <h2 class="fw-bold text-white">Welcome To Sportify</h2>
             <p class="text-white">The platform where talents meet opportunity</p>
             <a href="{% url 'main:about_page_view' %}" class="btn btn-light btn-lg" style="z-index: 10; position: relative; height: 3rem; width: 11rem;">Get to know us</a>
           </div>
         </div>
         <div style="flex: 1; height: 100%; overflow: hidden;">
-          <img src="{% static 'images/p1.jpg' %}" alt="Sportify" class="w-100 h-100" style="object-fit: cover;">
+          <img src="{% static 'images/p1.jpg' %}" alt="Sportify" class="fit" style="object-fit: cover;">
         </div>
       </div>
     </div>
@@ -134,8 +134,8 @@ body {
       <div class="d-flex align-items-center" style="height: 60vh; overflow: hidden;">
         <div class="d-flex flex-column justify-content-center p-5" style="flex: 1; height: 100%; background-color: #0C1518;">
           <div class="p-5">
-            <h2 class="fw-bold text-white">Sign Up as a Club</h2>
-            <p class="text-white">The platform where you can find athletes that match your team.</p>
+            <h2 class="fw-bold text-white">Join as a club to discover and connect with athletes who are the perfect fit for your team.</h2>
+            <p class="text-white"></p>
             <a href="{% url 'account:signup_club_view' %}" class="btn btn-light btn-lg" style="z-index: 10; position: relative; height: 3rem; width: 11rem;">Sign Up</a>
           </div>
         </div>
@@ -147,16 +147,16 @@ body {
 
     <!-- Slide 3 -->
     <div class="carousel-item">
-      <div class="d-flex align-items-center" style="height: 70vh; overflow: hidden;">
+      <div class="d-flex align-items-center" style="height: 60vh; overflow: hidden;">
         <!-- Left content with background -->
-        <div class="d-flex flex-column justify-content-center p-5" style="flex: 1; height: 100%; background-color: black;">
+        <div class="d-flex flex-column justify-content-center p-5" style="flex: 1; height: 100%; background-color: #0C1518;">
           <div class="p-5">
             <h2 class="fw-bold text-white">Yasser has accomplished his dream and became a football player</h2>
             <p class="text-white">Join us and be the next Saudi sport star!</p>
             <a href="{% url 'account:signup_athlete_view' %}" class="btn btn-light btn-lg" style="z-index: 10; position: relative; height: 3rem; width: 11rem;">Sign up</a>
           </div>
         </div>
-    
+
         <!-- Video content -->
         <div style="flex: 1; display: flex; justify-content: center; align-items: center; height: 100%; overflow: hidden; background-color: black;">
           <video autoplay loop muted style="max-width: 100%; max-height: 100%; object-fit: contain;">
@@ -165,31 +165,43 @@ body {
           </video>
         </div>
       </div>
-    </div>    
+    </div>
   </div>
+
+{#  Carousel Controls with Arrows#}
+  <button class="carousel-control-prev" type="button" data-bs-target="#sportifyCarousel" data-bs-slide="prev" >
+    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Previous</span>
+  </button>
+  <button class="carousel-control-next" type="button" data-bs-target="#sportifyCarousel" data-bs-slide="next">
+    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Next</span>
+  </button> 
+
 </div>
 
 <div class="clubs-section py-5">
   <div class="container text-center">
     <h2 class="mb-4">Explore Our Clubs</h2>
     <div class="clubs-scroll-container position-relative">
+    
       <div class="scrolling-wrapper" id="scrollingWrapper">
         {% for club in clubs %}
-          <div class="club-photo-wrapper"
-               data-club-name="{{ club.user.clubName }}"
-               data-club-id="{{ club.user.id }}">
-            <img src="{% if club.photo %}{{ club.photo.url }}{% else %}{% static 'images/profile.png' %}{% endif %}" alt="Club Photo">
-            <div class="club-hover-name">{{ club.user.clubName }}</div>
-          </div>
-        {% endfor %}
-        {% for club in clubs %}
-          <div class="club-photo-wrapper"
-               data-club-name="{{ club.user.clubName }}"
-               data-club-id="{{ club.user.id }}">
-            <img src="{% if club.photo %}{{ club.photo.url }}{% else %}{% static 'images/profile.png' %}{% endif %}" alt="Club Photo">
-            <div class="club-hover-name">{{ club.user.clubName }}</div>
-          </div>
-        {% endfor %}
+  <a href="{% url 'account:profile_view' club.user.id %}" class="club-photo-wrapper"
+     data-club-name="{{ club.user.clubName }}"
+     data-username="{{ club.user.username }}">
+    <img src="{% if club.photo %}{{ club.photo.url }}{% else %}{% static 'images/profile.png' %}{% endif %}" alt="Club Photo">
+    <div class="club-hover-name">{{ club.user.clubName }}</div>
+    <div class="club-info-tooltip">
+      <strong>{{ club.user.club.clubName }}&nbsp;<i class="bi bi-patch-check-fill"></i></strong><br>
+      <span class="username">@{{ club.user.username }}</span>
+        <br>
+        <small class="text-muted">{{ club.user.club.description }}</small>
+    </div>
+  </a>
+{% endfor %}
+
+       
       </div>
     </div>
   </div>
@@ -197,28 +209,26 @@ body {
 
 <div class="athletes-section py-5" style="background-color: #f9f9f9;">
   <div class="container">
-    <h2 class="mb-4 fw-bold text-dark">🏅 Meet the Athletes</h2>
+    <h2 class="mb-4 fw-bold text-dark">üèÖ Meet the Athletes</h2>
     <div class="row g-4">
       {% for athlete in athletes %}
       {% if not athlete.isPrivate %}
       <div class="col-md-4">
-        <a href="{% url 'account:profile_view' athlete.user.id %}" class="text-decoration-none athlete-card">
-          <div class="position-relative overflow-hidden rounded-4 shadow-sm" style="height: 320px;">
-            <!-- Square Image Background -->
-            <div class="h-100 w-100 bg-cover bg-center"
-                 style="background-image: url('{% if athlete.profilePhoto %}{{ athlete.profilePhoto.url }}{% else %}{% static 'images/profile.png' %}{% endif %}');">
-            </div>
-
-            <!-- Overlay Box -->
-            <div class="position-absolute bottom-0 w-100 p-3"
-                 style="background: rgba(0, 0, 0, 0.6); color: white;">
-              <h5 class="mb-0">{{ athlete.user.first_name }}</h5>
-              <p class="small mb-0 text-truncate">@{{ athlete.user.username }}</p>
-              <p class="small mt-2 mb-0" style="line-height: 1.2;">{{ athlete.bio|truncatewords:15 }}</p>
-            </div>
-          </div>
-        </a>
+  <div class="card h-100 text-center shadow-sm">
+    <a href="{% url 'account:profile_view' athlete.user.id %}" class="text-decoration-none">
+      <img src="{% if athlete.profilePhoto %}{{ athlete.profilePhoto.url }}{% else %}{% static 'images/profile.png' %}{% endif %}"
+           alt="{{ athlete.user.username }}"
+           class="card-img-top rounded-circle mx-auto mt-4"
+           style="width: 120px; height: 120px; object-fit: cover; border: 3px solid #eee;">
+      <div class="card-body">
+        <h5 class="card-title">{{ athlete.user.first_name }}</h5>
+        <p class="text-muted mb-1">@{{ athlete.user.username }}</p>
+        <p class="card-text small">{{ athlete.bio|truncatewords:15 }}</p>
       </div>
+    </a>
+  </div>
+</div>
+
       {% endif %}
       {% endfor %}
     </div>
@@ -265,8 +275,8 @@ body {
     </div>
 
     <div class="text-center mt-4">
-      <a href="{% url 'posts:all_posts' %}" 
-         class="btn px-4 py-2 fs-5 rounded-pill shadow-sm transition"
+      <a href="{% url 'posts:all_posts' %}"
+         class="btn btn-dark px-4 py-2 fs-5 rounded-pill shadow-sm transition"
          style="transition: all 0.3s ease;">
         View All Posts &rarr;
       </a>
@@ -275,78 +285,70 @@ body {
 </div>
 
 <script>
-  const wrapper = document.getElementById("scrollingWrapper");
-  const container = document.querySelector(".clubs-scroll-container");
-
-  document.querySelectorAll(".club-photo-wrapper").forEach(el => {
-    const infoDiv = document.createElement("div");
-    infoDiv.classList.add("club-info-tooltip");
-    el.appendChild(infoDiv);  // Append info container under each club photo
-
-    el.addEventListener("mouseenter", () => {
-      // Show the club info under the hovered club
-      const name = el.getAttribute("data-club-name");
-      const id = el.getAttribute("data-club-id");
-      
-      infoDiv.innerHTML = `
-        <strong>${name}</strong><br>
-        <a href="/profile_view/${id}">View Profile →</a>
-      `;
-      
-      infoDiv.style.display = "block";
-      wrapper.style.animationPlayState = "paused";  // Pause the scroll animation
-    });
-
-    el.addEventListener("mouseleave", () => {
-      infoDiv.style.display = "none";
-      wrapper.style.animationPlayState = "running";  // Resume the scroll animation
-    });
-  });
+  
 </script>
 
 <style>
-  .club-info-tooltip {
-    display: none;  /* Initially hidden */
-    position: absolute;
-    background: #fff;
-    padding: 1rem;
-    border: 1px solid #ccc;
-    border-radius: 10px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-    width: 180px; /* You can adjust this width based on the content */
-    text-align: center;
-    font-size: 14px;
-    transition: opacity 0.3s ease-in-out;
-  }
-
   .club-photo-wrapper {
-    position: relative;
-    flex: 0 0 auto;
-    margin: 0 1.5rem 2rem;
-    text-align: center;
-  }
+  position: relative;
+  flex: 0 0 auto;
+  margin: 0 1.5rem 2rem;
+  text-align: center;
+  text-decoration: none;
+  color: inherit;
+}
 
-  .club-photo-wrapper img {
-    width: 150px;
-    height: 150px;
-    object-fit: contain;
-    border-radius: 50%;
-    border: 3px solid #ccc;
-    background-color: white;
-    padding: 20px;
-    transition: transform 0.3s;
-  }
+.club-photo-wrapper img {
+  width: 150px;
+  height: 150px;
+  object-fit: contain;
+  border-radius: 50%;
+  background-color: white;
+  padding: 20px;
+  transition: transform 0.3s;
+}
 
-  .club-photo-wrapper:hover img {
-    transform: scale(1.05);
-  }
+.club-photo-wrapper:hover img {
+  transform: scale(1.05);
+}
 
-  .club-hover-name {
-    margin-top: 0.5rem;
-    font-weight: bold;
-  }
+.club-hover-name {
+  margin-top: 0.5rem;
+  font-weight: bold;
+}
+
+.club-info-tooltip {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #f8f9fa;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-size: 14px;
+  white-space: nowrap;
+  box-shadow: 0 4px 4px rgba(0, 0, 0, 0.1);
+  margin-top: 0.5rem;
+  z-index: 10;
+}
+
+.club-photo-wrapper:hover .club-info-tooltip {
+  display: block;
+}
+
+.club-info-tooltip .username {
+  color: #888;
+  font-size: 13px;
+}
+.clubs-scroll-container:hover .scrolling-wrapper {
+  animation-play-state: paused;
+}
+
 </style>
 
 
 
 {% endblock %}
+
+

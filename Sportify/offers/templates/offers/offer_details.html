@@ -12,15 +12,16 @@
                          class="rounded-circle me-2"
                          style="width: 40px; height: 40px; object-fit: cover; border: 2px solid #ccc;">
                     <div>
-                        <strong>{{ offer.user.club.clubName}}</strong><br>
+                        <strong>{{ offer.user.club.clubName}}&nbsp;<i class="bi bi-patch-check-fill"></i></strong><br>
                         <a href="{% url 'account:profile_view' offer.user.id %}" class="text-muted text-decoration-none">
                                 @{{ offer.user.username }}
                             </a>
                     </div>
                 </div>
-
+<br>
         <div class="text-center">
             <h4 class="fw-bold">{{ offer.title }}</h4>
+<br>
 
 
             {% if offer.photo %}
@@ -32,6 +33,13 @@
 
         <p class="my-3">{{ offer.content }}</p>
         </div>
+            {% if offer.date %}
+                <p><strong>Date:</strong> {{ offer.date|date:"M d, Y" }} at {{ offer.date|time:"H:i" }}</p>
+            {% endif %}
+
+            {% if offer.location %}
+                <p><strong>Location:</strong> {{ offer.location }}</p>
+            {% endif %}
 
         <div class="d-flex flex-column align-items-center gap-2 mb-3">
             {% if offer.url %}
@@ -58,12 +66,35 @@
                 {% if has_applied %}
                     <div class="alert alert-success text-center">You have already applied to this offer.</div>
                 {% else %}
-                    <form method="post" action="{% url 'offers:apply_to_offer' offer.id %}">
-                        {% csrf_token %}
-                        <div class="d-grid">
-                            <button type="submit" class="btn btn-dark">Apply to this Offer</button>
-                        </div>
-                    </form>
+                    <!-- Apply Button (Triggers Modal) -->
+<div class="d-grid">
+    <button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#applyModal">
+        Apply to this Offer
+    </button>
+</div>
+
+<!-- Apply Confirmation Modal -->
+<div class="modal fade" id="applyModal" tabindex="-1" aria-labelledby="applyModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form method="post" action="{% url 'offers:apply_to_offer' offer.id %}">
+        {% csrf_token %}
+        <div class="modal-header">
+          <h5 class="modal-title" id="applyModalLabel">Confirm Application</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          Are you sure you want to apply to this offer?
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-success">Yes, Apply</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
                 {% endif %}
             {% endif %}
 
