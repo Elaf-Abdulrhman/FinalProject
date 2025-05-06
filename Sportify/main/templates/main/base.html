@@ -255,6 +255,11 @@ body.dark hr {
             {% if not request.user.is_superuser %}
             <a href="{% url 'direct_message:chat_page_view' %}" class="me-2 text-white" title="Messages">
               <i class="fas fa-inbox fa-lg"></i>
+              {% if unread_message_count > 0 %}
+                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                  {{ unread_message_count }}
+                </span>
+              {% endif %}
             </a>
             {% endif %}
         

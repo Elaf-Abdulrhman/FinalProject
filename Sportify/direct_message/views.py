@@ -4,7 +4,6 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.models import User
 from .models import Message
 from django.db.models import Q, Max
-
 from django.contrib import messages
 
 @login_required

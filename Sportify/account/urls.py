@@ -42,8 +42,5 @@ urlpatterns = [
 
 
 
-
-
-
     ]
 
