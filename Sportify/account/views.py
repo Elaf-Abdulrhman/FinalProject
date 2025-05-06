@@ -5,12 +5,14 @@ from .forms import UserSignupForm, AthleteSignupForm, ClubSignupForm, ClubUserSi
 from .models import Athlete, Club
 from posts.models import Post
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.http import HttpRequest
 from django.shortcuts import render,redirect,get_object_or_404
 from django.contrib.auth import logout,login
 from .forms import AthleteEditForm ,ClubEditForm
 from bookmarks.models import Bookmark
 from django.contrib.auth.models import User
+from account.forms import AchievementForm
 
 
 # Create your views here.
@@ -165,3 +167,36 @@ def edit_profile_club_view(request: HttpRequest, user_id):
 
     return render(request, "account/edit_club_profile.html", {"form": form})
 
+
+@login_required
+def add_achievement(request, user_id):
+    user = get_object_or_404(User, id=user_id)  # Get the user by ID
+    athlete = get_object_or_404(Athlete, user=user)  # Get the athlete profile for the user
+    if request.method == 'POST':
+        form = AchievementForm(request.POST, request.FILES)
+
+        if form.is_valid():
+            achievement = form.save(commit=False)
+            achievement.user = request.user
+
+            achievement.save()
+
+            return redirect('account:profile_view', user_id=user_id)
+    else:
+        form = AchievementForm()
+
+    return render(request, 'account/add_achievement.html', {'form': form})
+
+
+
+@login_required
+def delete_achievement(request, user_id,pk):
+    achievement = get_object_or_404(Achievement, pk=pk, user__id=user_id)
+    if achievement.user == request.user:
+        if request.method == 'POST':
+            achievement.delete()
+            messages.success(request, "achievement deleted.")
+            return redirect('account:profile_view', user_id=user_id)
+    else:
+        messages.error(request, "You are not authorized to delete this achievement.")
+    return render(request, 'account/delete_achievement.html', {'achievement': achievement})

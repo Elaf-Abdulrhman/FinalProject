@@ -29,8 +29,6 @@
     <!-- Right Panel: Chat -->
     <div class="col-md-8">
       {% if selected_user %}
-      <h5 class="mb-3">Chat with {{ selected_user.username }}</h5>
-
       <div class="chat-box border rounded p-3 mb-3" style="height: 400px; overflow-y: scroll;">
         {% regroup chat_messages by timestamp.date as date_groups %}
         {% for group in date_groups %}

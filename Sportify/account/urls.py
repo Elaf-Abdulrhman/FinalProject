@@ -37,6 +37,8 @@ urlpatterns = [
         template_name='account/password_reset_complete.html'
     ), name='password_reset_complete'),
 
+    path('add/<int:user_id>', views.add_achievement, name='add_achievement'),
+    path('delete/<int:user_id>/<int:pk>/', views.delete_achievement, name='delete_achievement'),
 
 
 
