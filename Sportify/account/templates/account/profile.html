@@ -190,7 +190,7 @@ body.dark .profile-card{
                 {% if request.user.is_authenticated and user.athlete %}
                 <h6 class="fw-bold">Achievements</h6>
                 {%for achievement in achievements%}
-                <div class="profile-card mb-4">
+             <div class="profile-card mb-4">
                 <p>{{ achievement.title|default:"No achievements yet." }}</p>
                 <p>{{achievement.dateOfStart}}</p>
                 <p>{{achievement.dateOfEnd}}</p>
@@ -200,12 +200,14 @@ body.dark .profile-card{
                 {% else %}
                     <P>There is no file</P>
                 {% endif %}
+                {%if request.user == user %}
                 <a href="{% url 'account:delete_achievement' user.id achievement.id %}" class="btn btn-danger"style="width: 7rem;font-size: 10px;">Delete Achievement</a>
-                </div>
+                {% endif %}
+             </div>
                 {%endfor%}
 
                {% endif %}
-                {% if request.user.athlete%}
+               {%if request.user == user %}
                     <a href="{% url 'account:add_achievement' user.id %}" class="btn edit-btn me-3">Add Achievement</a>
                 {% endif %}
                 <hr>
