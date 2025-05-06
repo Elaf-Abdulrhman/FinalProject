@@ -102,6 +102,11 @@
         {% endfor %}
       </div>
 
+      <form method="post" action="{% url 'direct_message:clear_conversation' selected_user.username %}">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-sm btn-outline-warning">Clear Conversation</button>
+      </form>
+      
       <!-- Send Message -->
       <form method="POST" class="mt-3">
         {% csrf_token %}

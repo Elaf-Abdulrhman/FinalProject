@@ -1,5 +1,5 @@
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.models import User
 from .models import Message
 from django.db.models import Q, Max, Count
@@ -21,12 +21,17 @@ def chat_page_view(request, username=None):
             is_superuser=False
         ).exclude(id=request.user.id)
     else:
-        # Get users with whom the current user has chatted
-        sent_times = Message.objects.filter(sender=request.user).values('recipient').annotate(last=Max('timestamp'))
-        received_times = Message.objects.filter(recipient=request.user).values('sender').annotate(last=Max('timestamp'))
+        # Filter messages that the current user has not deleted
+        messages_qs = Message.objects.filter(
+            Q(sender=request.user, sender_deleted=False) |
+            Q(recipient=request.user, recipient_deleted=False)
+        )
+
+        # Get users with whom the current user has chatted (filtered)
+        sent_times = messages_qs.filter(sender=request.user).values('recipient').annotate(last=Max('timestamp'))
+        received_times = messages_qs.filter(recipient=request.user).values('sender').annotate(last=Max('timestamp'))
 
         last_message_map = {}
-
         for entry in sent_times:
             last_message_map[entry['recipient']] = entry['last']
         for entry in received_times:
@@ -34,16 +39,16 @@ def chat_page_view(request, username=None):
             if not existing or entry['last'] > existing:
                 last_message_map[entry['sender']] = entry['last']
 
-        # Get unread message counts (clean and correct)
+        # Get unread message counts (only if not deleted by recipient)
         unread_counts_qs = (
             Message.objects
-            .filter(recipient=request.user, is_read=False)
+            .filter(recipient=request.user, recipient_deleted=False, is_read=False)
             .values('sender')
             .annotate(count=Count('id'))
         )
         unread_counts = {entry['sender']: entry['count'] for entry in unread_counts_qs}
 
-        # Build user queryset and sort by last message timestamp
+        # Filter users who are in the last_message_map and exclude superuser/self
         user_ids = last_message_map.keys()
         users_qs = User.objects.filter(id__in=user_ids, is_superuser=False).exclude(id=request.user.id)
         users = sorted(users_qs, key=lambda u: last_message_map[u.id], reverse=True)
@@ -55,20 +60,19 @@ def chat_page_view(request, username=None):
                 selected_user = None
                 messages.error(request, "You cannot chat with this user.")
             else:
-                # Mark messages as read
+                # Mark messages from selected user as read
                 Message.objects.filter(
                     sender=selected_user,
                     recipient=request.user,
                     is_read=False
                 ).update(is_read=True)
 
-                # Load chat history
+                # Load chat messages (respecting delete flags)
                 chat_messages = Message.objects.filter(
-                    Q(sender=request.user, recipient=selected_user) |
-                    Q(sender=selected_user, recipient=request.user)
+                    Q(sender=request.user, recipient=selected_user, sender_deleted=False) |
+                    Q(sender=selected_user, recipient=request.user, recipient_deleted=False)
                 ).order_by('timestamp')
         except User.DoesNotExist:
-            print("!!! USER NOT FOUND !!!")
             messages.error(request, f"No user found with username '{username}'.")
 
     # Handle sending a message
@@ -89,3 +93,35 @@ def chat_page_view(request, username=None):
         'search_query': search_query,
         'unread_counts': unread_counts,
     })
+
+@login_required
+def edit_message(request, message_id):
+    message = get_object_or_404(Message, id=message_id, sender=request.user)
+    if request.method == 'POST':
+        new_content = request.POST.get('content')
+        if new_content:
+            message.content = new_content
+            message.edited = True
+            message.save()
+            return redirect('direct_message:chat_page', username=message.recipient.username if request.user == message.sender else message.sender.username)
+    return render(request, 'direct_message/edit_message.html', {'message': message})
+
+
+@login_required
+def delete_message(request, message_id):
+    message = get_object_or_404(Message, id=message_id)
+    if request.method == 'POST':
+        message.soft_delete(request.user)
+        return redirect('direct_message:chat_page', username=message.recipient.username if request.user == message.sender else message.sender.username)
+
+@login_required
+def clear_conversation(request, username):
+    other_user = get_object_or_404(User, username=username)
+    if request.method == 'POST':
+        messages = Message.objects.filter(
+            Q(sender=request.user, recipient=other_user) |
+            Q(sender=other_user, recipient=request.user)
+        )
+        for m in messages:
+            m.soft_delete(request.user)
+        return redirect('direct_message:chat_page_view')
