@@ -18,7 +18,6 @@ def main_page_view(request):
     athletes = Athlete.objects.filter(isPrivate=False)
     clubs = Club.objects.all()
 
-    #Fetch latest posts from clubs or public athletes
     latest_posts = Post.objects.filter(
         Q(user__club__isnull=False) |
         Q(user__athlete__isPrivate=False)

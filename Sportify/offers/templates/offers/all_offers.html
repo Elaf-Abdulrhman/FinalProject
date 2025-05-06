@@ -64,7 +64,7 @@
                          class="rounded-circle me-2"
                          style="width: 40px; height: 40px; object-fit: cover; border: 2px solid #ccc;">
                     <div>
-                        <strong>{{ offer.user.club.clubName}}</strong><br>
+                        <strong>{{ offer.user.club.clubName}} </strong><i class="bi bi-patch-check-fill"></i><br>
                         <a href="{% url 'account:profile_view' offer.user.id %}" class="text-muted text-decoration-none">
                                 @{{ offer.user.username }}
                             </a>

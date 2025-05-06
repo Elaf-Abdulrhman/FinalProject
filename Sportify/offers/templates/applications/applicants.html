@@ -40,13 +40,13 @@
                                 <span class="badge bg-secondary">Pending</span>
                             {% endif %}
                         </p>
-                        <small class="text-muted d-block mb-2">Applied on {{ app.created_at|date:"M d, Y" }}</small>
 
                         {% if app.status == 'pending' %}
-                            <a href="{% url 'offers:respond_to_application' app.id %}" class="btn btn-sm btn-outline-primary">Respond</a>
+                            <a href="{% url 'offers:respond_to_application' app.id %}" class="btn btn-sm btn-outline-warning">Respond</a>
                         {% else %}
                             <a href="{% url 'offers:application_response_detail' app.id %}" class="btn btn-sm btn-outline-secondary">View More</a>
                         {% endif %}
+                        <small class="text-muted d-block mb-2">Applied on {{ app.created_at|date:"M d, Y" }}</small>
 
                     </div>
 
