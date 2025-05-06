@@ -44,7 +44,7 @@ def chat_page_view(request, username=None):
         # Get unread message counts (only if not deleted by recipient)
         unread_counts_qs = (
             Message.objects
-            .filter(recipient=request.user, recipient_deleted=False, is_read=False)
+            .filter(recipient=request.user, is_read=False, recipient_deleted=False)
             .values('sender')
             .annotate(count=Count('id'))
         )
@@ -109,13 +109,21 @@ def edit_message_view(request, message_id):
     
     return render(request, 'direct_message/edit_message.html', {'message': message_obj})
 
+@login_required
+def delete_message_for_me(request, message_id):
+    message = get_object_or_404(Message, id=message_id, sender=request.user)
+    message.sender_deleted = True
+    message.save()
+    return redirect('direct_message:chat_page', username=message.recipient.username)
 
 @login_required
-def delete_message_view(request, message_id):
-    message_obj = get_object_or_404(Message, id=message_id, sender=request.user)
-    recipient_username = message_obj.recipient.username
-    message_obj.delete()
-    return redirect('direct_message:chat_page', username=recipient_username)
+def delete_message_for_everyone(request, message_id):
+    message = get_object_or_404(Message, id=message_id, sender=request.user)
+    message.content = "This message was deleted"
+    message.deleted_for_everyone = True
+    message.save()
+    return redirect("direct_message:chat_page", username=message.recipient.username)
+
 @login_required
 def clear_conversation(request, username):
     other_user = get_object_or_404(User, username=username)
