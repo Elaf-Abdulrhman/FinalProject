@@ -64,4 +64,9 @@ class Achievement(models.Model):
     dateOfStart = models.DateTimeField()
     dateOfEnd = models.DateTimeField()
     content= models.TextField(blank=True) 
+<<<<<<< HEAD
     file = models.ImageField(upload_to='athletes/photos/')
+=======
+    file = models.ImageField(upload_to='athletes/photos/')
+
+>>>>>>> 2bcdac6b3f82aad849b0173c4ca1929230536bfe

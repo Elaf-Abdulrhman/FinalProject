@@ -23,7 +23,11 @@ class Offer(models.Model):
 
     created_at = models.DateTimeField(auto_now_add=True)
 
-    def __str__(self):
+    date = models.DateTimeField(null=True, blank=True)
+    location = models.CharField(max_length=255, blank=True)
+
+
+def __str__(self):
         return self.title
 
 

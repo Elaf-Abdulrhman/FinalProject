@@ -77,9 +77,9 @@ body.dark .profile-card{
         <div class=" d-flex align-items-center">
             {% if user.is_authenticated and user.athlete %}
                 {% if user.athlete.profilePhoto %}
-                    <img src="{{ user.athlete.profilePhoto.url }}" alt="Profile Photo" class="profile-img me-3">
+                    <img src="{{ user.athlete.profilePhoto.url }}" alt="Profile Photo" class="profile-img me-3 border">
                 {% else %}
-                    <img src="{% static 'images/userprofile.png' %}" alt="Default Photo" class="profile-img me-3">
+                    <img src="{% static 'images/userprofile.png' %}" alt="Default Photo" class="profile-img me-3 border">
                 {% endif %}
                 <div>
                     <h5 class="fw-bold">{{ user.first_name }}{% if user.athlete.isPrivate %}
@@ -107,7 +107,7 @@ body.dark .profile-card{
 
                 </div>
             {% else %}
-                <img src="{{ user.club.photo.url }}" alt="Club Profile Photo" class="profile-img me-3">
+                <img src="{{ user.club.photo.url }}" alt="Club Profile Photo" class="profile-img me-3 border">
                 <div>
                     <h5 class="fw-bold">{{ user.club.clubName }} <i class="bi bi-patch-check-fill"></i></h5>
                     <h6>@{{ user.username }}</h6>
@@ -127,12 +127,7 @@ body.dark .profile-card{
 
                 </div>
             {% endif %}
-            <!-- Message Icon (white, spaced) -->
-             {% if request.user.is_authenticated and not request.user == user %}
-              <a href="{% url 'direct_message:chat_page_view' %}" class="me-2 text-black" title="Messages">
-                <i class="fas fa-inbox fa-lg"></i>
-              </a>
-            {% endif %}
+        
         </div>
 
         <div class="d-inline align-items-center text-end">
@@ -145,7 +140,8 @@ body.dark .profile-card{
             {% endif %}
 
             {% if request.user.is_authenticated and not request.user == user and not request.user.is_superuser %}
-                <form method="post" action="{% url 'bookmarks:bookmark_profile' user.id %}">
+            <div class="row">   
+            <form method="post" action="{% url 'bookmarks:bookmark_profile' user.id %}">
                     {% csrf_token %}
                     <button type="submit" class="btn btn-link p-0">
                         {% if is_bookmarked %}
@@ -153,6 +149,23 @@ body.dark .profile-card{
                         {% else %}
                             <i class="bi bi-bookmark" style="color: black;font-size: 24px; "></i>
                         {% endif %}
+                    </button>
+                </form>
+            {% endif %}
+
+            <!-- Message Icon (white, spaced) -->
+            {% if request.user.is_authenticated and not request.user == user  %}
+            <a href="{% url 'direct_message:chat_page' username=user.username %}" class="me-2 text-black" title="Messages">
+              <i class="fas fa-inbox fa-lg" style="margin-top: 1rem;"></i>
+            </a>
+          {% endif %}
+        </div> 
+
+            {% if request.user.is_superuser %}
+                <form method="post" action="{% url 'account:delete_profile' user.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-link p-0">
+                        <i class="bi bi-trash" style="color: black; font-size: 24px;"></i>
                     </button>
                 </form>
             {% endif %}
@@ -199,6 +212,19 @@ body.dark .profile-card{
                     <img src="{{user.achievement.file.url }}" alt="achievement file"  style="width: 10rem;">
                 {% else %}
                     <P>There is no file</P>
+<<<<<<< HEAD
+=======
+                {% endif %}
+                {%if request.user == user %}
+                <a href="{% url 'account:delete_achievement' user.id achievement.id %}" class="btn btn-danger"style="width: 7rem;font-size: 10px;">Delete Achievement</a>
+                {% endif %}
+             </div>
+                {%endfor%}
+
+               {% endif %}
+               {%if request.user == user %}
+                    <a href="{% url 'account:add_achievement' user.id %}" class="btn edit-btn me-3">Add Achievement</a>
+>>>>>>> 2bcdac6b3f82aad849b0173c4ca1929230536bfe
                 {% endif %}
                 {%if request.user == user %}
                 <a href="{% url 'account:delete_achievement' user.id achievement.id %}" class="btn btn-danger"style="width: 7rem;font-size: 10px;">Delete Achievement</a>
@@ -212,7 +238,11 @@ body.dark .profile-card{
                 {% endif %}
 
                 <hr>
+<<<<<<< HEAD
                 <h6 class="fw-bold mt-2">Contact Info</h6>
+=======
+                <h6 class="fw-bold mt-2" >Contact Info</h6>
+>>>>>>> 2bcdac6b3f82aad849b0173c4ca1929230536bfe
                 <p>Email: {{ user.email }}</p>
                 {% if request.user.is_authenticated and user.athlete %}
                     <p>Phone: {{ user.athlete.phoneNumber|default:"-" }}</p>

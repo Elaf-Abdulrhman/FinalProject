@@ -5,12 +5,14 @@ from .forms import UserSignupForm, AthleteSignupForm, ClubSignupForm, ClubUserSi
 from .models import Athlete, Club,Achievement
 from posts.models import Post
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.http import HttpRequest
 from django.shortcuts import render,redirect,get_object_or_404
 from django.contrib.auth import logout,login
 from .forms import AthleteEditForm ,ClubEditForm
 from bookmarks.models import Bookmark
 from django.contrib.auth.models import User
+from account.forms import AchievementForm
 
 
 # Create your views here.
@@ -96,7 +98,7 @@ def login_view(request):
             if request.user.is_superuser:
                 return redirect("admins:dashboard")
             elif hasattr(request.user, 'club'):
-                return redirect('clubs:club_dashboard')
+                return redirect('account:profile_view', request.user.id)
             else:
                 return redirect('posts:all_posts')
         else:
@@ -168,10 +170,18 @@ def edit_profile_club_view(request: HttpRequest, user_id):
 
     return render(request, "account/edit_club_profile.html", {"form": form})
 
+<<<<<<< HEAD
 @login_required
 def add_achievement(request, user_id):
     user = get_object_or_404(User, id=user_id)  
     athlete = get_object_or_404(Athlete, user=user)  
+=======
+
+@login_required
+def add_achievement(request, user_id):
+    user = get_object_or_404(User, id=user_id)  # Get the user by ID
+    athlete = get_object_or_404(Athlete, user=user)  # Get the athlete profile for the user
+>>>>>>> 2bcdac6b3f82aad849b0173c4ca1929230536bfe
     if request.method == 'POST':
         form = AchievementForm(request.POST, request.FILES)
 
@@ -199,4 +209,8 @@ def delete_achievement(request, user_id,pk):
             return redirect('account:profile_view', user_id=user_id)
     else:
         messages.error(request, "You are not authorized to delete this achievement.")
+<<<<<<< HEAD
     return render(request, 'account/delete_achievement.html', {'achievement': achievement})
+=======
+    return render(request, 'account/delete_achievement.html', {'achievement': achievement})
+>>>>>>> 2bcdac6b3f82aad849b0173c4ca1929230536bfe

@@ -182,3 +182,17 @@ def my_applications(request):
 def application_detail(request, application_id):
     app = get_object_or_404(Application, id=application_id, athlete=request.user)
     return render(request, 'applications/application_detail.html', {'application': app})
+
+
+
+
+
+@login_required
+def application_response_detail(request, application_id):
+    application = get_object_or_404(Application, id=application_id)
+
+    # Only allow the club that owns the offer to view it
+    if request.user != application.offer.user:
+        return HttpResponseForbidden("You are not allowed to view this response.")
+
+    return render(request, 'applications/application_response_detail.html', {'application': application})

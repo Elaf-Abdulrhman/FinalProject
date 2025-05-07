@@ -47,9 +47,9 @@ class AthleteEditForm(forms.ModelForm):
             'dateOfBirth': forms.DateInput(attrs={'type': 'date'}),
         }
 
-    def __init__(self, *args, **kwargs):
+    def _init_(self, *args, **kwargs):
         user = kwargs.pop('user', None)
-        super(AthleteEditForm, self).__init__(*args, **kwargs)
+        super(AthleteEditForm, self)._init_(*args, **kwargs)
         if user:
             self.fields['first_name'].initial = user.first_name
             self.fields['last_name'].initial = user.last_name
@@ -83,9 +83,9 @@ class ClubEditForm(forms.ModelForm):
             'description': forms.Textarea(attrs={'rows': 3}),
         }
 
-    def __init__(self, *args, **kwargs):
+    def _init_(self, *args, **kwargs):
         user = kwargs.pop('user', None)
-        super(ClubEditForm, self).__init__(*args, **kwargs)
+        super(ClubEditForm, self)._init_(*args, **kwargs)
         if user:
             self.fields['username'].initial = user.username
             self.fields['email'].initial = user.email
