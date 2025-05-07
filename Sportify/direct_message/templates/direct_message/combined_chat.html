@@ -4,13 +4,6 @@
 
 {% block content %}
 <div class="container my-5 bg-white p-4 shadow rounded" style="max-width: 900px">
-  {% if messages %}
-    <ul class="messages list-unstyled">
-      {% for message in messages %}
-        <li{% if message.tags %} class="alert alert-{{ message.tags }}"{% endif %}>{{ message }}</li>
-      {% endfor %}
-    </ul>
-  {% endif %}
 
   <div class="row">
     <div class="col-md-4 border-end">
