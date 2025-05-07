@@ -18,11 +18,14 @@ def chat_page_view(request, username=None):
     unread_counts = {}
 
     if search_query:
-        # If user is searching
+    # If user is searching
         users = User.objects.filter(
             username__icontains=search_query,
             is_superuser=False
         ).exclude(id=request.user.id)
+
+        if not users.exists():
+            messages.info(request, "No users found matching your search.")
     else:
         # Get message queryset where current user is involved and has not deleted messages
         messages_qs = Message.objects.filter(
