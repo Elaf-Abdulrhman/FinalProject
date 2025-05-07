@@ -33,9 +33,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-dtm56)$@mucw8zj=(6m25m1nd83aiuqut=fw#+v1k^9wkl=+6o'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# DEBUG = True
 
-ALLOWED_HOSTS = []
+DEBUG = False 
+ALLOWED_HOSTS = ['Sportify.onrender.com']
 
 
 # Application definition
