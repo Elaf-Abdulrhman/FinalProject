@@ -127,12 +127,7 @@ body.dark .profile-card{
 
                 </div>
             {% endif %}
-            <!-- Message Icon (white, spaced) -->
-             {% if request.user.is_authenticated and not request.user == user  %}
-              <a href="{% url 'direct_message:chat_page' username=user.username %}" class="me-2 text-black" title="Messages">
-                <i class="fas fa-inbox fa-lg"></i>
-              </a>
-            {% endif %}
+        
         </div>
 
         <div class="d-inline align-items-center text-end">
@@ -145,7 +140,8 @@ body.dark .profile-card{
             {% endif %}
 
             {% if request.user.is_authenticated and not request.user == user and not request.user.is_superuser %}
-                <form method="post" action="{% url 'bookmarks:bookmark_profile' user.id %}">
+            <div class="row">   
+            <form method="post" action="{% url 'bookmarks:bookmark_profile' user.id %}">
                     {% csrf_token %}
                     <button type="submit" class="btn btn-link p-0">
                         {% if is_bookmarked %}
@@ -153,6 +149,23 @@ body.dark .profile-card{
                         {% else %}
                             <i class="bi bi-bookmark" style="color: black;font-size: 24px; "></i>
                         {% endif %}
+                    </button>
+                </form>
+            {% endif %}
+
+            <!-- Message Icon (white, spaced) -->
+            {% if request.user.is_authenticated and not request.user == user  %}
+            <a href="{% url 'direct_message:chat_page' username=user.username %}" class="me-2 text-black" title="Messages">
+              <i class="fas fa-inbox fa-lg" style="margin-top: 1rem;"></i>
+            </a>
+          {% endif %}
+        </div> 
+
+            {% if request.user.is_superuser %}
+                <form method="post" action="{% url 'account:delete_profile' user.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-link p-0">
+                        <i class="bi bi-trash" style="color: black; font-size: 24px;"></i>
                     </button>
                 </form>
             {% endif %}
