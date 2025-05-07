@@ -18,7 +18,7 @@ def bookmark_post(request, post_id):
 @login_required
 def all_bookmarks(request):
     # Filter bookmarks for the logged-in user
-    bookmarks = Bookmark.objects.filter(user=request.user).select_related('post')
+    bookmarks = Bookmark.objects.filter(user=request.user, post__isnull=False).select_related('post')
     liked_posts = Post.objects.filter(likes__user=request.user)  # Posts liked by the user
     bookmarked_posts = Post.objects.filter(bookmarked_by__user=request.user)  # Posts bookmarked by the user
 
