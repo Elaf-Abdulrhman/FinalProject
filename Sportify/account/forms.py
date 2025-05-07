@@ -40,35 +40,35 @@ class AthleteEditForm(forms.ModelForm):
         fields = [
             'profilePhoto', 'phoneNumber', 'dateOfBirth', 'sport', 'playingPosition',
             'height', 'weight', 'gender', 'isAvailable', 'isPrivate', 'city',
-            'bio', 'facebook', 'twitterX', 'instagram'  # <- Added here
+            'bio', 'facebook', 'twitterX', 'instagram'
         ]
         widgets = {
             'bio': forms.Textarea(attrs={'rows': 3}),
             'dateOfBirth': forms.DateInput(attrs={'type': 'date'}),
         }
 
-    def _init_(self, *args, **kwargs):
-        user = kwargs.pop('user', None)
-        super(AthleteEditForm, self)._init_(*args, **kwargs)
-        if user:
-            self.fields['first_name'].initial = user.first_name
-            self.fields['last_name'].initial = user.last_name
-            self.fields['username'].initial = user.username
-            self.fields['email'].initial = user.email
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user', None)
+        super().__init__(*args, **kwargs)
+        if self.user:
+            self.fields['first_name'].initial = self.user.first_name
+            self.fields['last_name'].initial = self.user.last_name
+            self.fields['username'].initial = self.user.username
+            self.fields['email'].initial = self.user.email
 
     def save(self, commit=True):
-        athlete = super(AthleteEditForm, self).save(commit=False)
-        user = athlete.user
-        user.first_name = self.cleaned_data['first_name']
-        user.last_name = self.cleaned_data['last_name']
-        user.username = self.cleaned_data['username']
-        user.email = self.cleaned_data['email']
+        athlete = super().save(commit=False)
+        if self.user:
+            user = athlete.user
+            user.first_name = self.cleaned_data['first_name']
+            user.last_name = self.cleaned_data['last_name']
+            user.username = self.cleaned_data['username']
+            user.email = self.cleaned_data['email']
+            if commit:
+                user.save()
         if commit:
-            user.save()
             athlete.save()
         return athlete
-
-
 class ClubEditForm(forms.ModelForm):
     username = forms.CharField(max_length=150)
     email = forms.EmailField()
@@ -77,29 +77,31 @@ class ClubEditForm(forms.ModelForm):
         model = Club
         fields = [
             'photo', 'clubName', 'phoneNumber', 'sport', 'city',
-            'description', 'facebook', 'twitterX', 'instagram'  # <- Added here
+            'description', 'facebook', 'twitterX', 'instagram'
         ]
         widgets = {
             'description': forms.Textarea(attrs={'rows': 3}),
         }
 
-    def _init_(self, *args, **kwargs):
-        user = kwargs.pop('user', None)
-        super(ClubEditForm, self)._init_(*args, **kwargs)
-        if user:
-            self.fields['username'].initial = user.username
-            self.fields['email'].initial = user.email
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user', None)
+        super().__init__(*args, **kwargs)
+        if self.user:
+            self.fields['username'].initial = self.user.username
+            self.fields['email'].initial = self.user.email
 
     def save(self, commit=True):
-        club = super(ClubEditForm, self).save(commit=False)
-        user = club.user
-        user.username = self.cleaned_data['username']
-        user.email = self.cleaned_data['email']
+        club = super().save(commit=False)
+        if self.user:
+            user = club.user
+            user.username = self.cleaned_data['username']
+            user.email = self.cleaned_data['email']
+            if commit:
+                user.save()
         if commit:
-            user.save()
             club.save()
         return club
-    
+
 class AchievementForm(forms.ModelForm):
     class Meta:
         model = Achievement
