@@ -283,7 +283,7 @@ body.dark .achievement-card {
             {% if request.user == user %}
                 <a href="{% url 'bookmarks:all_bookmarks' %}" class="text-decoration-none text-dark">
                     <div class="profile-card mb-4 text-center">
-                        <h6 class="fw-bold">Bookmark</h6>
+                        <h6 class="fw-bold">Bookmarked Posts</h6>
                         <div class="bookmark-icon d-block mt-2" > <i class=" bi bi-bookmark"></i></div>
                     </div>
                 </a>
@@ -302,7 +302,7 @@ body.dark .achievement-card {
                 <a href="{% url 'bookmarks:all_bookmarked_profiles' %}" class="text-decoration-none text-dark">
                     <div class="profile-card mb-4 text-center">
                         <h6 class="fw-bold"> Bookmarked Profiles </h6>
-                        <div class="bookmark-icon d-block mt-2"><i class="bi bi-card-heading"></i></div>
+                        <div class="bookmark-icon d-block mt-2"><i class=" bi bi-bookmark"></i></div>
                     </div>
                 </a>
             {% endif %}
