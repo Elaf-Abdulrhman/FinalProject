@@ -170,8 +170,8 @@ def edit_profile_club_view(request: HttpRequest, user_id):
 
 @login_required
 def add_achievement(request, user_id):
-    user = get_object_or_404(User, id=user_id)  # Get the user by ID
-    athlete = get_object_or_404(Athlete, user=user)  # Get the athlete profile for the user
+    user = get_object_or_404(User, id=user_id)  
+    athlete = get_object_or_404(Athlete, user=user)  
     if request.method == 'POST':
         form = AchievementForm(request.POST, request.FILES)
 

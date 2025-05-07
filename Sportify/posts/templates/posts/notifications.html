@@ -1,0 +1,24 @@
+
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block title %}Notifications Post | Sportify{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Your Notifications</h2>
+    
+    <ul>
+        {% for notif in notifications %}
+            <li>
+                {{ notif.message }} 
+                {% if not notif.read %}
+                    <strong>(New)</strong>
+                {% endif %}
+            </li>
+        {% empty %}
+            <li>No notifications yet.</li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}

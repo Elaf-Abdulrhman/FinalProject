@@ -10,8 +10,26 @@ from django.template.loader import render_to_string
 from django.http import JsonResponse
 from bookmarks.models import Bookmark
 from posts.models import Post, Like
+from user_notifications.models import Notification
 
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from django.utils.timezone import now
 
+@receiver(post_save, sender=Like)
+def create_like_notification(sender, instance, created, **kwargs):
+    if created:
+        # Send a notification to the author of the post
+        post_author = instance.post.user
+        message = f"{instance.user.username} liked your post: {instance.post.content}"
+        
+        # Create a notification for the post author
+        Notification.objects.create(
+            recipient=post_author,
+            message=message,
+            created_at=now(),
+            read=False
+        )
 
 
 
@@ -140,7 +158,6 @@ def edit_post(request, pk):
 
 
 
-
 @login_required
 def like_post(request, post_id):
     post = get_object_or_404(Post, id=post_id)
@@ -195,8 +212,9 @@ def all_posts(request):
     query_params = request.GET.copy()
     query_params.pop('page', None)
     filter_querystring = query_params.urlencode()
-
+    unread_count = Notification.objects.unread().filter(recipient=request.user).count()
     context = {
+        'unread_count': unread_count,
         'posts': page_obj,
         'sports': Sport.objects.all(),
         'cities': City.objects.all(),

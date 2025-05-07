@@ -257,6 +257,12 @@ body.dark hr {
               <button class="btn btn-light dropdown-toggle" id="authDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                 {{ request.user.username }}
               </button>
+              <a href="{% url 'user_notifications:inbox' %}">
+                Notifications 
+                {% if unread_count > 0 %}
+                  (<span>{{ unread_count }}</span>)
+                {% endif %}
+            </a>          
               <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="authDropdown">
                 <li><a class="dropdown-item" href="{% url 'account:profile_view' user_id=request.user.id %}">Profile</a></li>
                 <li><a class="dropdown-item" href="{% url 'account:logout_view' %}">Log Out</a></li>

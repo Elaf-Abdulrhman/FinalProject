@@ -35,4 +35,6 @@ urlpatterns = [
     path('bookmarks/', include('bookmarks.urls')),
     path('admins/', include('admins.urls')),
     path('direct_message/', include('direct_message.urls')),
+    path('notifications/', include('user_notifications.urls', namespace='user_notifications')),
+    path('notifications/', include('user_notifications.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -51,7 +51,9 @@ INSTALLED_APPS = [
     'subscriptions',
     'bookmarks',
     'direct_message',
-    'admins.apps.AdminConfig',  # Ensure this matches the app's configuration
+    'admins.apps.AdminConfig', # Ensure this matches the app's configuration
+    'user_notifications',   
+    'notifications', 
 ]
 
 MIDDLEWARE = [
